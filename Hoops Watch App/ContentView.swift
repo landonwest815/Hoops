@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  WatchTest Watch App
+//  Hoops Watch App
 //
 //  Created by Landon West on 1/2/24.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-    
+        
         NavigationStack {
             Image(systemName: "basketball.fill")
                 .resizable()
