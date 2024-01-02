@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var hapticsTrigger = 0
+    
     var body: some View {
         
         NavigationStack {
@@ -19,7 +22,10 @@ struct ContentView: View {
             
             NavigationLink(destination: ShotSelection()) {
                 Text("New Session")
-            }
+            }.simultaneousGesture(TapGesture().onEnded{
+                hapticsTrigger += 1
+            })
+            .sensoryFeedback(.selection, trigger: hapticsTrigger)
             .tint(.green)
         }
         
