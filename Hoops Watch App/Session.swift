@@ -43,7 +43,7 @@ struct Session: View {
                 .confirmationDialog("Are you sure?",
                      isPresented: $showingConfirmation) {
                     NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true)) {
-                        Button("Exit Session?", role: .destructive) {
+                        Button("Exit Session", role: .destructive) {
                             exitHaptic += 1
                         }
                         .sensoryFeedback(.error, trigger: exitHaptic)
