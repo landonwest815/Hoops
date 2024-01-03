@@ -11,9 +11,7 @@ struct PostSession: View {
     
     @State var sessionTimeInMin: Int
     @State var makes: Int
-    
-    @State var hapticsTrigger = 0
-    
+        
     init(sessionTimeInMin: Int, makes: Int) {
         self.sessionTimeInMin = sessionTimeInMin / 60
         self.makes = makes
@@ -41,7 +39,6 @@ struct PostSession: View {
                 
                 VStack {
                     
-                    
                     Form {
                         
                         Section(header: Text("AVG/Min")) {
@@ -60,10 +57,9 @@ struct PostSession: View {
                             Spacer()
                         }
                     }.simultaneousGesture(TapGesture().onEnded{
-                        hapticsTrigger += 1
+                        WKInterfaceDevice.current().play(.click)
                     })
                     .navigationBarBackButtonHidden(true)
-                    .sensoryFeedback(.selection, trigger: hapticsTrigger)
                     .tint(.green)
                     .padding(.trailing, 20)
                     

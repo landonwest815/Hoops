@@ -8,58 +8,51 @@
 import SwiftUI
 
 struct ShotSelection: View {
-    
-    @State var hapticsTrigger = 0
-
     var body: some View {
-        
         NavigationStack {
-            
             ScrollView {
                 
-                NavigationLink(destination: SessionSettings(shotSelection: "Layups")) {
-                    Text("Layups")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    hapticsTrigger += 1
-                })
-                .sensoryFeedback(.selection, trigger: hapticsTrigger)
-                .tint(.red)
+                // MARK: Layups
+                    NavigationLink(destination: SessionSettings(shotSelection: "Layups")) {
+                        Text("Layups")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.red)
                 
-                NavigationLink(destination: SessionSettings(shotSelection: "Free Throws")) {
-                    Text("Free Throws")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    hapticsTrigger += 1
-                })
-                .sensoryFeedback(.selection, trigger: hapticsTrigger)
-                .tint(.blue)
+                // MARK: Free Throws
+                    NavigationLink(destination: SessionSettings(shotSelection: "Free Throws")) {
+                        Text("Free Throws")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.blue)
                 
-                NavigationLink(destination: SessionSettings(shotSelection: "Midrange")) {
-                    Text("Midrange")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    hapticsTrigger += 1
-                })
-                .sensoryFeedback(.selection, trigger: hapticsTrigger)
-                .tint(.blue)
+                // MARK: Midrange
+                    NavigationLink(destination: SessionSettings(shotSelection: "Midrange")) {
+                        Text("Midrange")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.blue)
                 
-                NavigationLink(destination: SessionSettings(shotSelection: "Three Pointers")) {
-                    Text("Three Pointers")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    hapticsTrigger += 1
-                })
-                .sensoryFeedback(.selection, trigger: hapticsTrigger)
-                .tint(.green)
+                // MARK: Three Pointers
+                    NavigationLink(destination: SessionSettings(shotSelection: "Three Pointers")) {
+                        Text("Three Pointers")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.green)
                 
-                NavigationLink(destination: SessionSettings(shotSelection: "Deep")) {
-                    Text("Deep")
-                }.simultaneousGesture(TapGesture().onEnded{
-                    hapticsTrigger += 1
-                })
-                .sensoryFeedback(.selection, trigger: hapticsTrigger)
-                .tint(.green)
-                
+                // MARK: Deep
+                    NavigationLink(destination: SessionSettings(shotSelection: "Deep")) {
+                        Text("Deep")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.green)
             }
             .navigationTitle("Shot Type")
-
         }
     }
 }

@@ -122,9 +122,9 @@
 			isa = PBXGroup;
 			children = (
 				91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */,
-				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
 				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
 				91AD54E12B449DDE00F4D367 /* Preview Content */,
+				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
 				91AD54ED2B449E0A00F4D367 /* ShotSelection.swift */,
 				91AD54EF2B449E3600F4D367 /* SessionSettings.swift */,
 				91AD54F12B449E4600F4D367 /* Session.swift */,
