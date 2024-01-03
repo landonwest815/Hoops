@@ -24,13 +24,13 @@ struct PostSession: View {
                 Form {
                     Section(header: Text("Time")) {
                         Text("\(sessionTimeInMin):00")
-                            .font(.system(size: 30))
+                            .font(.system(size: 25))
                     }
                     .listRowBackground(Color.clear)
 
                     Section(header: Text("Makes")) {
                         Text("\(makes)")
-                            .font(.system(size: 30))
+                            .font(.system(size: 25))
                     }
                     .listRowBackground(Color.clear)
 
@@ -43,7 +43,7 @@ struct PostSession: View {
                         
                         Section(header: Text("AVG/Min")) {
                             Text(averageMakesPerMinute(sessionLength: sessionTimeInMin, makes: makes))
-                                .font(.system(size: 30))
+                                .font(.system(size: 25))
                         }
                         .listRowBackground(Color.clear)
                         
@@ -81,5 +81,5 @@ struct PostSession: View {
 }
 
 #Preview {
-    PostSession(sessionTimeInMin: 120, makes: 25)
+    PostSession(sessionTimeInMin: 600, makes: 25)
 }
