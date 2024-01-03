@@ -32,7 +32,7 @@ struct SessionSettings: View {
                 }
                 .sensoryFeedback(.selection, trigger: pickerHapticsTrigger)
                 
-                NavigationLink(destination: Session(sessionTime: selectedTime).navigationBarBackButtonHidden(true)){
+                NavigationLink(destination: Session(sessionTime: selectedTime * 60).navigationBarBackButtonHidden(true)){
                     Text("Start")
                 }.simultaneousGesture(TapGesture().onEnded{
                     hapticsTrigger += 1
