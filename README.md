@@ -1,4 +1,4 @@
-![App Icon](https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png)
+<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="50">
 # Hoops App Project Documentation
 
 ## Collaborators
