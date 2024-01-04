@@ -1,4 +1,4 @@
-<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="100" style="border-radius: 15;">
+<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="100"">
  
 # Hoops App Project Documentation
 
