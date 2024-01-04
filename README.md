@@ -1,4 +1,4 @@
-(https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png)
+!(https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png)
 # Hoops App Project Documentation
 
 ## Collaborators
