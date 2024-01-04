@@ -78,6 +78,10 @@ struct PostSession: View {
         let average = Double(makes) / Double(sessionLength)
         return String(format: "%.1f", round(10 * average) / 10)
     }
+    
+    func sendToiPhone() {
+        //let Session(date:)
+    }
 }
 
 #Preview {

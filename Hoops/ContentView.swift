@@ -10,10 +10,25 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         
-        
-        Text("hello")
-        
-        
+        ZStack {
+            TabView {
+                Sessions()
+                    .tabItem() {
+                        Image(systemName: "basketball")
+                        Text("Sessions")
+                    }
+                Stats()
+                    .tabItem() {
+                        Image(systemName: "chart.bar")
+                        Text("Stats")
+                    }
+                Settings()
+                    .tabItem() {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
+            }
+        }
     }
 }
 
