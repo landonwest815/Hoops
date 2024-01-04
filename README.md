@@ -1,4 +1,5 @@
-<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="50">
+<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="75">
+ 
 # Hoops App Project Documentation
 
 ## Collaborators
