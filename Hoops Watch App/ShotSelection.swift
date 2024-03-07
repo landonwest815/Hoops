@@ -51,6 +51,14 @@ struct ShotSelection: View {
                         WKInterfaceDevice.current().play(.click)
                     })
                     .tint(.green)
+                
+                // MARK: All Shots
+                    NavigationLink(destination: SessionSettings(shotSelection: "All Shots")) {
+                        Text("All Shots")
+                    }.simultaneousGesture(TapGesture().onEnded{
+                        WKInterfaceDevice.current().play(.click)
+                    })
+                    .tint(.purple)
             }
             .navigationTitle("Shot Type")
         }
