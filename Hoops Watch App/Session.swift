@@ -6,32 +6,28 @@
 //
 
 import SwiftUI
+import Combine
 
 struct Session: View {
     
-    @State var sessionTime: Int
-    @State var copiedTime: Int
+    @State var startTime = Date()
+    @State private var elapsedTime = 0
+    @State private var timer: AnyCancellable?
     @State var makes = 0
     @State var sessionEnd = false
     
-    @State var timer = Timer.publish (every: 1, on: .current, in: .common).autoconnect()
-    @State private var hapticTimer: Timer?
-    @State var isHapticActive = false
+    //@State private var hapticTimer: Timer?
+    //@State var isHapticActive = false
     
     @State var showingEndConfirmation = false
     @State private var showingEndEarlyConfirmation = false
-
-    // copy over the time to save it's initial value
-    init(sessionTime: Int) {
-            self._sessionTime = State(initialValue: sessionTime)
-            self._copiedTime = State(initialValue: sessionTime)
-    }
     
     var body: some View {
+        NavigationStack {
             VStack {
                 HStack {
                     Spacer()
-                    Button {
+                    Button {                         showingEndEarlyConfirmation = true
                     } label: {
                         Image(systemName: "x.circle")
                             .resizable()
@@ -41,21 +37,16 @@ struct Session: View {
                     .clipShape(.circle)
                     .frame(width: 25, height: 25)
                     .tint(.red)
-                    .simultaneousGesture(TapGesture().onEnded{
-                        showingEndEarlyConfirmation = true
-                    })
-                    .confirmationDialog("End Session Early?",
-                                        isPresented: $showingEndEarlyConfirmation) {
-                        NavigationLink(destination: PostSession(sessionTimeInMin: copiedTime, makes: makes).navigationBarBackButtonHidden(true)            .navigationBarTitleDisplayMode(.inline)) {
-                            Button("End", role: .destructive) {
-                                WKInterfaceDevice.current().play(.click)
-                                sessionEnd = true
-                            }
-                        }
-                        .tint(.red)
-                    }
+                    .confirmationDialog("End Session?", isPresented: $showingEndEarlyConfirmation) {
+                                        Button("Finish Session", role: .destructive) {
+                                            endSessionAndNavigate()
+                                        }
+                                        Button("Keep Hoopin'") {
+                                            
+                                        }
+                                    }
                     Spacer()
-                    Text(formatTime(seconds: sessionTime))
+                    Text(formatTime(seconds: elapsedTime))
                     Spacer()
                     Text("\(makes)")
                     Spacer()
@@ -80,30 +71,46 @@ struct Session: View {
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.roundedRectangle(radius: 40))
             }
-            .onReceive(timer) { time in
-                if sessionTime > 0 {
-                    sessionTime -= 1
-                } else {
-                    startHapticFeedback()
-                    showingEndConfirmation = true
-                    self.timer.upstream.connect().cancel()
+            .navigationDestination(isPresented: $sessionEnd) {
+                PostSession(sessionTimeInSec: elapsedTime, makes: makes)
+                    .navigationBarBackButtonHidden()
+                    .navigationBarTitleDisplayMode(.inline)
+                        }
+            .onAppear {
+                if (timer == nil) {
+                    startTimer()
                 }
             }
             .edgesIgnoringSafeArea(.all)
-            .confirmationDialog("End of Session",
-                                isPresented: $showingEndConfirmation) {
-                NavigationLink(destination: PostSession(sessionTimeInMin: copiedTime, makes: makes).navigationBarBackButtonHidden(true)            .navigationBarTitleDisplayMode(.inline)) {
-                    Button("Exit", role: .destructive) {
-                        startHapticFeedback()
-                        WKInterfaceDevice.current().play(.click)
-                        sessionEnd = true
-                    }
-                }
-                .tint(.red)
-            }
-            .onDisappear {
-                stopHapticFeedback()
-            }
+        }
+    }
+    
+    func endSessionAndNavigate() {
+        sessionEnd = true
+        stopTimer()
+    }
+    
+    func startTimer() {
+        // Capture the start time
+        startTime = Date()
+        elapsedTime = 0
+        makes = 0
+        // Create a timer that updates the elapsed time
+        timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().sink { _ in
+            self.updateElapsedTime()
+        }
+    }
+
+    func stopTimer() {
+        // Invalidate and release the timer
+        timer?.cancel()
+        timer = nil
+    }
+
+    func updateElapsedTime() {
+        let currentTime = Date()
+        // Calculate the elapsed time by comparing the current time with the start time
+        elapsedTime = Int(currentTime.timeIntervalSince(startTime))
     }
     
     func formatTime(seconds: Int) -> String {
@@ -111,25 +118,8 @@ struct Session: View {
         let remainingSeconds = seconds % 60
         return String(format: "%02d:%02d", minutes, remainingSeconds)
     }
-    
-    func startHapticFeedback() {
-           isHapticActive = true
-           hapticTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-               if self.isHapticActive {
-                   WKInterfaceDevice.current().play(.notification)
-               } else {
-                   self.hapticTimer?.invalidate()
-               }
-           }
-   }
-
-   func stopHapticFeedback() {
-       isHapticActive = false
-       hapticTimer?.invalidate()
-   }
-    
 }
 
 #Preview {
-    Session(sessionTime: 120)
+    Session()
 }

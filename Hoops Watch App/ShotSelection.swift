@@ -13,7 +13,7 @@ struct ShotSelection: View {
             ScrollView {
                 
                 // MARK: Layups
-                    NavigationLink(destination: SessionSettings(shotSelection: "Layups")) {
+                NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("Layups")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -21,7 +21,7 @@ struct ShotSelection: View {
                     .tint(.red)
                 
                 // MARK: Free Throws
-                    NavigationLink(destination: SessionSettings(shotSelection: "Free Throws")) {
+                NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("Free Throws")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -29,7 +29,7 @@ struct ShotSelection: View {
                     .tint(.blue)
                 
                 // MARK: Midrange
-                    NavigationLink(destination: SessionSettings(shotSelection: "Midrange")) {
+                NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("Midrange")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -37,7 +37,7 @@ struct ShotSelection: View {
                     .tint(.blue)
                 
                 // MARK: Three Pointers
-                    NavigationLink(destination: SessionSettings(shotSelection: "Three Pointers")) {
+                NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("Three Pointers")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -45,7 +45,7 @@ struct ShotSelection: View {
                     .tint(.green)
                 
                 // MARK: Deep
-                    NavigationLink(destination: SessionSettings(shotSelection: "Deep")) {
+                NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("Deep")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -53,7 +53,7 @@ struct ShotSelection: View {
                     .tint(.green)
                 
                 // MARK: All Shots
-                    NavigationLink(destination: SessionSettings(shotSelection: "All Shots")) {
+                    NavigationLink(destination: Session().navigationBarBackButtonHidden(true)) {
                         Text("All Shots")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)

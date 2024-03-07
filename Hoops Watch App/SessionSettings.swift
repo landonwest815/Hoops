@@ -31,7 +31,7 @@ struct SessionSettings: View {
                     }
                 
                 // MARK: Start Session Button
-                    NavigationLink(destination: Session(sessionTime: selectedTime * 60).navigationBarBackButtonHidden(true)){
+                    NavigationLink(destination: Session().navigationBarBackButtonHidden(true)){
                         Text("Start")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
