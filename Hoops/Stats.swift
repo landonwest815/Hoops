@@ -19,9 +19,10 @@ struct Stats: View {
         NavigationStack {
             
             // MARK: - List of Wants
-            Form {
-                
+            ZStack {
+                GraphTesting()
             }
+            .padding()
             .toolbar() {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Image(systemName: "chart.bar.fill")
