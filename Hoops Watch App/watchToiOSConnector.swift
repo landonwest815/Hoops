@@ -19,22 +19,28 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        
+        if let error = error {
+            // Handle the error appropriately
+            print("WCSession activation failed with error: \(error.localizedDescription)")
+        }
     }
     
     func sendSessionToiPhone(hoopSession: HoopSession) {
+        // Prepare the data dictionary
+        let data: [String: Any] = [
+            "date": hoopSession.date,
+            "makes": hoopSession.makes,
+            "length": hoopSession.length
+        ]
+
+        // Check if the session is reachable and prefer sendMessage for instant transfer if possible
         if session.isReachable {
-            let data : [String: Any] = [
-                "date": hoopSession.date,
-                "makes": hoopSession.makes,
-                "length": hoopSession.length
-            ]
-            
             session.sendMessage(data, replyHandler: nil) { error in
                 print(error.localizedDescription)
             }
         } else {
-            print("session is not reachable")
+            // Use transferUserInfo for background transfer when session is not reachable
+            session.transferUserInfo(data)
         }
     }
 }

@@ -21,7 +21,10 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        
+        if let error = error {
+            // Handle the error appropriately
+            print("WCSession activation failed with error: \(error.localizedDescription)")
+        }
     }
     
     func sessionDidBecomeInactive(_ session: WCSession) {
@@ -29,7 +32,8 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     }
     
     func sessionDidDeactivate(_ session: WCSession) {
-        
+        // Necessary to reactivate the session after it has been deactivated.
+        session.activate()
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
@@ -39,6 +43,8 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
             makes: message["makes"] as? Int ?? 0,
             length: message["length"] as? Int ?? 0)
         
-        modelContext?.insert(hoopSession)
+        DispatchQueue.main.async {
+            self.modelContext?.insert(hoopSession)
+        }
     }
 }
