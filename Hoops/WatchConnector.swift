@@ -7,9 +7,11 @@
 
 import Foundation
 import WatchConnectivity
+import SwiftData
 
-class WatchConnector: NSObject, WCSessionDelegate {
+class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     var session: WCSession
+    var modelContext: ModelContext? = nil
     
     init(session: WCSession = .default) {
         self.session = session
@@ -31,6 +33,12 @@ class WatchConnector: NSObject, WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+        print(message)
+        var hoopSession = HoopSession(
+            date: message["date"] as? Date ?? Date.now,
+            makes: message["makes"] as? Int ?? 0,
+            length: message["length"] as? Int ?? 0)
         
+        modelContext?.insert(hoopSession)
     }
 }

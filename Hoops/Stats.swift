@@ -12,7 +12,7 @@ struct Stats: View {
     
     @Environment(\.modelContext) var context
     
-    @Query var sessions: [Session]
+    @Query var sessions: [HoopSession]
     
     var body: some View {
         

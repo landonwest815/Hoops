@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Session {
+class HoopsSession {
     // Data
     var date: Date
     var makes: Int

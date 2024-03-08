@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PostSession: View {
-    
+    @StateObject var watchConnector = WatchToiOSConnector()
     @Environment(\.dismiss) private var dismiss
     
     @State var sessionTimeInSec: Int
@@ -55,6 +55,7 @@ struct PostSession: View {
 //                        }
 //                    }
                     Button("Done") {
+                        sendSessionToiOS()
                         dismiss()
                     }
                     .simultaneousGesture(TapGesture().onEnded{
@@ -90,8 +91,9 @@ struct PostSession: View {
         return String(format: "%.1f", round(10 * average) / 10)
     }
     
-    func sendToiPhone() {
-        //let Session(date:)
+    func sendSessionToiOS() {
+        let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec)
+        watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
     }
 }
 

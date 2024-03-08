@@ -8,7 +8,7 @@
 import Foundation
 import WatchConnectivity
 
-class WatchConnector: NSObject, WCSessionDelegate {
+class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     var session: WCSession
     
     init(session: WCSession = .default) {
@@ -22,7 +22,19 @@ class WatchConnector: NSObject, WCSessionDelegate {
         
     }
     
-    func sendSessionToiPhone() {
-        
+    func sendSessionToiPhone(hoopSession: HoopSession) {
+        if session.isReachable {
+            let data : [String: Any] = [
+                "date": hoopSession.date,
+                "makes": hoopSession.makes,
+                "length": hoopSession.length
+            ]
+            
+            session.sendMessage(data, replyHandler: nil) { error in
+                print(error.localizedDescription)
+            }
+        } else {
+            print("session is not reachable")
+        }
     }
 }

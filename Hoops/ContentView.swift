@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) var modelContext
+    @StateObject var watchConnecter = WatchConnector()
+    
     var body: some View {
         
         ZStack {
@@ -28,6 +32,9 @@ struct ContentView: View {
                         Text("Settings")
                     }
             }
+        }
+        .onAppear() {
+            watchConnecter.modelContext = modelContext
         }
     }
 }

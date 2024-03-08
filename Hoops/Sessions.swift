@@ -12,7 +12,7 @@ struct Sessions: View {
     
     @Environment(\.modelContext) var context
     
-    @Query var sessions: [Session]
+    @Query var sessions: [HoopSession]
     
     var body: some View {
         
@@ -23,6 +23,10 @@ struct Sessions: View {
                     ForEach(sessions, id: \.self) { session in
                         // If a want is tapped, bring up its information using WantView
                         Section {
+                            Text("\(session.makes)")
+                            Text("\(session.length)")
+//                            Text(String(session.makes))
+//                            Text(session.length)
 //                            NavigationLink(session.date) {
 //                                SessionView(item: session)
 //                            }

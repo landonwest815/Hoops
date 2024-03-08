@@ -61,7 +61,7 @@ struct Settings: View {
                     .confirmationDialog("Delete data?", isPresented: $showConfirmation) {
                         Button("Delete everything!", role: .destructive, action: {
                                 do {
-                                    try context.delete(model: Session.self)
+                                    try context.delete(model: HoopSession.self)
                                     try context.delete(model: UserSettings.self)
                                 } catch {
                                     print("Failed to clear all data.")
@@ -102,7 +102,7 @@ struct Settings: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-       let container = try! ModelContainer(for: Session.self, UserSettings.self, configurations: config)
+       let container = try! ModelContainer(for: HoopSession.self, UserSettings.self, configurations: config)
     let userSettings = UserSettings()
     container.mainContext.insert(userSettings)
 

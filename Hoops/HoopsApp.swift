@@ -13,7 +13,7 @@ struct HoopsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [Session.self, UserSettings.self])
+                .modelContainer(for: [HoopSession.self, UserSettings.self])
         }
     }
 }

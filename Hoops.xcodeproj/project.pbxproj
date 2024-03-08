@@ -22,13 +22,15 @@
 		91AD54F22B449E4600F4D367 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54F12B449E4600F4D367 /* Session.swift */; };
 		91C36FC72B45E6910074E7B1 /* Sessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FC62B45E6910074E7B1 /* Sessions.swift */; };
 		91C36FC92B45E6990074E7B1 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FC82B45E6990074E7B1 /* Settings.swift */; };
-		91C36FCB2B45E77B0074E7B1 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FCA2B45E77B0074E7B1 /* Session.swift */; };
 		91C36FCD2B45E9CA0074E7B1 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FCC2B45E9CA0074E7B1 /* Stats.swift */; };
 		91C36FCF2B45EAC10074E7B1 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FCE2B45EAC10074E7B1 /* UserSettings.swift */; };
 		91C36FD12B45EE640074E7B1 /* WatchConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD02B45EE640074E7B1 /* WatchConnector.swift */; };
 		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */; };
 		91CED1122B9A920F00F2004C /* GraphTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CED1112B9A920F00F2004C /* GraphTesting.swift */; };
+		91E8ADE02B9BADC9004D1124 /* HoopSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E8ADDF2B9BADC9004D1124 /* HoopSession.swift */; };
+		91E8ADE12B9BADC9004D1124 /* HoopSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E8ADDF2B9BADC9004D1124 /* HoopSession.swift */; };
+		91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,13 +74,14 @@
 		91AD54F12B449E4600F4D367 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		91C36FC62B45E6910074E7B1 /* Sessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sessions.swift; sourceTree = "<group>"; };
 		91C36FC82B45E6990074E7B1 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		91C36FCA2B45E77B0074E7B1 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		91C36FCC2B45E9CA0074E7B1 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		91C36FCE2B45EAC10074E7B1 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		91C36FD02B45EE640074E7B1 /* WatchConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnector.swift; sourceTree = "<group>"; };
 		91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchToiOSConnector.swift; sourceTree = "<group>"; };
 		91CED1112B9A920F00F2004C /* GraphTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphTesting.swift; sourceTree = "<group>"; };
+		91E8ADDF2B9BADC9004D1124 /* HoopSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoopSession.swift; sourceTree = "<group>"; };
+		91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,7 +128,6 @@
 			children = (
 				91AD54C92B449DDC00F4D367 /* HoopsApp.swift */,
 				91AD54CD2B449DDD00F4D367 /* Assets.xcassets */,
-				91C36FCA2B45E77B0074E7B1 /* Session.swift */,
 				91C36FCE2B45EAC10074E7B1 /* UserSettings.swift */,
 				91AD54CF2B449DDD00F4D367 /* Preview Content */,
 				91AD54CB2B449DDC00F4D367 /* ContentView.swift */,
@@ -133,6 +136,7 @@
 				91C36FC82B45E6990074E7B1 /* Settings.swift */,
 				91C36FD02B45EE640074E7B1 /* WatchConnector.swift */,
 				91CED1112B9A920F00F2004C /* GraphTesting.swift */,
+				91E8ADDF2B9BADC9004D1124 /* HoopSession.swift */,
 			);
 			path = Hoops;
 			sourceTree = "<group>";
@@ -172,6 +176,7 @@
 		91C36FD22B45EEBE0074E7B1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */,
 				91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */,
 			);
 			name = Frameworks;
@@ -279,9 +284,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91C36FCB2B45E77B0074E7B1 /* Session.swift in Sources */,
 				91C36FD12B45EE640074E7B1 /* WatchConnector.swift in Sources */,
 				91C36FCD2B45E9CA0074E7B1 /* Stats.swift in Sources */,
+				91E8ADE02B9BADC9004D1124 /* HoopSession.swift in Sources */,
 				91CED1122B9A920F00F2004C /* GraphTesting.swift in Sources */,
 				91AD54CC2B449DDC00F4D367 /* ContentView.swift in Sources */,
 				91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */,
@@ -301,6 +306,7 @@
 				91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */,
 				91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */,
 				91AD54DC2B449DDD00F4D367 /* HoopsApp.swift in Sources */,
+				91E8ADE12B9BADC9004D1124 /* HoopSession.swift in Sources */,
 				91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
