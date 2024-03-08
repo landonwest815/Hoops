@@ -23,14 +23,11 @@ struct Sessions: View {
                     ForEach(sessions, id: \.self) { session in
                         // If a want is tapped, bring up its information using WantView
                         Section {
-                            Text("\(session.makes)")
-                            Text("\(session.length)")
-//                            Text(String(session.makes))
-//                            Text(session.length)
-//                            NavigationLink(session.date) {
-//                                SessionView(item: session)
-//                            }
-//                            .fontWeight(.semibold)
+                            
+                            SessionThumbnail(date: session.date, makes: session.makes, average: Double(session.makes) / (Double(session.length) / 60.0))
+                                .onLongPressGesture {
+                                    context.delete(session)
+                                }
 
                         }
                     }
@@ -51,5 +48,11 @@ struct Sessions: View {
 }
 
 #Preview {
-    Sessions()
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: HoopSession.self, configurations: config)
+    let hoopSession = HoopSession(date: Date.now, makes: 5, length: 120)
+    container.mainContext.insert(hoopSession)
+
+    return Sessions()
+           .modelContainer(container)
 }

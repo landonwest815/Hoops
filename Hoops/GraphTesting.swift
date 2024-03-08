@@ -7,45 +7,26 @@
 
 import SwiftUI
 import Charts
+import SwiftData
 
 struct GraphTesting: View {
     
-    struct HoopSession: Identifiable {
-        var id = UUID()
-        var date: Date
-        var averageMakes: Double
-        var dayMonthString: String {
-                let dateFormatter = DateFormatter()
-                // Choose the desired format here:
-                dateFormatter.dateFormat = "MM/dd" // for numeric month and day, e.g., "03/04"
-                // Or
-                // dateFormatter.dateFormat = "d MMM" // for day and abbreviated month, e.g., "4 Mar"
-                return dateFormatter.string(from: date)
-            }
+    @Environment(\.modelContext) var context
+    @Query var sessions: [HoopSession]
     
-        init(date: Date, averageMakes: Double) {
-            self.date = date
-            self.averageMakes = averageMakes
-        }
+    let dateFormatter = DateFormatter()
+    init() {
+        dateFormatter.dateFormat = "d MMM"
     }
-    
-    
-    var data: [HoopSession] = [
-        HoopSession(date: Date(timeInterval: -86400, since: Date.now), averageMakes: 2.7),
-        HoopSession(date: Date.now, averageMakes: 4.1),
-        HoopSession(date: Date(timeInterval: 86400, since: Date.now), averageMakes: 3.6),
-        HoopSession(date: Date(timeInterval: 3 * 86400, since: Date.now), averageMakes: 3.3),
-        HoopSession(date: Date(timeInterval: 6 * 86400, since: Date.now), averageMakes: 4.2)
-    ]
-    
     
     var body: some View {
         
         ZStack {
-            Chart(data) {
+            Chart(sessions) {
                 LineMark(
-                    x: .value("Month", $0.dayMonthString),
-                    y: .value("Hours of Sunshine", $0.averageMakes)
+//                    x: .value("Month", dateFormatter.string(from: $0.date)),
+                    x: .value("Month", $0.date.description),
+                    y: .value("Hours of Sunshine", Double($0.makes) / (Double($0.length) / 60.0))
                 )
             }
             .frame(height: 300)

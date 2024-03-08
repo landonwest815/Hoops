@@ -9,7 +9,9 @@ import Foundation
 import SwiftData
 
 @Model
-class HoopSession {
+class HoopSession: Identifiable {
+    var id = UUID()
+    
     // Data
     var date: Date
     var makes: Int
