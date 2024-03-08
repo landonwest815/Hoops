@@ -28,6 +28,7 @@
 		91C36FD12B45EE640074E7B1 /* WatchConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD02B45EE640074E7B1 /* WatchConnector.swift */; };
 		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */; };
+		91CED1122B9A920F00F2004C /* GraphTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91CED1112B9A920F00F2004C /* GraphTesting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		91C36FD02B45EE640074E7B1 /* WatchConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnector.swift; sourceTree = "<group>"; };
 		91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchToiOSConnector.swift; sourceTree = "<group>"; };
+		91CED1112B9A920F00F2004C /* GraphTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphTesting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				91C36FCC2B45E9CA0074E7B1 /* Stats.swift */,
 				91C36FC82B45E6990074E7B1 /* Settings.swift */,
 				91C36FD02B45EE640074E7B1 /* WatchConnector.swift */,
+				91CED1112B9A920F00F2004C /* GraphTesting.swift */,
 			);
 			path = Hoops;
 			sourceTree = "<group>";
@@ -221,7 +224,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1510;
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					91AD54C52B449DDC00F4D367 = {
 						CreatedOnToolsVersion = 15.1;
@@ -279,6 +282,7 @@
 				91C36FCB2B45E77B0074E7B1 /* Session.swift in Sources */,
 				91C36FD12B45EE640074E7B1 /* WatchConnector.swift in Sources */,
 				91C36FCD2B45E9CA0074E7B1 /* Stats.swift in Sources */,
+				91CED1122B9A920F00F2004C /* GraphTesting.swift in Sources */,
 				91AD54CC2B449DDC00F4D367 /* ContentView.swift in Sources */,
 				91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */,
 				91C36FCF2B45EAC10074E7B1 /* UserSettings.swift in Sources */,
@@ -346,6 +350,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -407,6 +412,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
