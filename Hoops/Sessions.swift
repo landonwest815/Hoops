@@ -36,8 +36,11 @@ struct Sessions: View {
                                 .frame(height: 52.5)
                         }
                     }
+                                        
                 }
                 .listSectionSpacing(15)
+                
+                CourtTesting()
             }
                 .toolbar() {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
