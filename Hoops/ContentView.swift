@@ -17,7 +17,7 @@ struct ContentView: View {
         ZStack {
             TabView {
                 Sessions()
-                    .tabItem() {
+                    .tabItem() { 
                         Image(systemName: "basketball")
                         Text("Sessions")
                     }

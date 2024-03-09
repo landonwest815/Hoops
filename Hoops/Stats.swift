@@ -14,19 +14,23 @@ struct Stats: View {
     
     @Query var sessions: [HoopSession]
     
+    @State private var color: Color = .orange
+    @State private var shotType: ShotType = .allShots
+    
     var body: some View {
         
         NavigationStack {
             
             // MARK: - List of Wants
-            ZStack {
-                GraphTesting()
+            VStack {
+                GraphTesting(shotType: $shotType)
+                CourtTesting(type: $shotType)
             }
             .padding()
             .toolbar() {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Image(systemName: "chart.bar.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(color)
                 }
             }
             .navigationTitle("Stats")

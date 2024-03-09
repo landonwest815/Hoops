@@ -15,24 +15,23 @@ struct GraphTesting: View {
     @Query(sort: \HoopSession.date) var sessions: [HoopSession]
     
     @State private var isOn = false
-    
-    let dateFormatter = DateFormatter()
-    init() {
-        dateFormatter.dateFormat = "d MMM"
-    }
+    @Binding var shotType: ShotType
+    let dateFormatter: () = DateFormatter().dateFormat = "d MMM"
+    @State private var color: Color = .orange
     
     var body: some View {
         
         ZStack {
-            Chart(sessions) {
+            Chart(filteredSessions) {
                 LineMark(
 //                    x: .value("Month", dateFormatter.string(from: $0.date)),
                     x: .value("Month", $0.date.formatted(date: .long, time: .shortened)),
                     y: .value("Hours of Sunshine", Double($0.makes) / (Double($0.length) / 60.0))
                 )
-                .foregroundStyle(Color.orange)
+                .foregroundStyle(color)
                 .lineStyle(.init(lineWidth: 3))
                 .interpolationMethod(.catmullRom)
+                .symbol(.circle)
                 
                 let makes = $0.makes
                 let length = $0.length / 60
@@ -69,9 +68,30 @@ struct GraphTesting: View {
                 }
             }
         }
+        .onChange(of: shotType) {
+                    switch shotType {
+                    case .freeThrows:
+                        color = .blue
+                    case .midrange:
+                        color = .blue
+                    case .layups:
+                        color = .red
+                    case .threePointers:
+                        color = .green
+                    case .deep:
+                        color = .purple
+                    case .allShots:
+                        color = .orange
+                    }
+            
+                }
         .onDisappear() {
             isOn = false
         }
+    }
+    
+    var filteredSessions: [HoopSession] {
+            sessions.filter { $0.shotType == shotType }
     }
 }
 
@@ -88,6 +108,8 @@ struct GraphTesting: View {
     let hoopSession2 = HoopSession(date: Date(timeInterval: 86400, since: Date.now), makes: 10, length: 90, shotType: .threePointers)
     container.mainContext.insert(hoopSession2)
     
-    return GraphTesting()
+    @State var shotType: ShotType = .threePointers
+    
+    return GraphTesting(shotType: $shotType)
            .modelContainer(container)
 }

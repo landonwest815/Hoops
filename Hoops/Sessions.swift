@@ -39,8 +39,6 @@ struct Sessions: View {
                                         
                 }
                 .listSectionSpacing(15)
-                
-                CourtTesting()
             }
                 .toolbar() {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
