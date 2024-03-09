@@ -12,7 +12,7 @@ struct Sessions: View {
     
     @Environment(\.modelContext) var context
     
-    @Query var sessions: [HoopSession]
+    @Query(sort: \HoopSession.date) var sessions: [HoopSession]
     
     var body: some View {
         
