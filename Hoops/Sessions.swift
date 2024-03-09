@@ -14,26 +14,31 @@ struct Sessions: View {
     
     @Query(sort: \HoopSession.date) var sessions: [HoopSession]
     
+    var groupedSessions: [(key: Date, value: [HoopSession])] {
+        let grouped = Dictionary(grouping: sessions) { $0.date.startOfDay }
+        let sortedGrouped = grouped.sorted { $0.key < $1.key }
+        return sortedGrouped
+    }
+    
     var body: some View {
         
         NavigationStack {
             
             // MARK: - List of Wants
-                Form {
-                    ForEach(sessions, id: \.self) { session in
-                        // If a want is tapped, bring up its information using WantView
-                        Section {
-                            
-                            SessionThumbnail(date: session.date, makes: session.makes, average: Double(session.makes) / (Double(session.length) / 60.0))
+            Form {
+                ForEach(groupedSessions, id: \.key) { day, daySessions in
+                    Section(header: Text(day, style: .date)) {
+                        ForEach(daySessions, id: \.self) { session in
+                            SessionThumbnail(date: session.date, makes: session.makes, length: session.length, average: Double(session.makes) / (Double(session.length) / 60.0))
                                 .onLongPressGesture {
                                     context.delete(session)
                                 }
-
+                                .frame(height: 52.5)
                         }
                     }
-                    .listSectionSpacing(15)
-                    .listRowSeparator(.hidden)
                 }
+                .listSectionSpacing(15)
+            }
                 .toolbar() {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         Image(systemName: "basketball.fill")

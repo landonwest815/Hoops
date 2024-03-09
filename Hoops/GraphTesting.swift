@@ -63,21 +63,15 @@ struct GraphTesting: View {
                 }
             }
             .frame(height: 300)
-            
-            HStack {
-                VStack {
-                    Toggle(isOn: $isOn.animation()) {
-                        Image(systemName: "eye")
-                    }
-                    .toggleStyle(.button)
-                    .clipShape(.circle)
-                    Spacer()
+            .onTapGesture {
+                withAnimation {
+                    isOn.toggle()
                 }
-                .frame(height: 285)
-                Spacer()
             }
         }
-        
+        .onDisappear() {
+            isOn = false
+        }
     }
 }
 
