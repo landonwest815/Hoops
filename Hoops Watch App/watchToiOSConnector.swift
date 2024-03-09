@@ -30,7 +30,8 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         let data: [String: Any] = [
             "date": hoopSession.date,
             "makes": hoopSession.makes,
-            "length": hoopSession.length
+            "length": hoopSession.length,
+            "shotType": hoopSession.shotType.rawValue
         ]
 
         // Check if the session is reachable and prefer sendMessage for instant transfer if possible

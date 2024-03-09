@@ -10,6 +10,8 @@ import Combine
 
 struct Session: View {
     
+    var shotType: ShotType
+    
     @State var startTime = Date()
     @State private var elapsedTime = 0
     @State private var timer: AnyCancellable?
@@ -72,7 +74,7 @@ struct Session: View {
                 .buttonBorderShape(.roundedRectangle(radius: 40))
             }
             .navigationDestination(isPresented: $sessionEnd) {
-                PostSession(sessionTimeInSec: elapsedTime, makes: makes)
+                PostSession(shotType: shotType, sessionTimeInSec: elapsedTime, makes: makes)
                     .navigationBarBackButtonHidden()
                     .navigationBarTitleDisplayMode(.inline)
                         }
@@ -121,5 +123,5 @@ struct Session: View {
 }
 
 #Preview {
-    Session()
+    Session(shotType: .allShots)
 }

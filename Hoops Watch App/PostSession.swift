@@ -11,6 +11,8 @@ struct PostSession: View {
     @StateObject var watchConnector = WatchToiOSConnector()
     @Environment(\.dismiss) private var dismiss
     
+    var shotType: ShotType
+    
     @State var sessionTimeInSec: Int
     @State var makes: Int
 
@@ -92,11 +94,11 @@ struct PostSession: View {
     }
     
     func sendSessionToiOS() {
-        let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec)
+        let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec, shotType: shotType)
         watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
     }
 }
 
 #Preview {
-    PostSession(sessionTimeInSec: 600, makes: 25)
+    PostSession(shotType: .allShots, sessionTimeInSec: 600, makes: 25)
 }

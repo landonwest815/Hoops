@@ -38,10 +38,17 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         print(message)
+        
+        // Convert the raw value back to the ShotType enum
+            let shotTypeRawValue = message["shotType"] as? String
+            let shotType = ShotType(rawValue: shotTypeRawValue ?? "") ?? .allShots
+        
         var hoopSession = HoopSession(
             date: message["date"] as? Date ?? Date.now,
             makes: message["makes"] as? Int ?? 0,
-            length: message["length"] as? Int ?? 0)
+            length: message["length"] as? Int ?? 0, 
+            shotType: shotType
+        )
         
         DispatchQueue.main.async {
             self.modelContext?.insert(hoopSession)

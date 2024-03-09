@@ -29,7 +29,7 @@ struct Sessions: View {
                 ForEach(groupedSessions, id: \.key) { day, daySessions in
                     Section(header: Text(day, style: .date)) {
                         ForEach(daySessions, id: \.self) { session in
-                            SessionThumbnail(date: session.date, makes: session.makes, length: session.length, average: Double(session.makes) / (Double(session.length) / 60.0))
+                            SessionThumbnail(date: session.date, makes: session.makes, length: session.length, average: Double(session.makes) / (Double(session.length) / 60.0), shotType: session.shotType)
                                 .onLongPressGesture {
                                     context.delete(session)
                                 }
@@ -55,7 +55,7 @@ struct Sessions: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: HoopSession.self, configurations: config)
-    let hoopSession = HoopSession(date: Date.now, makes: 5, length: 120)
+    let hoopSession = HoopSession(date: Date.now, makes: 5, length: 120, shotType: .threePointers)
     container.mainContext.insert(hoopSession)
 
     return Sessions()

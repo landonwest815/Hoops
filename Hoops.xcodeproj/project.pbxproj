@@ -36,7 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		91AD54D82B449DDD00F4D367 /* PBXContainerItemProxy */ = {
+		91AE59BE2B9C3EB5002C6D8D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91AD54BE2B449DDC00F4D367 /* Project object */;
 			proxyType = 1;
@@ -48,7 +48,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		91AD54E92B449DDE00F4D367 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
@@ -203,7 +203,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				91AD54D92B449DDD00F4D367 /* PBXTargetDependency */,
+				91AE59BF2B9C3EB5002C6D8D /* PBXTargetDependency */,
 			);
 			name = Hoops;
 			productName = Hoops;
@@ -322,10 +322,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		91AD54D92B449DDD00F4D367 /* PBXTargetDependency */ = {
+		91AE59BF2B9C3EB5002C6D8D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
-			targetProxy = 91AD54D82B449DDD00F4D367 /* PBXContainerItemProxy */;
+			targetProxy = 91AE59BE2B9C3EB5002C6D8D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -13,13 +13,15 @@ struct SessionThumbnail: View {
     var makes: Int
     var length: Int
     var average: Double
+    var shotType: ShotType
     let dateFormatter = DateFormatter()
     
-    init(date: Date, makes: Int, length: Int, average: Double) {
+    init(date: Date, makes: Int, length: Int, average: Double, shotType: ShotType) {
         self.date = date
         self.makes = makes
         self.length = length
         self.average = average
+        self.shotType = shotType
         dateFormatter.dateFormat = "d MMM"
     }
     
@@ -30,7 +32,7 @@ struct SessionThumbnail: View {
                     HStack(spacing: 0) {
                         HStack {
                             Image(systemName: "ruler")
-                            Text("Threes")
+                            Text("\(shotType.rawValue)")
                                 .fontWeight(.heavy)
                             Spacer()
                         }
@@ -54,8 +56,13 @@ struct SessionThumbnail: View {
                         HStack {
                             Image(systemName: "clock")
                                 .fontWeight(.semibold)
-                            Text("\(length / 60)min")
-                                .fontWeight(.heavy)
+                            if length > 59 {
+                                Text("\(length / 60) min")
+                                    .fontWeight(.heavy)
+                            } else {
+                                Text("\(length) sec")
+                                    .fontWeight(.heavy)
+                            }
                             Spacer()
                         }
                         .fontDesign(.monospaced)
@@ -80,5 +87,5 @@ struct SessionThumbnail: View {
 }
 
 #Preview {
-    SessionThumbnail(date: Date.now, makes: 5, length: 120, average: 2.5)
+    SessionThumbnail(date: Date.now, makes: 5, length: 120, average: 2.5, shotType: .freeThrows)
 }
