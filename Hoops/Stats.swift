@@ -24,6 +24,9 @@ struct Stats: View {
             // MARK: - List of Wants
             VStack {
                 GraphTesting(shotType: $shotType)
+                    .frame(height: 250)
+                    .padding(.vertical, 50)
+
                 CourtTesting(type: $shotType)
             }
             .padding()

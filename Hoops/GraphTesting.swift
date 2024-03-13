@@ -18,6 +18,9 @@ struct GraphTesting: View {
     @Binding var shotType: ShotType
     let dateFormatter: () = DateFormatter().dateFormat = "d MMM"
     @State private var color: Color = .orange
+    
+    @State private var currentActiveSession: HoopSession?
+    @State private var plotWidth: CGFloat = 0
       
     var body: some View {
         
@@ -31,43 +34,102 @@ struct GraphTesting: View {
                 .foregroundStyle(color)
                 .lineStyle(.init(lineWidth: 3))
                 .interpolationMethod(.catmullRom)
-                .symbol(.circle)
                 
                 let makes = $0.makes
                 let length = $0.length / 60
-                        
-                if (isOn) {
-
+                
                 PointMark(
-                    x: .value("Index", $0.date),
+                    x: .value("Index", $0.date.description),
                     y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
-                    )
-                    .annotation(position: .automatic,
-                                alignment: .bottomLeading,
-                                spacing: 5) {
-                        Text("\(makes) makes \n \(length) min")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.orange)
-                            .padding(5) // Add padding around the text
-                            .background(Color.black.opacity(0.5)) // Semi-transparent black background
-                            .clipShape(RoundedRectangle(cornerRadius: 5)) // Rounded corners
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 5)
-                                    .stroke(Color.orange, lineWidth: 1) // White border for more contrast
-                            )
-                            .opacity(isOn ? 1.0 : 0.0)
-                        
-                    }
+                )
+                if let currentActiveSession,currentActiveSession.id == $0.id {
+                    RuleMark(x: .value("Index", currentActiveSession.date.description))
+                        .lineStyle(.init(lineWidth: 2, miterLimit: 2, dash: [2], dashPhase: 5))
+                        .annotation(position: .top) {
+                            HStack(spacing: 18) {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Makes")
+                                        .font(.caption)
+                                        .foregroundStyle(.orange)
+                                    
+                                    Text(String(currentActiveSession.makes))
+                                        .font(.title3.bold())
+                                        .foregroundStyle(.orange)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Length")
+                                        .font(.caption)
+                                        .foregroundStyle(.orange)
+                                    
+                                    let minutes = Double(currentActiveSession.length) / 60.0
+                                    
+                                    
+                                    Text(String(format: "%.1f", minutes) + "min")
+                                        .font(.title3.bold())
+                                        .foregroundStyle(.orange)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 6) {
+                                    
+                                    Text("AVG")
+                                        .font(.caption)
+                                        .foregroundStyle(.orange)
+                                    
+                                    let avg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
+                                    
+                                    Text(String(format: "%.1f", avg))
+                                        .font(.title3.bold())
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(.black.shadow(.drop(radius: 2)))
+                            }
+                        }
                 }
+                
+                
             }
+            .frame(height: 250)
+            .chartYScale(domain: 0...15)
             .chartXAxis(.hidden)
-            .frame(height: 300)
-            .onTapGesture {
-                withAnimation {
-                    isOn.toggle()
+            .chartYAxis(.hidden)
+            .chartOverlay(content: { proxy in
+                GeometryReader {innerProxy in
+                    Rectangle()
+                        .fill(.clear).contentShape(Rectangle())
+                        .gesture(
+                            DragGesture()
+                                .onChanged{value in
+                                    let location = value.location
+                                                            
+                                    if let date: String = proxy.value(atX: location.x) {
+                                        
+                                        if let currentSession = sessions.first(where: { item in
+                                            item.date.description == date
+                                        }) {
+                                            self.currentActiveSession = currentSession
+                                            self.plotWidth = proxy.plotSize.width
+                                        }
+                                    }
+                                }.onEnded {value in
+                                    self.currentActiveSession = nil
+                                }
+                        )
+                    
+                    
                 }
-            }
+            })
+            .padding(.vertical)
+//            .onTapGesture {
+//                withAnimation {
+//                    isOn.toggle()
+//                }
+//            }
         }
         .onChange(of: shotType) {
                     switch shotType {
