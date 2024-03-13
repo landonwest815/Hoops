@@ -18,7 +18,7 @@ struct GraphTesting: View {
     @Binding var shotType: ShotType
     let dateFormatter: () = DateFormatter().dateFormat = "d MMM"
     @State private var color: Color = .orange
-    
+      
     var body: some View {
         
         ZStack {

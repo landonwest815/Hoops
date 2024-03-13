@@ -262,59 +262,6 @@ struct CourtTesting: View {
                         type = .midrange
                     }
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    ZStack {
-                        ZStack {
-                            Path { path in
-                                
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.35/0.35), y: geometry.size.height))
-                                
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.1), y: geometry.size.height))
-                                
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.35), y: geometry.size.height / 1.5))
-                                
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(56.5), endAngle: .degrees(123.5), clockwise: false)
-                            }
-                            .fill(Color.green.opacity(0.5))
-                            
-                            Path { path in
-                                
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.35/0.35), y: geometry.size.height))
-                                
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.1), y: geometry.size.height))
-                                
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / (1.35), y: geometry.size.height / 1.5))
-                                
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(58.5), endAngle: .degrees(123.5), clockwise: false)
-                                
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
-                            }
-                            .stroke(Color.green, lineWidth: 2.5)
-                        }
-                        .opacity((type == .threePointers || type == .allShots) ? 1.0 : 0.1)
-                        
-                    }
-                    .onTapGesture {
-                        type = .threePointers
-                    }
-                    
-                    
-                    
                     // MID RIGHT
                     ZStack {
                         ZStack {
@@ -380,42 +327,32 @@ struct CourtTesting: View {
                     }
                     
                     
-                    
-                    
-                    
                     ZStack {
                         ZStack {
                             
                             Path { path in
                                 
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                                path.move(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2.35))
                                 
-                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height / 2.25))
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2.5), radius: geometry.size.width / 1.75, startAngle: .degrees(30), endAngle: .degrees(150), clockwise: false)
                                 
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / (11), y: geometry.size.height / 2.5))
+                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height / 2.35))
                                 
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(160), endAngle: .degrees(123.5), clockwise: true)
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4), radius: geometry.size.width / 1.93, startAngle: .degrees(165), endAngle: .degrees(15), clockwise: true)
+                                
                             }
                             .fill(Color.purple.opacity(0.5))
                             
                             Path { path in
                                 
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height))
+                                path.move(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2.35))
                                 
-                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height / 2.25))
-                                path.addLine(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height / 2.5))
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2.5), radius: geometry.size.width / 1.75, startAngle: .degrees(30), endAngle: .degrees(150), clockwise: false)
                                 
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(160), endAngle: .degrees(123.5), clockwise: true)
+                                path.addLine(to: CGPoint(x: 0, y: geometry.size.height / 2.35))
                                 
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / 11, y: geometry.size.height))
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4), radius: geometry.size.width / 1.93, startAngle: .degrees(165), endAngle: .degrees(15), clockwise: true)
+                                
                             }
                             .stroke(Color.purple, lineWidth: 2.5)
                         }
@@ -429,49 +366,49 @@ struct CourtTesting: View {
                     
                     ZStack {
                         ZStack {
+                            Path { path in
+                                
+                                path.move(to: CGPoint(x: geometry.size.width / 15.1, y: 0))
+                                
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(175), endAngle: .degrees(5), clockwise: true)
+                                
+                                path.addLine(to: CGPoint(x: geometry.size.width / (15.1/14.1), y: 0))
+                                
+                                path.addLine(to: CGPoint(x: geometry.size.width, y: 0))
+                                
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4), radius: geometry.size.width / 1.93, startAngle: .degrees(15), endAngle: .degrees(165), clockwise: false)
+                                
+                                path.addLine(to: CGPoint(x: 0, y: 0))
+                                
+                                path.addLine(to: CGPoint(x: geometry.size.width / 15.1, y: 0))
+                            }
+                            .fill(Color.green.opacity(0.5))
                             
                             Path { path in
                                 
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / (11/10), y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
+                                path.move(to: CGPoint(x: geometry.size.width / 15.1, y: 0))
                                 
-                                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2.25))
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(175), endAngle: .degrees(5), clockwise: true)
                                 
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / (11/10), y: geometry.size.height / 2.5))
+                                path.addLine(to: CGPoint(x: geometry.size.width / (15.1/14.1), y: 0))
                                 
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(30), endAngle: .degrees(56), clockwise: false)
+                                path.addLine(to: CGPoint(x: geometry.size.width, y: 0))
+                                
+                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4), radius: geometry.size.width / 1.93, startAngle: .degrees(15), endAngle: .degrees(165), clockwise: false)
+                                
+                                path.addLine(to: CGPoint(x: 0, y: 0))
+                                
+                                path.addLine(to: CGPoint(x: geometry.size.width / 15.1, y: 0))
+                                
                             }
-                            .fill(Color.purple.opacity(0.5))
-                            
-                            Path { path in
-                                
-                                // Connect to the top horizontal line
-                                path.move(to: CGPoint(x: geometry.size.width / (11/10), y: geometry.size.height))
-                                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height))
-                                
-                                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2.25))
-                                path.addLine(to: CGPoint(x: geometry.size.width / (11/10), y: geometry.size.height / 2.5))
-                                
-                                // First arc
-                                path.addArc(center: CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 4.75), radius: geometry.size.width / 2.3, startAngle: .degrees(30), endAngle: .degrees(56), clockwise: false)
-                                
-                                // Connect to the top horizontal line
-                                path.addLine(to: CGPoint(x: geometry.size.width / (11/10), y: geometry.size.height))
-                            }
-                            .stroke(Color.purple, lineWidth: 2.5)
+                            .stroke(Color.green, lineWidth: 2.5)
                         }
-                        .opacity((type == .deep || type == .allShots ) ? 1.0 : 0.1)
+                        .opacity((type == .threePointers || type == .allShots) ? 1.0 : 0.1)
                         
                     }
                     .onTapGesture {
-                        type = .deep
+                        type = .threePointers
                     }
-                    
-                    
-                    
                     
                     // LAYUPS
                     ZStack {
@@ -530,6 +467,6 @@ struct CourtTesting: View {
 }
 
 #Preview {
-    @State var shotType: ShotType = .threePointers
+    @State var shotType: ShotType = .allShots
     return CourtTesting(type: $shotType)
 }
