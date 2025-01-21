@@ -61,7 +61,7 @@ struct Session: View {
                 
                 Button(action: {
                     makes += 1
-                    WKInterfaceDevice.current().play(.directionUp)
+                    WKInterfaceDevice.current().play(.success)
                 }) {
                     Image(systemName: "basketball")
                         .resizable()

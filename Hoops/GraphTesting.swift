@@ -17,12 +17,37 @@ struct GraphTesting: View {
     @State private var isOn = false
     @Binding var shotType: ShotType
     let dateFormatter: () = DateFormatter().dateFormat = "d MMM"
-    @State private var color: Color = .orange
     
     @State private var currentActiveSession: HoopSession?
     @State private var plotWidth: CGFloat = 0
+    
+    var lineColor: Color {
+        switch shotType {
+        case .freeThrows:    return .blue
+        case .midrange:      return .blue
+        case .layups:        return .red
+        case .threePointers: return .green
+        case .deep:          return .purple
+        case .allShots:      return .orange
+        }
+    }
+    
       
     var body: some View {
+        
+        let filteredValues = filteredSessions.map {
+            Double($0.makes) / (Double($0.length) / 60.0)
+        }
+        
+        // Provide sensible defaults if there are no sessions:
+        let minYValue = filteredValues.min() ?? 0
+        let maxYValue = filteredValues.max() ?? 1
+        
+        // Add some “padding” around the min/max values.
+        // For example, 10% on top/bottom:
+        let range = maxYValue - minYValue
+        let domainStart = max(0, minYValue - 0.1 * range)
+        let domainEnd   = maxYValue + 0.1 * range
         
         ZStack {
             
@@ -31,17 +56,19 @@ struct GraphTesting: View {
                     x: .value("Month", $0.date.description),
                     y: .value("Hours of Sunshine", Double($0.makes) / (Double($0.length) / 60.0))
                 )
-                .foregroundStyle(color)
+                .foregroundStyle(lineColor)
                 .lineStyle(.init(lineWidth: 3))
                 .interpolationMethod(.catmullRom)
                 
-                let makes = $0.makes
-                let length = $0.length / 60
+                //let makes = $0.makes
+                //let length = $0.length / 60
                 
                 PointMark(
                     x: .value("Index", $0.date.description),
                     y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
                 )
+                .foregroundStyle(.white)
+                
                 if let currentActiveSession,currentActiveSession.id == $0.id {
                     RuleMark(x: .value("Index", currentActiveSession.date.description))
                         .lineStyle(.init(lineWidth: 2, miterLimit: 2, dash: [2], dashPhase: 5))
@@ -95,7 +122,7 @@ struct GraphTesting: View {
                 
             }
             .frame(height: 250)
-            .chartYScale(domain: 0...15)
+            .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
             .chartOverlay(content: { proxy in
@@ -106,7 +133,7 @@ struct GraphTesting: View {
                             DragGesture()
                                 .onChanged{value in
                                     let location = value.location
-                                                            
+                                    
                                     if let date: String = proxy.value(atX: location.x) {
                                         
                                         if let currentSession = sessions.first(where: { item in
@@ -125,46 +152,27 @@ struct GraphTesting: View {
                 }
             })
             .padding(.vertical)
-//            .onTapGesture {
-//                withAnimation {
-//                    isOn.toggle()
-//                }
-//            }
+            .background(.ultraThinMaterial)
+            .cornerRadius(18)
         }
-        .onChange(of: shotType) {
-                    switch shotType {
-                    case .freeThrows:
-                        color = .blue
-                    case .midrange:
-                        color = .blue
-                    case .layups:
-                        color = .red
-                    case .threePointers:
-                        color = .green
-                    case .deep:
-                        color = .purple
-                    case .allShots:
-                        color = .orange
-                    }
-            
-                }
         .onDisappear() {
             isOn = false
         }
     }
     
     var filteredSessions: [HoopSession] {
-            sessions.filter { $0.shotType == shotType }
+        sessions.filter { $0.shotType == shotType }
     }
 }
 
 #Preview {
+    @Previewable @State var shotType: ShotType = .threePointers
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: HoopSession.self, configurations: config)
     
     let hoopSession3 = HoopSession(date: Date(timeInterval: -86400, since: Date.now), makes: 15, length: 240, shotType: .threePointers)
     container.mainContext.insert(hoopSession3)
-
+    
     let hoopSession1 = HoopSession(date: Date.now, makes: 5, length: 120, shotType: .threePointers)
     container.mainContext.insert(hoopSession1)
     
@@ -189,8 +197,6 @@ struct GraphTesting: View {
     let hoopSession11 = HoopSession(date: Date(timeInterval: 60 * 86400, since: Date.now), makes: 3, length: 90, shotType: .threePointers)
     container.mainContext.insert(hoopSession11)
     
-    @State var shotType: ShotType = .threePointers
-    
     return GraphTesting(shotType: $shotType)
-           .modelContainer(container)
+        .modelContainer(container)
 }

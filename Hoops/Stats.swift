@@ -22,12 +22,15 @@ struct Stats: View {
         NavigationStack {
             
             // MARK: - List of Wants
-            VStack {
+            VStack(spacing: 30) {
                 GraphTesting(shotType: $shotType)
                     .frame(height: 250)
-                    .padding(.vertical, 50)
 
                 CourtTesting(type: $shotType)
+                    .offset(y: 0)
+                
+                Spacer()
+                
             }
             .padding()
             .toolbar() {
