@@ -8,13 +8,13 @@
 import Foundation
 import SwiftData
 
-enum ShotType: String, Codable {
+enum ShotType: String, Codable, CaseIterable {
     case layups = "Layups"
     case freeThrows = "FTs"
     case midrange = "Midrange"
     case threePointers = "Threes"
     case deep = "Deep"
-    case allShots = "All"
+    case allShots = "All Shots"
 }
 
 @Model

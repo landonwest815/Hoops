@@ -121,7 +121,7 @@ struct GraphTesting: View {
                 
                 
             }
-            .frame(height: 250)
+            .frame(height: 150)
             .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
@@ -152,8 +152,8 @@ struct GraphTesting: View {
                 }
             })
             .padding(.vertical)
-            .background(.ultraThinMaterial)
-            .cornerRadius(18)
+            //.background(.ultraThinMaterial)
+            .cornerRadius(15)
         }
         .onDisappear() {
             isOn = false

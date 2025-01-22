@@ -22,17 +22,15 @@ struct Stats: View {
         NavigationStack {
             
             // MARK: - List of Wants
-            VStack(spacing: 30) {
+            VStack(spacing: 15) {
                 GraphTesting(shotType: $shotType)
-                    .frame(height: 250)
+                
 
                 CourtTesting(type: $shotType)
-                    .offset(y: 0)
-                
-                Spacer()
-                
+                    .padding(.bottom)
+
             }
-            .padding()
+            .padding(.horizontal)
             .toolbar() {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Image(systemName: "chart.bar.fill")
