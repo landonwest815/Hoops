@@ -15,6 +15,8 @@ struct Sessions: View {
     
     @State private var selectedShotType: ShotType? = nil
     
+    @State private var isSheetPresented = false
+    
     private var filteredSessions: [HoopSession] {
         if let shotType = selectedShotType {
             return sessions.filter { $0.shotType == shotType }
@@ -31,22 +33,6 @@ struct Sessions: View {
     var body: some View {
         NavigationStack {
             VStack {
-                
-                HStack {
-                    Spacer()
-                    
-                    // Dropdown menu for selecting shot type
-                    Picker("Shot Type", selection: $selectedShotType) {
-                        Text("All Shots (\(sessions.count))").tag(ShotType?.none)
-                        ForEach(ShotType.allCases, id: \.self) { type in
-                            let count = sessions.filter { $0.shotType == type }.count
-                            Text("\(type.rawValue.capitalized) (\(count))").tag(type as ShotType?)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .padding(.horizontal)
-                }
-                
                 // List of sessions
                 List {
                     ForEach(groupedSessions, id: \.key) { day, daySessions in
@@ -68,26 +54,57 @@ struct Sessions: View {
                     }
                     .listSectionSpacing(15)
                 }
+                .listRowSpacing(8)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Image(systemName: "basketball.fill")
-                        .foregroundStyle(.orange)
-                }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: deleteSessionsForSelectedShotType) {
-                        Image(systemName: "trash.circle")
-                            .foregroundStyle(.orange)
-                    }
-                }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: addRandomSession) {
-                        Image(systemName: "plus.circle")
+                        HStack(spacing: 7.5) {
+                            Image(systemName: "basketball.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(.orange)
+                                .fontWeight(.semibold)
+                                
+                            Text("hoops.")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.white)
+                        }
+                        .onLongPressGesture {
+                            deleteSessionsForSelectedShotType()
+                        }
+                    }
+                }
+                ToolbarItemGroup(placement: .automatic) {
+                    // Dropdown menu for selecting shot type
+                    Picker("Shot Type", selection: $selectedShotType) {
+                        Text("All Shots (\(sessions.count))").tag(ShotType?.none)
+                        ForEach(ShotType.allCases, id: \.self) { type in
+                            let count = sessions.filter { $0.shotType == type }.count
+                            Text("\(type.rawValue.capitalized) (\(count))").tag(type as ShotType?)
+                                .frame(width: 50)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    //.padding(.horizontal)
+                }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: { isSheetPresented = true }) {
+                        Image(systemName: "chart.bar.fill")
                             .foregroundStyle(.orange)
                     }
                 }
+                
             }
-            .navigationTitle("Sessions")
+        }
+        .sheet(isPresented: $isSheetPresented) {
+            Stats()
+                .presentationCornerRadius(50)
+                .presentationDetents([.fraction(0.95)])
+                .presentationDragIndicator(.visible)
         }
     }
     

@@ -24,6 +24,7 @@ struct CourtTesting: View {
                         .font(.caption)
                     
                     Text(type.rawValue)
+                        .contentTransition(.numericText())
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .font(.headline)
@@ -40,6 +41,7 @@ struct CourtTesting: View {
                         .font(.caption)
                     
                     Text(String(totalMakes))
+                        .contentTransition(.numericText())
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .font(.headline)
@@ -53,14 +55,19 @@ struct CourtTesting: View {
                 
                 
                 VStack {
-                    Text("Time")
+                    Text("Avg")
                         .font(.caption)
                     
-                    Text(formattedTotalTime)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.headline)
-                        .lineLimit(1)
+                    HStack(spacing: 5) {
+                        Text(String(format: "%.1f", averageShotsPerMinute))
+                            .contentTransition(.numericText())
+                        Text("/ min")
+                            .foregroundStyle(.gray)
+                    }
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .font(.headline)
+                    .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -385,6 +392,17 @@ struct CourtTesting: View {
         
         return "\(hours)h \(minutes)m"
     }
+    
+    private var averageShotsPerMinute: Double {
+        let sessionAverages = sessions
+            .filter { $0.shotType == type }
+            .map { Double($0.makes) / (Double($0.length) / 60.0) } // Shots per minute for each session
+        
+        guard !sessionAverages.isEmpty else { return 0.0 } // Avoid division by zero
+        
+        return sessionAverages.reduce(0, +) / Double(sessionAverages.count)
+    }
+    
     
 }
 

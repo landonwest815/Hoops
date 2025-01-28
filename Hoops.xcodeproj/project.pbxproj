@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9174635F2B45B10F00A147A0 /* PostSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9174635E2B45B10F00A147A0 /* PostSession.swift */; };
+		918632992D4957F50090D2C1 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918632982D4957F50090D2C1 /* CardView.swift */; };
 		91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54C92B449DDC00F4D367 /* HoopsApp.swift */; };
 		91AD54CC2B449DDC00F4D367 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54CB2B449DDC00F4D367 /* ContentView.swift */; };
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
@@ -62,6 +63,7 @@
 
 /* Begin PBXFileReference section */
 		9174635E2B45B10F00A147A0 /* PostSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSession.swift; sourceTree = "<group>"; };
+		918632982D4957F50090D2C1 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C92B449DDC00F4D367 /* HoopsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoopsApp.swift; sourceTree = "<group>"; };
 		91AD54CB2B449DDC00F4D367 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				91AE59BA2B9BCA47002C6D8D /* SessionThumbnail.swift */,
 				91AE59BC2B9C3722002C6D8D /* DateExtension.swift */,
 				91AE59C02B9CDF12002C6D8D /* CourtTesting.swift */,
+				918632982D4957F50090D2C1 /* CardView.swift */,
 			);
 			path = Hoops;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				91AE59C12B9CDF12002C6D8D /* CourtTesting.swift in Sources */,
 				91AD54CC2B449DDC00F4D367 /* ContentView.swift in Sources */,
 				91AE59BB2B9BCA47002C6D8D /* SessionThumbnail.swift in Sources */,
+				918632992D4957F50090D2C1 /* CardView.swift in Sources */,
 				91AE59BD2B9C3722002C6D8D /* DateExtension.swift in Sources */,
 				91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */,
 				91C36FCF2B45EAC10074E7B1 /* UserSettings.swift in Sources */,

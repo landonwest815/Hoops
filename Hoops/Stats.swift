@@ -22,22 +22,34 @@ struct Stats: View {
         NavigationStack {
             
             // MARK: - List of Wants
-            VStack(spacing: 15) {
+            VStack(spacing: 10) {
+                Spacer()
+
                 GraphTesting(shotType: $shotType)
                 
-
                 CourtTesting(type: $shotType)
                     .padding(.bottom)
 
             }
             .padding(.horizontal)
-            .toolbar() {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Image(systemName: "chart.bar.fill")
-                        .foregroundStyle(color)
-                }
-            }
-            .navigationTitle("Stats")
+//            .toolbar() {
+//                ToolbarItemGroup(placement: .navigationBarLeading) {
+//                    HStack(spacing: 7.5) {
+//                        Image(systemName: "chart.bar.fill")
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(width: 20, height: 20)
+//                            .foregroundStyle(.orange)
+//                            .fontWeight(.semibold)
+//                            
+//                        Text("stats.")
+//                            .font(.title2)
+//                            .fontWeight(.semibold)
+//                            .fontDesign(.rounded)
+//                    }
+//                }
+//            }
+           // .navigationTitle("Stats")
         }
     }
 }

@@ -15,23 +15,24 @@ struct ContentView: View {
     var body: some View {
         
         ZStack {
-            TabView {
-                Sessions()
-                    .tabItem() { 
-                        Image(systemName: "basketball")
-                        Text("Sessions")
-                    }
-                Stats()
-                    .tabItem() {
-                        Image(systemName: "chart.bar")
-                        Text("Stats")
-                    }
-                Settings()
-                    .tabItem() {
-                        Image(systemName: "gear")
-                        Text("Settings")
-                    }
-            }
+//            TabView {
+//                Sessions()
+//                    .tabItem() { 
+//                        Image(systemName: "basketball")
+//                        Text("Sessions")
+//                    }
+//                Stats()
+//                    .tabItem() {
+//                        Image(systemName: "chart.bar")
+//                        Text("Stats")
+//                    }
+////                Settings()
+////                    .tabItem() {
+////                        Image(systemName: "gear")
+////                        Text("Settings")
+////                    }
+//            }
+            Sessions()
         }
         .onAppear() {
             watchConnecter.modelContext = modelContext

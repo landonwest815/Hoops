@@ -31,12 +31,12 @@ struct SessionThumbnail: View {
                 VStack(spacing: 10) {
                     HStack(spacing: 0) {
                         HStack {
-                            Image(systemName: "ruler")
+                            Image(systemName: "ruler.fill")
                             Text("\(shotType.rawValue)")
-                                .fontWeight(.heavy)
+                                .fontWeight(.semibold)
                             Spacer()
                         }
-                        .fontDesign(.monospaced)
+                        .fontDesign(.rounded)
                         .frame(width: geometry.size.width / 2)
                         
                         Spacer()
@@ -46,38 +46,33 @@ struct SessionThumbnail: View {
                             Text("\(makes)")
                             Spacer()
                         }
-                        .fontWeight(.heavy)
-                        .fontDesign(.monospaced)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
                         .frame(width: geometry.size.width / 2)
 
                     }
                     
                     HStack(spacing: 0) {
                         HStack {
-                            Image(systemName: "clock")
+                            Image(systemName: "clock.fill")
                                 .fontWeight(.semibold)
-                            if length > 59 {
-                                Text("\(length / 60) min")
-                                    .fontWeight(.heavy)
-                            } else {
-                                Text("\(length) sec")
-                                    .fontWeight(.heavy)
-                            }
+                            Text("\(length / 60)m  \(length % 60)s")
+                                .fontWeight(.semibold)
                             Spacer()
                         }
-                        .fontDesign(.monospaced)
+                        .fontDesign(.rounded)
                         .frame(width: geometry.size.width / 2)
 
                         Spacer()
                         
                         HStack {
                             Image(systemName: "chart.line.uptrend.xyaxis")
-                                .fontWeight(.bold)
-                            Text("\(String(format: "%.1f", average))/min")
-                                .fontWeight(.heavy)
+                                .fontWeight(.semibold)
+                            Text("\(String(format: "%.1f", average)) / min")
+                                .fontWeight(.semibold)
                             Spacer()
                         }
-                        .fontDesign(.monospaced)
+                        .fontDesign(.rounded)
                         .frame(width: geometry.size.width / 2)
                     }
                 }

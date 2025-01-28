@@ -21,6 +21,9 @@ struct GraphTesting: View {
     @State private var currentActiveSession: HoopSession?
     @State private var plotWidth: CGFloat = 0
     
+    @State private var avg: Double = 0.0
+    @State private var makes: Int = 0
+    
     var lineColor: Color {
         switch shotType {
         case .freeThrows:    return .blue
@@ -39,6 +42,8 @@ struct GraphTesting: View {
             Double($0.makes) / (Double($0.length) / 60.0)
         }
         
+        let averageValue = filteredValues.isEmpty ? 0 : filteredValues.reduce(0, +) / Double(filteredValues.count)
+
         // Provide sensible defaults if there are no sessions:
         let minYValue = filteredValues.min() ?? 0
         let maxYValue = filteredValues.max() ?? 1
@@ -48,6 +53,7 @@ struct GraphTesting: View {
         let range = maxYValue - minYValue
         let domainStart = max(0, minYValue - 0.1 * range)
         let domainEnd   = maxYValue + 0.1 * range
+    
         
         ZStack {
             
@@ -60,6 +66,20 @@ struct GraphTesting: View {
                 .lineStyle(.init(lineWidth: 3))
                 .interpolationMethod(.catmullRom)
                 
+                RuleMark(y: .value("Average", averageValue))
+                    .lineStyle(.init(lineWidth: 1.5, dash: [5]))
+                    .foregroundStyle(.gray)
+//                    .annotation(position: .topTrailing) {
+//                        Text("Avg: \(String(format: "%.2f", averageValue))")
+//                            .font(.caption)
+//                            .foregroundColor(.white)
+//                            .padding(4)
+//                            .background {
+//                                RoundedRectangle(cornerRadius: 4)
+//                                    .fill(.ultraThinMaterial)
+//                            }
+//                    }
+                
                 //let makes = $0.makes
                 //let length = $0.length / 60
                 
@@ -68,95 +88,131 @@ struct GraphTesting: View {
                     y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
                 )
                 .foregroundStyle(.white)
+                    
                 
                 if let currentActiveSession,currentActiveSession.id == $0.id {
                     RuleMark(x: .value("Index", currentActiveSession.date.description))
-                        .lineStyle(.init(lineWidth: 2, miterLimit: 2, dash: [2], dashPhase: 5))
+                        .lineStyle(.init(lineWidth: 1.5, miterLimit: 2, dash: [5], dashPhase: 5))
+                        .foregroundStyle(.white)
                         .annotation(position: .top) {
-                            HStack(spacing: 18) {
-                                VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 10) {
+                                VStack(alignment: .center, spacing: 1) {
                                     Text("Makes")
                                         .font(.caption)
-                                        .foregroundStyle(.orange)
+                                        .foregroundStyle(.white)
+                                        .frame(width: 50)
                                     
-                                    Text(String(currentActiveSession.makes))
+                                    Text(String(makes))
                                         .font(.title3.bold())
-                                        .foregroundStyle(.orange)
+                                        .foregroundStyle(.white)
+                                        .contentTransition(.numericText())
+                                        .animation(.easeInOut(duration: 0.3), value: makes)
+                                        .frame(width: 50)
                                 }
+                                .frame(height: 40)
+                                .padding(2.5)
+                                .background(.white.opacity(0.2))
+                                .cornerRadius(10)
                                 
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text("Length")
+                                VStack(alignment: .center, spacing: 1) {
+                                    
+                                    Text("Avg")
                                         .font(.caption)
-                                        .foregroundStyle(.orange)
-                                    
-                                    let minutes = Double(currentActiveSession.length) / 60.0
-                                    
-                                    
-                                    Text(String(format: "%.1f", minutes) + "min")
-                                        .font(.title3.bold())
-                                        .foregroundStyle(.orange)
-                                }
-                                
-                                VStack(alignment: .leading, spacing: 6) {
-                                    
-                                    Text("AVG")
-                                        .font(.caption)
-                                        .foregroundStyle(.orange)
-                                    
-                                    let avg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
-                                    
+                                        .foregroundStyle(.white)
+                                        .frame(width: 50)
+                                                                        
                                     Text(String(format: "%.1f", avg))
                                         .font(.title3.bold())
-                                        .foregroundStyle(.orange)
+                                        .foregroundStyle(.white)
+                                        .contentTransition(.numericText())
+                                        .animation(.easeInOut(duration: 0.3), value: avg)
+                                        .frame(width: 50)
+                                        .sensoryFeedback(.increase, trigger: avg)
                                 }
+                                .frame(height: 40)
+                                .padding(2.5)
+                                .background(.white.opacity(0.2))
+                                .cornerRadius(10)
+                                
                             }
                             .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background {
-                                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                    .fill(.black.shadow(.drop(radius: 2)))
-                            }
+                            .padding(.top, 30)
                         }
+                } else {
+                    RuleMark(y: .value("Average", averageValue))
+                        .lineStyle(.init(lineWidth: 1.5, dash: [5]))
+                        .foregroundStyle(.gray)
+                        .annotation(position: .topTrailing) {
+                            Text("Avg: \(String(format: "%.1f", averageValue))")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(4)
+                                .offset(x: -66)
+                        }
+                    
                 }
                 
                 
             }
-            .frame(height: 150)
+            .frame(height: 300)
             .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
-            .chartOverlay(content: { proxy in
-                GeometryReader {innerProxy in
-                    Rectangle()
-                        .fill(.clear).contentShape(Rectangle())
-                        .gesture(
-                            DragGesture()
-                                .onChanged{value in
-                                    let location = value.location
-                                    
-                                    if let date: String = proxy.value(atX: location.x) {
-                                        
-                                        if let currentSession = sessions.first(where: { item in
-                                            item.date.description == date
-                                        }) {
-                                            self.currentActiveSession = currentSession
-                                            self.plotWidth = proxy.plotSize.width
-                                        }
-                                    }
-                                }.onEnded {value in
-                                    self.currentActiveSession = nil
-                                }
-                        )
-                    
-                    
-                }
-            })
-            .padding(.vertical)
+//            .chartOverlay(content: { proxy in
+//                GeometryReader {innerProxy in
+//                    Rectangle()
+//                        .fill(.clear).contentShape(Rectangle())
+//                        .gesture(
+//                            DragGesture()
+//                                .onChanged { value in
+//                                    let location = value.location
+//
+//                                    if let date: String = proxy.value(atX: location.x),
+//                                       let session = sessions.first(where: { $0.date.description == date }) {
+//                                        if currentActiveSession?.id != session.id {
+//                                            currentActiveSession = session
+//
+//                                            // Update `avg` with animation
+//                                            if let currentActiveSession = currentActiveSession {
+//                                                let newAvg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
+//                                                if avg != newAvg {
+//                                                    withAnimation(.easeInOut(duration: 0.3)) {
+//                                                        avg = newAvg
+//                                                    }
+//                                                }
+//                                                let newMakes = currentActiveSession.makes
+//                                                if makes != newMakes {
+//                                                    withAnimation(.easeInOut(duration: 0.3)) {
+//                                                        makes = newMakes
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                .onEnded { _ in
+//                                    currentActiveSession = nil
+//                                }
+//                        )
+//                }
+//            })
+            //.padding(.top, 50)
             //.background(.ultraThinMaterial)
             .cornerRadius(15)
         }
+        .padding(.horizontal)
         .onDisappear() {
             isOn = false
+        }
+        .onChange(of: currentActiveSession) { newSession in
+            if let currentActiveSession = newSession {
+                let newAvg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
+                if avg != newAvg {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        avg = newAvg
+                    }
+                }
+            }
         }
     }
     
