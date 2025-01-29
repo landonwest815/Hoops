@@ -17,6 +17,8 @@ struct Sessions: View {
     
     @State private var isSheetPresented = false
     
+    @State var shotType = ShotType.allShots
+    
     private var filteredSessions: [HoopSession] {
         if let shotType = selectedShotType {
             return sessions.filter { $0.shotType == shotType }
@@ -32,29 +34,38 @@ struct Sessions: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                // List of sessions
-                List {
-                    ForEach(groupedSessions, id: \.key) { day, daySessions in
-                        Section(header: Text(day, style: .date)) {
-                            ForEach(daySessions, id: \.self) { session in
-                                SessionThumbnail(
-                                    date: session.date,
-                                    makes: session.makes,
-                                    length: session.length,
-                                    average: Double(session.makes) / (Double(session.length) / 60.0),
-                                    shotType: session.shotType
-                                )
-                                .onLongPressGesture {
-                                    context.delete(session)
+            VStack(spacing: -15) {
+                
+                WeekView()
+                    .offset(y: -15)
+                
+                
+                VStack(alignment: .trailing, spacing: 0) {
+                    
+                    // List of sessions
+                    List {
+                        ForEach(groupedSessions, id: \.key) { day, daySessions in
+                            Section(header: Text(day, style: .date)) {
+                                ForEach(daySessions, id: \.self) { session in
+                                    SessionThumbnail(
+                                        date: session.date,
+                                        makes: session.makes,
+                                        length: session.length,
+                                        average: Double(session.makes) / (Double(session.length) / 60.0),
+                                        shotType: session.shotType
+                                    )
+                                    .onLongPressGesture {
+                                        context.delete(session)
+                                    }
+                                    .frame(height: 52.5)
                                 }
-                                .frame(height: 52.5)
                             }
                         }
+                        .listSectionSpacing(15)
                     }
-                    .listSectionSpacing(15)
+                    .listRowSpacing(8)
                 }
-                .listRowSpacing(8)
+                .background(.black)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
@@ -78,33 +89,43 @@ struct Sessions: View {
                         }
                     }
                 }
-                ToolbarItemGroup(placement: .automatic) {
-                    // Dropdown menu for selecting shot type
-                    Picker("Shot Type", selection: $selectedShotType) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Picker("Shot Type", selection: $selectedShotType.animation(.bouncy)) {
                         Text("All Shots (\(sessions.count))").tag(ShotType?.none)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.subheadline)
                         ForEach(ShotType.allCases, id: \.self) { type in
                             let count = sessions.filter { $0.shotType == type }.count
                             Text("\(type.rawValue.capitalized) (\(count))").tag(type as ShotType?)
                                 .frame(width: 50)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .font(.subheadline)
                         }
                     }
                     .pickerStyle(.menu)
-                    //.padding(.horizontal)
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { isSheetPresented = true }) {
                         Image(systemName: "chart.bar.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 22.5, height: 22.5)
                             .foregroundStyle(.orange)
+                            .fontWeight(.semibold)
                     }
                 }
                 
             }
+            .background(.ultraThinMaterial)
         }
         .sheet(isPresented: $isSheetPresented) {
-            Stats()
+            Stats(shotType: $shotType)
                 .presentationCornerRadius(50)
-                .presentationDetents([.fraction(0.95)])
+                .presentationDetents([.fraction(0.96)])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(.ultraThickMaterial)
         }
     }
     

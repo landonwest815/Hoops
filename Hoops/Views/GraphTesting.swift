@@ -57,9 +57,17 @@ struct GraphTesting: View {
         
         ZStack {
             
+            if filteredSessions.isEmpty {
+                Text("No data available.\nGo shoot some hoops!")
+                    .fontWeight(.regular)
+                    .fontDesign(.rounded)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+            }
+            
             Chart(filteredSessions) {
                 LineMark(
-                    x: .value("Month", $0.date.description),
+                    x: .value("Month", $0.id.description),
                     y: .value("Hours of Sunshine", Double($0.makes) / (Double($0.length) / 60.0))
                 )
                 .foregroundStyle(lineColor)
@@ -84,61 +92,61 @@ struct GraphTesting: View {
                 //let length = $0.length / 60
                 
                 PointMark(
-                    x: .value("Index", $0.date.description),
+                    x: .value("Index", $0.id.description),
                     y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
                 )
                 .foregroundStyle(.white)
                     
                 
-                if let currentActiveSession,currentActiveSession.id == $0.id {
-                    RuleMark(x: .value("Index", currentActiveSession.date.description))
-                        .lineStyle(.init(lineWidth: 1.5, miterLimit: 2, dash: [5], dashPhase: 5))
-                        .foregroundStyle(.white)
-                        .annotation(position: .top) {
-                            HStack(spacing: 10) {
-                                VStack(alignment: .center, spacing: 1) {
-                                    Text("Makes")
-                                        .font(.caption)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 50)
-                                    
-                                    Text(String(makes))
-                                        .font(.title3.bold())
-                                        .foregroundStyle(.white)
-                                        .contentTransition(.numericText())
-                                        .animation(.easeInOut(duration: 0.3), value: makes)
-                                        .frame(width: 50)
-                                }
-                                .frame(height: 40)
-                                .padding(2.5)
-                                .background(.white.opacity(0.2))
-                                .cornerRadius(10)
-                                
-                                VStack(alignment: .center, spacing: 1) {
-                                    
-                                    Text("Avg")
-                                        .font(.caption)
-                                        .foregroundStyle(.white)
-                                        .frame(width: 50)
-                                                                        
-                                    Text(String(format: "%.1f", avg))
-                                        .font(.title3.bold())
-                                        .foregroundStyle(.white)
-                                        .contentTransition(.numericText())
-                                        .animation(.easeInOut(duration: 0.3), value: avg)
-                                        .frame(width: 50)
-                                        .sensoryFeedback(.increase, trigger: avg)
-                                }
-                                .frame(height: 40)
-                                .padding(2.5)
-                                .background(.white.opacity(0.2))
-                                .cornerRadius(10)
-                                
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.top, 30)
-                        }
-                } else {
+//                if let currentActiveSession,currentActiveSession.id == $0.id {
+//                    RuleMark(x: .value("Index", currentActiveSession.id.description))
+//                        .lineStyle(.init(lineWidth: 1.5, miterLimit: 2, dash: [5], dashPhase: 5))
+//                        .foregroundStyle(.white)
+//                        .annotation(position: .top) {
+//                            HStack(spacing: 10) {
+//                                VStack(alignment: .center, spacing: 1) {
+//                                    Text("Makes")
+//                                        .font(.caption)
+//                                        .foregroundStyle(.white)
+//                                        .frame(width: 50)
+//                                    
+//                                    Text(String(makes))
+//                                        .font(.title3.bold())
+//                                        .foregroundStyle(.white)
+//                                        .contentTransition(.numericText())
+//                                        .animation(.easeInOut(duration: 0.3), value: makes)
+//                                        .frame(width: 50)
+//                                }
+//                                .frame(height: 40)
+//                                .padding(2.5)
+//                                .background(.white.opacity(0.2))
+//                                .cornerRadius(10)
+//                                
+//                                VStack(alignment: .center, spacing: 1) {
+//                                    
+//                                    Text("Avg")
+//                                        .font(.caption)
+//                                        .foregroundStyle(.white)
+//                                        .frame(width: 50)
+//                                                                        
+//                                    Text(String(format: "%.1f", avg))
+//                                        .font(.title3.bold())
+//                                        .foregroundStyle(.white)
+//                                        .contentTransition(.numericText())
+//                                        .animation(.easeInOut(duration: 0.3), value: avg)
+//                                        .frame(width: 50)
+//                                        .sensoryFeedback(.increase, trigger: avg)
+//                                }
+//                                .frame(height: 40)
+//                                .padding(2.5)
+//                                .background(.white.opacity(0.2))
+//                                .cornerRadius(10)
+//                                
+//                            }
+//                            .padding(.horizontal, 10)
+//                            .padding(.top, 30)
+//                        }
+//                } else {
                     RuleMark(y: .value("Average", averageValue))
                         .lineStyle(.init(lineWidth: 1.5, dash: [5]))
                         .foregroundStyle(.gray)
@@ -150,55 +158,19 @@ struct GraphTesting: View {
                                 .offset(x: -66)
                         }
                     
-                }
+                //}
                 
                 
             }
-            .frame(height: 300)
+            .frame(height: 250)
             .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
-//            .chartOverlay(content: { proxy in
-//                GeometryReader {innerProxy in
-//                    Rectangle()
-//                        .fill(.clear).contentShape(Rectangle())
-//                        .gesture(
-//                            DragGesture()
-//                                .onChanged { value in
-//                                    let location = value.location
-//
-//                                    if let date: String = proxy.value(atX: location.x),
-//                                       let session = sessions.first(where: { $0.date.description == date }) {
-//                                        if currentActiveSession?.id != session.id {
-//                                            currentActiveSession = session
-//
-//                                            // Update `avg` with animation
-//                                            if let currentActiveSession = currentActiveSession {
-//                                                let newAvg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
-//                                                if avg != newAvg {
-//                                                    withAnimation(.easeInOut(duration: 0.3)) {
-//                                                        avg = newAvg
-//                                                    }
-//                                                }
-//                                                let newMakes = currentActiveSession.makes
-//                                                if makes != newMakes {
-//                                                    withAnimation(.easeInOut(duration: 0.3)) {
-//                                                        makes = newMakes
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                                .onEnded { _ in
-//                                    currentActiveSession = nil
-//                                }
-//                        )
-//                }
-//            })
-            //.padding(.top, 50)
-            //.background(.ultraThinMaterial)
             .cornerRadius(15)
+        }
+        .onChange(of: shotType) {
+            print("Total Sessions: \(sessions.count)")
+            print("Filtered Sessions: \(filteredSessions.count)")
         }
         .padding(.horizontal)
         .onDisappear() {
@@ -217,12 +189,12 @@ struct GraphTesting: View {
     }
     
     var filteredSessions: [HoopSession] {
-        sessions.filter { $0.shotType == shotType }
+        shotType == .allShots ? sessions : sessions.filter { $0.shotType == shotType }
     }
 }
 
 #Preview {
-    @Previewable @State var shotType: ShotType = .threePointers
+    @Previewable @State var shotType: ShotType = .deep
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: HoopSession.self, configurations: config)
     

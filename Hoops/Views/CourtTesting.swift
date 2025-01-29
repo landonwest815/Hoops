@@ -17,66 +17,6 @@ struct CourtTesting: View {
     var body: some View {
         VStack(spacing: 15) {
             
-            HStack(spacing: 10) {
-                
-                VStack {
-                    Text("Shot Type")
-                        .font(.caption)
-                    
-                    Text(type.rawValue)
-                        .contentTransition(.numericText())
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.headline)
-                        .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 15)
-                .background(.ultraThinMaterial)
-                .cornerRadius(15)
-                
-                VStack {
-                    Text("Makes")
-                        .font(.caption)
-                    
-                    Text(String(totalMakes))
-                        .contentTransition(.numericText())
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.headline)
-                        .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 15)
-                .background(.ultraThinMaterial)
-                .cornerRadius(15)
-                
-                
-                VStack {
-                    Text("Avg")
-                        .font(.caption)
-                    
-                    HStack(spacing: 5) {
-                        Text(String(format: "%.1f", averageShotsPerMinute))
-                            .contentTransition(.numericText())
-                        Text("/ min")
-                            .foregroundStyle(.gray)
-                    }
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
-                    .font(.headline)
-                    .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 15)
-                .background(.ultraThinMaterial)
-                .cornerRadius(15)
-                
-            }
-            
             ZStack {
                 GeometryReader { geometry in
                     
@@ -373,37 +313,7 @@ struct CourtTesting: View {
         }
         .padding(.horizontal, 5)
     }
-    
-    // Computed property for total makes
-    private var totalMakes: Int {
-        sessions
-            .filter { $0.shotType == type }
-            .reduce(0) { $0 + $1.makes }
-    }
-    
-    // Computed property for formatted total time
-    private var formattedTotalTime: String {
-        let totalSeconds = sessions
-            .filter { $0.shotType == type }
-            .reduce(0) { $0 + $1.length }
-        
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        
-        return "\(hours)h \(minutes)m"
-    }
-    
-    private var averageShotsPerMinute: Double {
-        let sessionAverages = sessions
-            .filter { $0.shotType == type }
-            .map { Double($0.makes) / (Double($0.length) / 60.0) } // Shots per minute for each session
-        
-        guard !sessionAverages.isEmpty else { return 0.0 } // Avoid division by zero
-        
-        return sessionAverages.reduce(0, +) / Double(sessionAverages.count)
-    }
-    
-    
+
 }
 
 #Preview {
