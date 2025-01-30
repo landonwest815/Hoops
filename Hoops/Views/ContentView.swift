@@ -9,19 +9,140 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) var modelContext
     @StateObject var watchConnecter = WatchConnector()
+    @Environment(\.modelContext) var context
+    @Query(sort: \HoopSession.date, order: .reverse) var sessions: [HoopSession]
+    @State private var selectedShotType: ShotType = .allShots
+    @State private var isSheetPresented = false
     
     var body: some View {
         
-        ZStack {
-            Sessions()
+        NavigationView {
+            ZStack {
+                Sessions(selectedShotType: $selectedShotType)
+                
+                VStack {
+                    Button(action: addRandomSession) {
+                        HStack(spacing: 7.5) {
+//                            Image(systemName: "basketball.fill")
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                                .frame(width: 20, height: 20)
+//                                .foregroundStyle(.orange)
+//                                .fontWeight(.semibold)
+                            
+                            Text("hoops.")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.white)
+                        }
+                        .onLongPressGesture {
+                            deleteSessionsForSelectedShotType()
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, 62)
+                .ignoresSafeArea()
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Image(systemName: "gearshape.fill")
+                        .foregroundStyle(.secondary)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                }
+//                ToolbarItemGroup(placement: .navigationBarTrailing) {
+//                    Picker("Shot Type", selection: $selectedShotType.animation(.bouncy)) {
+//                        Text("All Shots (\(sessions.count))").tag(ShotType.allShots)
+//                            .fontWeight(.semibold)
+//                            .fontDesign(.rounded)
+//                            .font(.subheadline)
+//                        ForEach(ShotType.allCases.filter { $0 != .allShots }, id: \.self) { type in
+//                            let count = sessions.filter { $0.shotType == type }.count
+//                            Text("\(type.rawValue.capitalized) (\(count))").tag(type as ShotType?)
+//                                .frame(width: 50)
+//                                .fontWeight(.semibold)
+//                                .fontDesign(.rounded)
+//                                .font(.subheadline)
+//                        }
+//                    }
+//                    .pickerStyle(.menu)
+//                }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: { isSheetPresented = true }) {
+                        Image(systemName: "chart.bar.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 22.5, height: 22.5)
+                            .foregroundStyle(.orange)
+                            .fontWeight(.semibold)
+                    }
+                }
+                
+            }
+            .sheet(isPresented: $isSheetPresented) {
+                Stats(shotType: $selectedShotType)
+                    .presentationCornerRadius(50)
+                    .presentationDetents([.fraction(0.965)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(.ultraThickMaterial)
+            }
         }
         .onAppear() {
-            watchConnecter.modelContext = modelContext
+            watchConnecter.modelContext = context
         }
         
     }
+    
+    private func deleteSessionsForSelectedShotType() {
+        let sessionsToDelete: [HoopSession]
+        
+        if selectedShotType != .allShots {
+            // Filter sessions by the selected shot type
+            sessionsToDelete = sessions.filter { $0.shotType == selectedShotType }
+        } else {
+            // If "All Shots" is selected, delete all sessions
+            sessionsToDelete = sessions
+        }
+        
+        // Perform deletion
+        withAnimation {
+            for session in sessionsToDelete {
+                context.delete(session)
+            }
+        }
+        
+        do {
+            try context.save()
+            print("Deleted \(sessionsToDelete.count) session(s) for \(selectedShotType.rawValue.capitalized).")
+        } catch {
+            print("Failed to delete sessions: \(error.localizedDescription)")
+        }
+    }
+    
+    private func addRandomSession() {
+        let shotTypeToAdd = selectedShotType
+
+        let randomSession = HoopSession(
+            date: .now,
+            makes: Int.random(in: 5...40),
+            length: Int.random(in: 60...600),
+            shotType: shotTypeToAdd
+        )
+        withAnimation {
+            context.insert(randomSession)
+        }
+        do {
+            try context.save()
+            print("New random session added!")
+        } catch {
+            print("Failed to save new session: \(error.localizedDescription)")
+        }
+    }
+    
 }
 
 #Preview {

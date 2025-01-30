@@ -13,15 +13,13 @@ struct Sessions: View {
     
     @Query(sort: \HoopSession.date, order: .reverse) var sessions: [HoopSession]
     
-    @State private var selectedShotType: ShotType? = nil
+    @Binding var selectedShotType: ShotType
     
-    @State private var isSheetPresented = false
-    
-    @State var shotType = ShotType.allShots
-    
+    @State var selectedDate = Date.now
+            
     private var filteredSessions: [HoopSession] {
-        if let shotType = selectedShotType {
-            return sessions.filter { $0.shotType == shotType }
+        if selectedShotType != .allShots {
+            return sessions.filter { $0.shotType == selectedShotType }
         } else {
             return sessions
         }
@@ -34,19 +32,93 @@ struct Sessions: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: -15) {
+            VStack(spacing: -10) {
                 
-                WeekView()
-                    .offset(y: -15)
+                VStack(spacing: -10) {
+                    WeekView(selectedDate: $selectedDate)
+                        .offset(y: -15)
+                        .padding(.bottom, 5)
+                    
+                    Divider()
+                        .frame(height: 1)
+                        .overlay(.orange)
+                        .offset(y: -10)
+                }
+                .background(.ultraThinMaterial)
                 
                 
                 VStack(alignment: .trailing, spacing: 0) {
                     
                     // List of sessions
-                    List {
-                        ForEach(groupedSessions, id: \.key) { day, daySessions in
-                            Section(header: Text(day, style: .date)) {
-                                ForEach(daySessions, id: \.self) { session in
+                    ScrollView {
+                        LazyVStack(spacing: 10) {
+                            // Date label and buttons
+                            HStack {
+                                Text(selectedDate, style: .date)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.secondary)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .foregroundStyle(.clear)
+                                            .frame(width: 25, height: 25)
+                                            .background(.ultraThickMaterial)
+                                            .clipShape(Circle())
+                                        Image(systemName: "arrow.up.arrow.down")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 15)
+                                            .foregroundStyle(.orange)
+                                    }
+                                }
+                                                        
+                                Button {
+                                    
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .foregroundStyle(.clear)
+                                            .frame(width: 25, height: 25)
+                                            .background(.ultraThickMaterial)
+                                            .clipShape(Circle())
+                                        Image(systemName: "line.3.horizontal.decrease")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 15)
+                                            .foregroundStyle(.orange)
+                                    }
+                                }
+                                
+                            }
+                            .padding(.horizontal)
+                            .scrollTransition { content, phase in
+                                content
+                                    .opacity(phase.isIdentity ? 1 : 0)
+                                    .scaleEffect(phase.isIdentity ? 1 : 0.85)
+                                    .blur(radius: phase.isIdentity ? 0 : 10)
+                            }
+                            
+                            // Compute sessions for the selected date inside the body
+                            let selectedDaySessions = groupedSessions.first(where: { $0.key == selectedDate.startOfDay })?.value ?? []
+
+                            // Show message if there are no sessions
+                            if selectedDaySessions.isEmpty {
+                                VStack {
+                                    Text("Go put some shots up!")
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.secondary)
+                                        .padding(.top, 20)
+                                }
+                            } else {
+                                // Filtered session list
+                                ForEach(selectedDaySessions, id: \.self) { session in
                                     SessionThumbnail(
                                         date: session.date,
                                         makes: session.makes,
@@ -57,131 +129,40 @@ struct Sessions: View {
                                     .onLongPressGesture {
                                         context.delete(session)
                                     }
-                                    .frame(height: 52.5)
+                                    .frame(height: 75)
+                                    .scrollTransition { content, phase in
+                                        content
+                                            .opacity(phase.isIdentity ? 1 : 0)
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.85)
+                                            .blur(radius: phase.isIdentity ? 0 : 10)
+                                    }
+                                    .padding(.horizontal)
                                 }
                             }
                         }
-                        .listSectionSpacing(15)
+                        .padding(.vertical)
                     }
-                    .listRowSpacing(8)
                 }
                 .background(.black)
             }
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button(action: addRandomSession) {
-                        HStack(spacing: 7.5) {
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(.orange)
-                                .fontWeight(.semibold)
-                                
-                            Text("hoops.")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.white)
-                        }
-                        .onLongPressGesture {
-                            deleteSessionsForSelectedShotType()
-                        }
-                    }
-                }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Picker("Shot Type", selection: $selectedShotType.animation(.bouncy)) {
-                        Text("All Shots (\(sessions.count))").tag(ShotType?.none)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .font(.subheadline)
-                        ForEach(ShotType.allCases, id: \.self) { type in
-                            let count = sessions.filter { $0.shotType == type }.count
-                            Text("\(type.rawValue.capitalized) (\(count))").tag(type as ShotType?)
-                                .frame(width: 50)
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .font(.subheadline)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: { isSheetPresented = true }) {
-                        Image(systemName: "chart.bar.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 22.5, height: 22.5)
-                            .foregroundStyle(.orange)
-                            .fontWeight(.semibold)
-                    }
-                }
-                
-            }
-            .background(.ultraThinMaterial)
+            //.background(.ultraThinMaterial)
         }
-        .sheet(isPresented: $isSheetPresented) {
-            Stats(shotType: $shotType)
-                .presentationCornerRadius(50)
-                .presentationDetents([.fraction(0.96)])
-                .presentationDragIndicator(.visible)
-                .presentationBackground(.ultraThickMaterial)
-        }
+        
     }
     
-    private func deleteSessionsForSelectedShotType() {
-        let sessionsToDelete: [HoopSession]
-        
-        if let selectedType = selectedShotType {
-            // Filter sessions by the selected shot type
-            sessionsToDelete = sessions.filter { $0.shotType == selectedType }
-        } else {
-            // If "All Shots" is selected, delete all sessions
-            sessionsToDelete = sessions
-        }
-        
-        // Perform deletion
-        withAnimation {
-            for session in sessionsToDelete {
-                context.delete(session)
-            }
-        }
-        
-        do {
-            try context.save()
-            print("Deleted \(sessionsToDelete.count) session(s) for \(selectedShotType?.rawValue.capitalized ?? "All Shots").")
-        } catch {
-            print("Failed to delete sessions: \(error.localizedDescription)")
-        }
-    }
-    
-    private func addRandomSession() {
-        let shotTypeToAdd = selectedShotType ?? ShotType.allCases.randomElement()!
-
-        let randomSession = HoopSession(
-            date: .now,
-            makes: Int.random(in: 5...40),
-            length: Int.random(in: 60...600),
-            shotType: shotTypeToAdd
-        )
-        withAnimation {
-            context.insert(randomSession)
-        }
-        do {
-            try context.save()
-            print("New random session added!")
-        } catch {
-            print("Failed to save new session: \(error.localizedDescription)")
-        }
-    }
 }
 
 #Preview {
+    @Previewable @State var shotType = ShotType.allShots
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: HoopSession.self, configurations: config)
+    
     let hoopSession = HoopSession(date: Date.now, makes: 5, length: 120, shotType: .threePointers)
     container.mainContext.insert(hoopSession)
     
-    return Sessions()
+    let hoopSession2 = HoopSession(date: Date.now, makes: 10, length: 120, shotType: .threePointers)
+    container.mainContext.insert(hoopSession2)
+    
+    return Sessions(selectedShotType: $shotType)
         .modelContainer(container)
 }

@@ -26,7 +26,6 @@ struct SessionThumbnail: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
             ZStack {
                 VStack(spacing: 10) {
                     HStack(spacing: 0) {
@@ -37,7 +36,7 @@ struct SessionThumbnail: View {
                             Spacer()
                         }
                         .fontDesign(.rounded)
-                        .frame(width: geometry.size.width / 2)
+                        //.frame(width: geometry.size.width / 2)
                         
                         Spacer()
                         
@@ -48,7 +47,7 @@ struct SessionThumbnail: View {
                         }
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
-                        .frame(width: geometry.size.width / 2)
+                        //.frame(width: geometry.size.width / 2)
 
                     }
                     
@@ -61,7 +60,7 @@ struct SessionThumbnail: View {
                             Spacer()
                         }
                         .fontDesign(.rounded)
-                        .frame(width: geometry.size.width / 2)
+                        //.frame(width: geometry.size.width / 2)
 
                         Spacer()
                         
@@ -73,11 +72,15 @@ struct SessionThumbnail: View {
                             Spacer()
                         }
                         .fontDesign(.rounded)
-                        .frame(width: geometry.size.width / 2)
+                        //.frame(width: geometry.size.width / 2)
                     }
                 }
+                .padding()
+                .frame(height: 75)
+                .background(.ultraThinMaterial)
+                .cornerRadius(18)
             }
-        }
+        
     }
 }
 

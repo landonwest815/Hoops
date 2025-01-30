@@ -1,28 +1,24 @@
-//
-//  WeekView.swift
-//  Hoops
-//
-//  Created by Landon West on 1/29/25.
-//
-
 import SwiftUI
 
 struct WeekView: View {
+    @Binding var selectedDate: Date // Bind to selectedDate
+    
     var body: some View {
         ZStack {
-            WeeklyShotTrackerView()
+            WeeklyShotTrackerView(selectedDate: $selectedDate)
         }
     }
 }
 
-
 struct WeeklyShotTrackerView: View {
+    @Binding var selectedDate: Date // Bind to selectedDate
     private let calendar = Calendar.current
     private let today: Int
     private let weekdays = ["S", "M", "T", "W", "T", "F", "S"] // Fixed order
     private let loggedDays: Set<Int> = [27, 29]
     
-    init() {
+    init(selectedDate: Binding<Date>) {
+        self._selectedDate = selectedDate
         today = calendar.component(.day, from: Date()) // Store today's day number
     }
     
@@ -33,15 +29,14 @@ struct WeeklyShotTrackerView: View {
         return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: startOfWeek) }
     }
     
-    
     var body: some View {
-        VStack(spacing: 7.5) {
+        VStack(spacing: 2.5) {
             // Weekday labels
             HStack(spacing: 10) {
                 ForEach(weekdays, id: \.self) { day in
                     Text(day)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.caption)
+                        .fontWeight(.regular)
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(.secondary)
                 }
@@ -53,7 +48,8 @@ struct WeeklyShotTrackerView: View {
                     let day = daysOfWeek[index]
                     let dayNumber = calendar.component(.day, from: day)
                     let isLogged = loggedDays.contains(dayNumber)
-                    let isToday = dayNumber == today // Check if this day is today
+                    let isToday = calendar.isDate(day, inSameDayAs: Date()) // Check if today
+                    let isSelected = calendar.isDate(day, inSameDayAs: selectedDate) // Check if selected
                     
                     VStack(spacing: 5) {
                         Image(systemName: "basketball.fill")
@@ -66,17 +62,20 @@ struct WeeklyShotTrackerView: View {
                         Text("\(dayNumber)")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
-                            .font(.headline)
-                        
+                            .font(.subheadline)
                     }
                     .padding(.vertical, 5)
                     .frame(maxWidth: .infinity)
-                    .background(Color(red: 0.2, green: 0.2, blue: 0.2))
                     .cornerRadius(12)
                     .overlay(
-                        isToday ? RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.orange, lineWidth: 2) : nil // White border for today
+                        isSelected ? RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.orange, lineWidth: 1.25) : nil
                     )
+                    .onTapGesture {
+                        withAnimation() {
+                            selectedDate = day // Update selected date when tapped
+                        }
+                    }
                 }
             }
         }
@@ -85,5 +84,6 @@ struct WeeklyShotTrackerView: View {
 }
 
 #Preview {
-    WeekView()
+    @Previewable @State var selectedDate = Date()
+    return WeekView(selectedDate: $selectedDate)
 }
