@@ -80,7 +80,7 @@ struct WeeklyShotTrackerView: View {
                     .overlay(
                         isSelected ?
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.75), lineWidth: 1)
+                            .stroke(Color.white.opacity(0.66), lineWidth: 1.5)
                         : nil
                     )
                     .onTapGesture {

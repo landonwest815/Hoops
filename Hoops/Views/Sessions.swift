@@ -10,7 +10,7 @@ import SwiftData
 
 struct Sessions: View {
     @Environment(\.modelContext) var context
-    @Query(sort: \HoopSession.date, order: .reverse) var sessions: [HoopSession]
+    @Query(sort: \HoopSession.date, order: .reverse, animation: .default) var sessions: [HoopSession]
     @State var selectedShotType: ShotType = .allShots
     @State private var isSheetPresented = false
     @State var selectedDate: Date = .now
@@ -46,7 +46,7 @@ struct Sessions: View {
                 
                 VStack(alignment: .trailing, spacing: 0) {
                     
-                    ZStack(alignment: .top) {
+                    ZStack(alignment: .bottomTrailing) {
                         
                         // List of sessions
                         ScrollView {
@@ -222,6 +222,26 @@ struct Sessions: View {
                             }
                             .padding(.vertical)
                         }
+                        
+                        Button {
+                            withAnimation {
+                                addRandomSession()
+                            }
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    //.stroke(Color.orange.opacity(0.75), lineWidth: 1.5)
+                                    .fill(.ultraThinMaterial)
+                                    .frame(width: 50)
+                                
+                                Image(systemName: "pencil")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20)
+                                
+                            }
+                            .padding(.horizontal)
+                        }
                     }
                 }
                 .background(.black)
@@ -232,8 +252,8 @@ struct Sessions: View {
                         .padding(.top, 5)
                     
                     Divider()
-                        .frame(height: 1)
-                        .overlay(.gray.opacity(0.66))
+                        .frame(height: 1.5)
+                        .overlay(.white.opacity(0.66))
 
                 }
                 .background(.ultraThinMaterial)
@@ -397,16 +417,15 @@ struct Sessions: View {
             shotType: shotTypeToAdd
         )
 
-        withAnimation {
-            context.insert(randomSession)
-        }
+        context.insert(randomSession)
         
-        do {
-            try context.save()
-            print("New random session added at \(selectedDateTime)!")
-        } catch {
-            print("Failed to save new session: \(error.localizedDescription)")
-        }
+        
+//        do {
+//            try context.save()
+//            print("New random session added at \(selectedDateTime)!")
+//        } catch {
+//            print("Failed to save new session: \(error.localizedDescription)")
+//        }
     }
     
     private func calculateStreak() {
@@ -449,95 +468,6 @@ struct Sessions: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: HoopSession.self, configurations: config)
-    
-    // -- LAYUPS (3 examples) --
-    let layups1 = HoopSession(
-        date: Date(timeInterval: -86400 * 3, since: .now), // 3 days ago
-        makes: 12,
-        length: 180,
-        shotType: .layups
-    )
-    container.mainContext.insert(layups1)
-    
-    let layups2 = HoopSession(
-        date: Date(timeInterval: -86400 * 2, since: .now), // 2 days ago
-        makes: 9,
-        length: 220,
-        shotType: .layups
-    )
-    container.mainContext.insert(layups2)
-    
-    let layups3 = HoopSession(
-        date: Date(timeInterval: -86400, since: .now), // 1 day ago
-        makes: 15,
-        length: 240,
-        shotType: .layups
-    )
-    container.mainContext.insert(layups3)
-    
-    // -- MIDRANGE (3 examples) --
-    let midrange1 = HoopSession(
-        date: Date(), // now
-        makes: 5,
-        length: 100,
-        shotType: .midrange
-    )
-    container.mainContext.insert(midrange1)
-    
-    // -- FREE THROWS (3 examples) --
-    let freeThrows1 = HoopSession(
-        date: Date(timeInterval: -86400 * 2, since: .now),
-        makes: 10,
-        length: 120,
-        shotType: .freeThrows
-    )
-    container.mainContext.insert(freeThrows1)
-    
-    let freeThrows2 = HoopSession(
-        date: Date(timeInterval: -86400, since: .now),
-        makes: 12,
-        length: 90,
-        shotType: .freeThrows
-    )
-    container.mainContext.insert(freeThrows2)
-    
-    // -- THREE POINTERS (3 examples) --
-    let threePointers1 = HoopSession(
-        date: Date(timeInterval: -86400, since: .now),
-        makes: 5,
-        length: 150,
-        shotType: .threePointers
-    )
-    container.mainContext.insert(threePointers1)
-    
-    let threePointers2 = HoopSession(
-        date: Date(), // now
-        makes: 7,
-        length: 180,
-        shotType: .threePointers
-    )
-    container.mainContext.insert(threePointers2)
-    
-    // -- ALL SHOTS (3 examples) --
-    let allShots1 = HoopSession(
-        date: Date(timeInterval: -86400 * 3, since: .now),
-        makes: 10,
-        length: 210,
-        shotType: .allShots
-    )
-    container.mainContext.insert(allShots1)
-    
-    let allShots2 = HoopSession(
-        date: Date(), // now
-        makes: 6,
-        length: 95,
-        shotType: .allShots
-    )
-    container.mainContext.insert(allShots2)
-
-    // Return your main view with the model container attached
-    return ContentView()
-        .modelContainer(container)
+        Sessions()
+            .modelContainer(HoopSession.preview)
 }
