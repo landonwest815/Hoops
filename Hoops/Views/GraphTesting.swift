@@ -162,7 +162,7 @@ struct GraphTesting: View {
                 
                 
             }
-            .frame(height: 250)
+            .frame(height: 150)
             .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)

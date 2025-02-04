@@ -50,12 +50,21 @@ struct SessionThumbnail: View {
                     
                     ZStack {
                         
+                        Image(systemName: "figure.basketball")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(iconColor.opacity(0.2))
+                            .frame(height: 40)
+                            .offset(x: -40, y: 20)
+                            .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
+                            .rotationEffect(.degrees(10))
+                        
                         Image(systemName: "basketball.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .foregroundStyle(iconColor.opacity(0.2))
                             .frame(height: 70)
-                            .offset(x: 17.5, y: 50)
+                            .offset(x: 17.5, y: 52.5)
                             .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
                         
                         ZStack {
@@ -73,11 +82,11 @@ struct SessionThumbnail: View {
                         .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
 
                         
-                        Text(getShotPoints(for: shotType))
+                        Text("\(getShotPoints(for: shotType)) pts")
                             .font(.headline)
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
-                            .offset(x: 17.5, y: -25)
+                            .offset(x: 20, y: -22.5)
                             .rotationEffect(.degrees(12))
                             .foregroundStyle(iconColor.opacity(0.2))
                             .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
@@ -189,7 +198,7 @@ struct SessionThumbnail: View {
         case .threePointers, .deep:
             return "+3"
         case .allShots:
-            return "!!" // Or another appropriate label
+            return "+" // Or another appropriate label
         }
     }
     
