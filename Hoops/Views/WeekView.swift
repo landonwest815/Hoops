@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct WeekView: View {
     @Binding var selectedDate: Date // Bind to selectedDate
@@ -11,6 +12,7 @@ struct WeekView: View {
 }
 
 struct WeeklyShotTrackerView: View {
+    @Query(sort: \HoopSession.date, order: .reverse) var sessions: [HoopSession]
     @Binding var selectedDate: Date // Bind to selectedDate
     private let calendar = Calendar.current
     private let today: Int
@@ -46,17 +48,21 @@ struct WeeklyShotTrackerView: View {
             HStack(spacing: 10) {
                 ForEach(daysOfWeek.indices, id: \.self) { index in
                     let day = daysOfWeek[index]
+                    let startOfDay = calendar.startOfDay(for: day)
                     let dayNumber = calendar.component(.day, from: day)
-                    let isLogged = loggedDays.contains(dayNumber)
-                    let isToday = calendar.isDate(day, inSameDayAs: Date()) // Check if today
+                    //let isLogged = loggedDays.contains(dayNumber)
+                    //let isToday = calendar.isDate(day, inSameDayAs: Date()) // Check if today
                     let isSelected = calendar.isDate(day, inSameDayAs: selectedDate) // Check if selected
                     let isFuture = calendar.startOfDay(for: day) > calendar.startOfDay(for: Date())
+                    
+                    let hasSession = sessions.contains { calendar.startOfDay(for: $0.date) == startOfDay }
+
                     
                     VStack(spacing: 5) {
                         Image(systemName: "basketball.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .foregroundStyle(isLogged ? .orange : Color(red: 0.3, green: 0.3, blue: 0.3)) // Orange if logged
+                            .foregroundStyle(hasSession ? .orange : Color(red: 0.3, green: 0.3, blue: 0.3))
                             .frame(width: 22.5, height: 22.5)
                             .padding(.top, 2.5)
                             .opacity(isFuture ? 0.33 : 1.0)
@@ -69,17 +75,16 @@ struct WeeklyShotTrackerView: View {
                     }
                     .padding(.vertical, 5)
                     .frame(maxWidth: .infinity)
+                    //.background(isSelected ? Color(red: 0.3, green: 0.3, blue: 0.3).opacity(0.33) : Color.clear)
                     .cornerRadius(12)
                     .overlay(
                         isSelected ?
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.orange.opacity(0.75), lineWidth: 1.25)
-                            .shadow(color: .orange.opacity(0.5), radius: 5, y: 0)
-                            .shadow(color: .orange.opacity(0.5), radius: 5, y: 0)
+                            .stroke(Color.white.opacity(0.75), lineWidth: 1)
                         : nil
                     )
                     .onTapGesture {
-                        withAnimation(.bouncy) {
+                        withAnimation(.snappy) {
                             if !isFuture {
                                 selectedDate = day // Update selected date when tapped
                             }
