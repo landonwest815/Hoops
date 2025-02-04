@@ -50,6 +50,7 @@ struct WeeklyShotTrackerView: View {
                     let isLogged = loggedDays.contains(dayNumber)
                     let isToday = calendar.isDate(day, inSameDayAs: Date()) // Check if today
                     let isSelected = calendar.isDate(day, inSameDayAs: selectedDate) // Check if selected
+                    let isFuture = calendar.startOfDay(for: day) > calendar.startOfDay(for: Date())
                     
                     VStack(spacing: 5) {
                         Image(systemName: "basketball.fill")
@@ -58,28 +59,37 @@ struct WeeklyShotTrackerView: View {
                             .foregroundStyle(isLogged ? .orange : Color(red: 0.3, green: 0.3, blue: 0.3)) // Orange if logged
                             .frame(width: 22.5, height: 22.5)
                             .padding(.top, 2.5)
+                            .opacity(isFuture ? 0.33 : 1.0)
                         
                         Text("\(dayNumber)")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.subheadline)
+                            .foregroundStyle(isFuture ? .secondary : .primary)
                     }
                     .padding(.vertical, 5)
                     .frame(maxWidth: .infinity)
                     .cornerRadius(12)
                     .overlay(
-                        isSelected ? RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.orange, lineWidth: 1.25) : nil
+                        isSelected ?
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.orange.opacity(0.75), lineWidth: 1.25)
+                            .shadow(color: .orange.opacity(0.5), radius: 5, y: 0)
+                            .shadow(color: .orange.opacity(0.5), radius: 5, y: 0)
+                        : nil
                     )
                     .onTapGesture {
-                        withAnimation() {
-                            selectedDate = day // Update selected date when tapped
+                        withAnimation(.bouncy) {
+                            if !isFuture {
+                                selectedDate = day // Update selected date when tapped
+                            }
                         }
                     }
                 }
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.bottom)
     }
 }
 

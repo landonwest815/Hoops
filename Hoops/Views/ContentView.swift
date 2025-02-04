@@ -21,6 +21,7 @@ struct ContentView: View {
             ZStack {
                 Sessions(selectedShotType: $selectedShotType)
                 
+                
                 VStack {
                     Button(action: addRandomSession) {
                         HStack(spacing: 7.5) {
@@ -49,10 +50,14 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Image(systemName: "gearshape.fill")
-                        .foregroundStyle(.secondary)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
+                    Button {
+                        addRandomSession()
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                    }
+                    .foregroundStyle(.secondary)
                 }
 //                ToolbarItemGroup(placement: .navigationBarTrailing) {
 //                    Picker("Shot Type", selection: $selectedShotType.animation(.bouncy)) {
