@@ -30,6 +30,8 @@ struct Sessions: View {
     
     @State var streak = 0
     
+    @State var isProfileShown = false
+    
     private var filteredSessions: [HoopSession] {
 //        if selectedShotType != .allShots {
 //            return sessions.filter { $0.shotType == selectedShotType }
@@ -343,7 +345,7 @@ struct Sessions: View {
                 ToolbarItemGroup(placement: .principal) {
                     
                     Button {
-                        print("test2")
+                        isProfileShown = true
                     } label: {
                         HStack(spacing: 7.5) {
                             
@@ -403,6 +405,16 @@ struct Sessions: View {
                 Stats(shotType: $selectedShotType, selectedGraph: $selectedGraph)
                     .presentationCornerRadius(32)
                     .presentationDetents([.fraction(0.6875)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(.ultraThickMaterial)
+                    .presentationBackgroundInteraction(.enabled)
+            }
+            .sheet(isPresented: $isProfileShown, onDismiss: {
+                // action
+            }) {
+                Profile()
+                    .presentationCornerRadius(32)
+                    .presentationDetents([.fraction(0.8375)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(.ultraThickMaterial)
                     .presentationBackgroundInteraction(.enabled)
