@@ -50,319 +50,282 @@ struct Sessions: View {
     var body: some View {
         
         NavigationView {
+                                
+            VStack(spacing: 0) {
                 
-            ZStack(alignment: .top) {
+                WeekView(selectedDate: $selectedDate)
+                    .padding(.top, 5)
                 
-                VStack(spacing: 0) {
+                HStack(spacing: 10) {
                     
-                    WeekView(selectedDate: $selectedDate)
-                        .padding(.top, 5)
-                    
-                    HStack(spacing: 10) {
-                        
-                        Button {
-                            withAnimation {
-                                if selectedGraph != .sessions {
-                                    isSheetPresented = true
-                                    selectedGraph = .sessions
-                                } else {
-                                    selectedGraph = .none
-                                    isSheetPresented = false
-                                }
-                            }
-                        } label: {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "basketball.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.orange)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("\(sessionCount)")
-                                        .font(.title3)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Sessions")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 90)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            .overlay(
-                                selectedGraph == .sessions ?
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white.opacity(0.66), lineWidth: 2)
-                                : nil
-                            )
-                        }
-                            
-                        Button {
-                            withAnimation {
-                                if selectedGraph != .makes {
-                                    isSheetPresented = true
-                                    selectedGraph = .makes
-                                } else {
-                                    selectedGraph = .none
-                                    isSheetPresented = false
-                                }
-                            }
-                        } label: {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "scope")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.red)
-                                        .fontWeight(.semibold)
-                                    
-                                    Text("\(totalMakes)")
-                                        .font(.title3)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Total Makes")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 105)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            .overlay(
-                                selectedGraph == .makes ?
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
-                                : nil
-                            )
-                        }
-                                                
-                        Button {
-                            withAnimation {
-                                if selectedGraph != .average {
-                                    isSheetPresented = true
-                                    selectedGraph = .average
-                                } else {
-                                    selectedGraph = .none
-                                    isSheetPresented = false
-                                }
-                            }
-                        } label: {
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "chart.line.uptrend.xyaxis")
-                                        .foregroundStyle(.blue)
-                                        .fontWeight(.semibold)
-                                    
-                                    HStack(spacing: 5) {
-                                        Text("\(averageMakesPerMinute, specifier: "%.2f")")
-                                            .font(.title3)
-                                            .fontDesign(.rounded)
-                                            .fontWeight(.semibold)
-                                            .contentTransition(.numericText())
-                                            .foregroundStyle(.white)
-                                        
-                                        Text("/min")
-                                            .font(.caption)
-                                            .fontDesign(.rounded)
-                                            .foregroundStyle(.gray)
-                                            .offset(y: 1)
-                                    }
-                                }
-                                
-                                Text("Average Makes")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: .infinity)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            .overlay(
-                                selectedGraph == .average ?
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
-                                : nil
-                            )
-                        }
-                        
-                    }
-                    .frame(height: 50)
-                    .padding(.horizontal, 15)
-                    .padding(.vertical, 5)
-                    
-                    // Date label and buttons
-                    HStack {
-                        Text(selectedDate, style: .date)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                            .contentTransition(.numericText())
-                        
-                        Spacer()
-                        
-                        Button {
-                            
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .foregroundStyle(.clear)
-                                    .frame(width: 30, height: 30)
-                                    .background(.ultraThinMaterial)
-                                    .clipShape(Circle())
-                                Image(systemName: "arrow.up.arrow.down")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 17.5)
-                                    .foregroundStyle(.orange)
-                                    .fontWeight(.semibold)
+                    Button {
+                        withAnimation {
+                            if selectedGraph != .sessions {
+                                isSheetPresented = true
+                                selectedGraph = .sessions
+                            } else {
+                                selectedGraph = .none
+                                isSheetPresented = false
                             }
                         }
-                        
-                        Button {
-                            
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    .foregroundStyle(.clear)
-                                    .frame(width: 30, height: 30)
-                                    .background(.ultraThinMaterial)
-                                    .clipShape(Circle())
-                                Image(systemName: "line.3.horizontal.decrease")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 17.5)
-                                    .foregroundStyle(.orange)
-                                    .fontWeight(.semibold)
-                            }
-                        }
-                        
-                    }
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    
-                    ZStack(alignment: .bottomTrailing) {
-                        
-                        // List of sessions
-                        ScrollView {
-                            LazyVStack(spacing: 10) {
-                                
-                                // Show message if there are no sessions
-                                if selectedDaySessions.isEmpty {
-                                    VStack {
-                                        Text(selectedDate.startOfDay == .now.startOfDay ? "Go shoot some hoops!" : "No sessions for today!")
-                                            .font(.subheadline)
-                                            .fontWeight(.regular)
-                                            .foregroundStyle(.secondary)
-                                            .padding(.top, 20)
-                                    }
-                                } else {
-                                    // Filtered session list
-                                    ForEach(selectedDaySessions, id: \.self) { session in
-                                        SessionThumbnail(
-                                            date: session.date,
-                                            makes: session.makes,
-                                            length: session.length,
-                                            average: Double(session.makes) / (Double(session.length) / 60.0),
-                                            shotType: session.shotType
-                                        )
-                                        .onLongPressGesture {
-                                            context.delete(session)
-                                        }
-                                        .frame(height: 75)
-                                        .scrollTransition { content, phase in
-                                            content
-                                                .opacity(phase.isIdentity ? 1 : 0)
-                                                .scaleEffect(phase.isIdentity ? 1 : 0.85)
-                                                .blur(radius: phase.isIdentity ? 0 : 10)
-                                        }
-                                        .padding(.horizontal)
-                                    }
-                                }
-                            }
-                        }
-                        
-                        Button {
-                            withAnimation {
-                                addRandomSession()
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                    //.stroke(Color.orange.opacity(0.75), lineWidth: 1.5)
-                                    .fill(.ultraThinMaterial)
-                                    .frame(width: 66)
-                                
+                    } label: {
+                        VStack(alignment: .leading) {
+                            HStack {
                                 Image(systemName: "basketball.fill")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(width: 30)
+                                    .frame(height: 16)
                                     .foregroundStyle(.orange)
-                                
-                            }
-                            .padding()
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                .background(.ultraThinMaterial)
-                
-                VStack {
-                    HStack(spacing: 7.5) {
-                        
-                        Text("hoops.")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .foregroundStyle(.white)
-                        
-                        if streak > 1 {
-                            ZStack {
-                                Image(systemName: "flame.fill")
-                                    .resizable()
-                                    .frame(width: 21, height: 23)
-                                Image(systemName: "circle.fill")
-                                    .resizable()
-                                    .frame(width: 11, height: 11)
-                                    .offset(y: 4)
-                                Text("\(streak)")
-                                    .font(.subheadline)
                                     .fontWeight(.semibold)
+                                
+                                
+                                Text("\(sessionCount)")
+                                    .font(.title3)
                                     .fontDesign(.rounded)
-                                    .foregroundStyle(.white)
-                                    .offset(x: -0.25, y: 1.75)
-                                    .shadow(radius: 5)
+                                    .fontWeight(.semibold)
                                     .contentTransition(.numericText())
+                                    .foregroundStyle(.white)
                             }
-                            .foregroundStyle(.red)
+                            
+                            Text("Sessions")
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.gray)
                         }
+                        .padding(.horizontal, 15)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: 90)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(18)
+                        .overlay(
+                            selectedGraph == .sessions ?
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.white.opacity(0.66), lineWidth: 2)
+                            : nil
+                        )
+                    }
                         
+                    Button {
+                        withAnimation {
+                            if selectedGraph != .makes {
+                                isSheetPresented = true
+                                selectedGraph = .makes
+                            } else {
+                                selectedGraph = .none
+                                isSheetPresented = false
+                            }
+                        }
+                    } label: {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Image(systemName: "scope")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 16)
+                                    .foregroundStyle(.red)
+                                    .fontWeight(.semibold)
+                                
+                                Text("\(totalMakes)")
+                                    .font(.title3)
+                                    .fontDesign(.rounded)
+                                    .fontWeight(.semibold)
+                                    .contentTransition(.numericText())
+                                    .foregroundStyle(.white)
+                            }
+                            
+                            Text("Total Makes")
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.gray)
+                        }
+                        .padding(.horizontal, 15)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: 105)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(18)
+                        .overlay(
+                            selectedGraph == .makes ?
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
+                            : nil
+                        )
+                    }
+                                            
+                    Button {
+                        withAnimation {
+                            if selectedGraph != .average {
+                                isSheetPresented = true
+                                selectedGraph = .average
+                            } else {
+                                selectedGraph = .none
+                                isSheetPresented = false
+                            }
+                        }
+                    } label: {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Image(systemName: "chart.line.uptrend.xyaxis")
+                                    .foregroundStyle(.blue)
+                                    .fontWeight(.semibold)
+                                
+                                HStack(spacing: 5) {
+                                    Text("\(averageMakesPerMinute, specifier: "%.2f")")
+                                        .font(.title3)
+                                        .fontDesign(.rounded)
+                                        .fontWeight(.semibold)
+                                        .contentTransition(.numericText())
+                                        .foregroundStyle(.white)
+                                    
+                                    Text("/min")
+                                        .font(.caption)
+                                        .fontDesign(.rounded)
+                                        .foregroundStyle(.gray)
+                                        .offset(y: 1)
+                                }
+                            }
+                            
+                            Text("Average Makes")
+                                .font(.caption)
+                                .fontWeight(.regular)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.gray)
+                        }
+                        .padding(.horizontal, 15)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(18)
+                        .overlay(
+                            selectedGraph == .average ?
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
+                            : nil
+                        )
+                    }
+                    
+                }
+                .frame(height: 50)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 5)
+                
+                // Date label and buttons
+                HStack {
+                    Text(selectedDate, style: .date)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                    
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .foregroundStyle(.clear)
+                                .frame(width: 30, height: 30)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Circle())
+                            Image(systemName: "arrow.up.arrow.down")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 17.5)
+                                .foregroundStyle(.orange)
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    
+                    Button {
+                        
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .foregroundStyle(.clear)
+                                .frame(width: 30, height: 30)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Circle())
+                            Image(systemName: "line.3.horizontal.decrease")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 17.5)
+                                .foregroundStyle(.orange)
+                                .fontWeight(.semibold)
+                        }
+                    }
+                    
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal)
+                
+                ZStack(alignment: .bottomTrailing) {
+                    
+                    // List of sessions
+                    ScrollView {
+                        LazyVStack(spacing: 10) {
+                            
+                            // Show message if there are no sessions
+                            if selectedDaySessions.isEmpty {
+                                VStack {
+                                    Text(selectedDate.startOfDay == .now.startOfDay ? "Go shoot some hoops!" : "No sessions for today!")
+                                        .font(.subheadline)
+                                        .fontWeight(.regular)
+                                        .foregroundStyle(.secondary)
+                                        .padding(.top, 20)
+                                }
+                            } else {
+                                // Filtered session list
+                                ForEach(selectedDaySessions, id: \.self) { session in
+                                    SessionThumbnail(
+                                        date: session.date,
+                                        makes: session.makes,
+                                        length: session.length,
+                                        average: Double(session.makes) / (Double(session.length) / 60.0),
+                                        shotType: session.shotType
+                                    )
+                                    .onLongPressGesture {
+                                        context.delete(session)
+                                    }
+                                    .frame(height: 75)
+                                    .scrollTransition { content, phase in
+                                        content
+                                            .opacity(phase.isIdentity ? 1 : 0)
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.85)
+                                            .blur(radius: phase.isIdentity ? 0 : 10)
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                        }
+                    }
+                    
+                    Button {
+                        withAnimation {
+                            addRandomSession()
+                        }
+                    } label: {
+                        ZStack {
+                            Circle()
+                                //.stroke(Color.orange.opacity(0.75), lineWidth: 1.5)
+                                .fill(.ultraThinMaterial)
+                                .frame(width: 66)
+                            
+                            Image(systemName: "basketball.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 30)
+                                .foregroundStyle(.orange)
+                            
+                        }
+                        .padding()
+                        .padding(.horizontal)
                     }
                 }
-                .padding(.top, 62)
-                .ignoresSafeArea()
             }
+            .background(.ultraThinMaterial)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button {
@@ -376,6 +339,50 @@ struct Sessions: View {
                     }
                     .foregroundStyle(.secondary)
                 }
+                
+                ToolbarItemGroup(placement: .principal) {
+                    
+                    Button {
+                        print("test2")
+                    } label: {
+                        HStack(spacing: 7.5) {
+                            
+                            Text("hoops.")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.white)
+                            
+                            if streak > 1 {
+                                ZStack {
+                                    Image(systemName: "flame.fill")
+                                        .resizable()
+                                        .frame(width: 21, height: 23)
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .frame(width: 11, height: 11)
+                                        .offset(y: 4)
+                                    Text("\(streak)")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .fontDesign(.rounded)
+                                        .foregroundStyle(.white)
+                                        .offset(x: -0.25, y: 1.75)
+                                        .shadow(radius: 5)
+                                        .contentTransition(.numericText())
+                                }
+                                .foregroundStyle(.red)
+                                .symbolEffect(.bounce, value: streak)
+                                .shadow(color: .red.opacity(0.25), radius: 5)
+                                .shadow(color: .red.opacity(0.125), radius: 12.5)
+                                .shadow(color: .red.opacity(0.05), radius: 20)
+
+                            }
+                            
+                        }
+                    }
+                }
+                
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { isSheetPresented = true }) {
                         Image(systemName: "chart.bar.fill")
