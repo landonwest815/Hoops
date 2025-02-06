@@ -14,42 +14,64 @@ struct Profile: View {
     var body: some View {
         ZStack(alignment: .top) {
             
-            VStack {
-                HStack {
+            VStack(spacing: 25) {
+                HStack(spacing: 12) {
                     
                     Text("My Hoopin' Career")
                         .font(.title2)
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .foregroundStyle(.white)
+                        .padding(.horizontal)
+                    
+//                    Circle()
+//                        .frame(width: 5)
+//                        .foregroundStyle(.gray)
+//                    
+//                    Text("Joined Aug 2024")
+//                        .font(.subheadline)
+//                        .fontWeight(.semibold)
+//                        .fontDesign(.rounded)
+//                        .foregroundStyle(.gray)
                     
                     Spacer()
                     
                     
-                    ZStack {
-                        Image(systemName: "flame.fill")
-                            .resizable()
-                            .frame(width: 35, height: 40)
-                        Image(systemName: "circle.fill")
-                            .resizable()
-                            .frame(width: 22, height: 22)
-                            .offset(y: 7)
-                        
-                        Text("\(3)")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .foregroundStyle(.white)
-                            .offset(x: -0.25, y: 3)
-                            .shadow(radius: 5)
-                            .contentTransition(.numericText())
-                    }
-                    .foregroundStyle(.red)
-                    .shadow(color: .red.opacity(0.25), radius: 5)
-                    .shadow(color: .red.opacity(0.125), radius: 12.5)
-                    .shadow(color: .red.opacity(0.05), radius: 20)
+                    
+//                    ZStack {
+//                        Image(systemName: "flame.fill")
+//                            .resizable()
+//                            .frame(width: 35, height: 40)
+//                        Image(systemName: "circle.fill")
+//                            .resizable()
+//                            .frame(width: 22, height: 22)
+//                            .offset(y: 7)
+//                        
+//                        Text("\(3)")
+//                            .font(.title2)
+//                            .fontWeight(.semibold)
+//                            .fontDesign(.rounded)
+//                            .foregroundStyle(.white)
+//                            .offset(x: -0.25, y: 3)
+//                            .shadow(radius: 5)
+//                            .contentTransition(.numericText())
+//                    }
+//                    .foregroundStyle(.red)
+//                    .shadow(color: .red.opacity(0.25), radius: 5)
+//                    .shadow(color: .red.opacity(0.125), radius: 12.5)
+//                    .shadow(color: .red.opacity(0.05), radius: 20)
                     
                 }
+                
+                
+//                HStack {
+//                    Image(systemName: "basketball.fill")
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .foregroundStyle(.blue)
+//                        .frame(width: 75, height: 75)
+//                }
+//                .frame(height: 150)
                 
                 
                 VStack(spacing: 20) {
@@ -102,6 +124,7 @@ struct Profile: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: 100)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
                             
@@ -123,7 +146,7 @@ struct Profile: View {
                                         .foregroundStyle(.white)
                                 }
                                 
-                                Text("Makes")
+                                Text("Total Makes")
                                     .font(.caption)
                                     .fontWeight(.regular)
                                     .fontDesign(.rounded)
@@ -132,14 +155,19 @@ struct Profile: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: 100)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
                             
                             VStack(alignment: .leading) {
                                 HStack {
                                     Image(systemName: "chart.line.uptrend.xyaxis")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 16)
                                         .foregroundStyle(.blue)
                                         .fontWeight(.semibold)
+                                        
                                     
                                     HStack(spacing: 5) {
                                         Text("\(averageMakesPerMinute, specifier: "%.2f")")
@@ -165,11 +193,80 @@ struct Profile: View {
                             }
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: 150)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
                             
                         }
+                        
+                        
+                        HStack(spacing: 10) {
+                            
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "clock.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 15)
+                                        .foregroundStyle(.green)
+                                        .fontWeight(.semibold)
+                                    
+                                    
+                                    Text("0d 18h 23m 37s")
+                                        .font(.headline)
+                                        .fontDesign(.rounded)
+                                        .fontWeight(.semibold)
+                                        .contentTransition(.numericText())
+                                        .foregroundStyle(.white)
+                                }
+                                
+                                Text("Total Time Spent Hoopin'")
+                                    .font(.caption)
+                                    .fontWeight(.regular)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.gray)
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 75)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(18)
+                            
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Image(systemName: "calendar")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 16)
+                                        .foregroundStyle(.purple)
+                                        .fontWeight(.semibold)
+                                    
+                                    
+                                    Text("14 days")
+                                        .font(.headline)
+                                        .fontDesign(.rounded)
+                                        .fontWeight(.semibold)
+                                        .contentTransition(.numericText())
+                                        .foregroundStyle(.white)
+                                }
+                                
+                                Text("Days Hooped")
+                                    .font(.caption)
+                                    .fontWeight(.regular)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.gray)
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: 150)
+                            .frame(height: 75)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(18)
+                            
+                        }
+                        
                     }
                     
                     
@@ -222,6 +319,7 @@ struct Profile: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: 110)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
                             
@@ -252,6 +350,7 @@ struct Profile: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: 110)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
                             
@@ -289,8 +388,114 @@ struct Profile: View {
                             .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
+                            .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
+                            
+                        }
+                    }
+                    
+                    
+                    VStack(spacing: 10) {
+                        
+                        HStack {
+                            //                        Image(systemName: "trophy.fill")
+                            //                            .resizable()
+                            //                            .aspectRatio(contentMode: .fit)
+                            //                            .frame(height: 15)
+                            //                            .foregroundStyle(.yellow)
+                            //                            .fontWeight(.semibold)
+                            
+                            Text("Accolades")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.gray)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        
+                        HStack(spacing: 10) {
+                            
+                            VStack {
+                                
+                                ZStack {
+                                    Image(systemName: "trophy.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 100)
+                                        .foregroundStyle(.brown)
+                                    
+                                    Image(systemName: "basketball.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 27.5)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                }
+                                
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: 110)
+                            .frame(height: 125)
+                            
+                            VStack(alignment: .leading) {
+                                
+                                ZStack {
+                                    Image(systemName: "trophy.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 100)
+                                        .foregroundStyle(.gray)
+                                    
+                                    Image(systemName: "scope")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .fontWeight(.semibold)
+                                            .frame(width: 30)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                }
+                                
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: 110)
+                            .frame(height: 125)
+                            
+                            VStack(alignment: .leading) {
+                                
+                                ZStack {
+                                    Image(systemName: "trophy.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 100)
+                                        .foregroundStyle(.brown)
+                                    
+                                    Image(systemName: "calendar")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 25)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                }
+                                
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 10)
+                            .frame(maxWidth: 110)
+                            .frame(height: 125)
                             
                         }
                     }
@@ -300,31 +505,24 @@ struct Profile: View {
                 Spacer()
             }
                         
-            ZStack(alignment: .top) {
-//                Image(.jersey)
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fit)
-//                    .frame(maxWidth: .infinity)
-//                    .offset(x: 3.5)
-//                    .foregroundStyle(.red)
-//                    .padding(.horizontal)
-                
-                JerseySymbolView()
-                    .frame(width: 200)
-                
-                VStack(spacing: 5) {
-                    ResizableTextView(text: "hansen")
-                    
-                    Text("23")
-                        .font(.system(size: 185))
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .offset(y: -15)
-                }
-                .padding(.top, 50)
-            }
-            .ignoresSafeArea()
-            .offset(y: 350)
+//            ZStack(alignment: .top) {
+//                
+//                JerseySymbolView()
+//                    .frame(width: 100)
+//                
+//                VStack(spacing: 5) {
+//                    ResizableTextView(text: "west")
+//
+//                    Text("23")
+//                        .font(.system(size: 120))
+//                        .fontWeight(.semibold)
+//                        .fontDesign(.rounded)
+//                        .offset(y: -15)
+//                }
+//                .padding(.top, 20)
+//            }
+//            .ignoresSafeArea()
+//            .offset(y: 350)
             
         }
         .padding(.horizontal)
@@ -342,21 +540,21 @@ struct JerseySymbolView: View {
             Image(.jersey)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 500, height: 500)
+                .frame(width: 250, height: 250)
                 .foregroundStyle(.blue)
 
             // Jersey mesh texture masked inside the shape
             Image(.mesh)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 500, height: 500)
+                .frame(width: 250, height: 250)
                 .opacity(0.15)
                 .blendMode(.multiply) // Helps blend texture with color
                 .mask(
                     Image(.jersey)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 500, height: 500)
+                        .frame(width: 250, height: 250)
                 )
         }
         .offset(x: 3.5)
@@ -367,7 +565,7 @@ struct JerseySymbolView: View {
 
 struct ResizableTextView: View {
     let text: String
-    let maxFontSize: CGFloat = 100 // Maximum font size
+    let maxFontSize: CGFloat = 18 // Maximum font size
     
     var body: some View {
         GeometryReader { geometry in
@@ -389,12 +587,13 @@ struct ResizableTextView: View {
                         .fontDesign(.rounded)
                         .rotationEffect(.degrees(angle)) // Rotates outward
                         .offset(y: yOffset) // Smooth downward curve
+                        .minimumScaleFactor(0.01) // Allows shrinking within limits
+
                 }
             }
             .rotationEffect(.degrees(globalRotation)) // Global slight clockwise shift
             .frame(width: geometry.size.width, height: geometry.size.height)
             .lineLimit(1)
-            .minimumScaleFactor(0.01) // Allows shrinking within limits
         }
         .frame(width: 175, height: 50) // Fixed width and height
     }
