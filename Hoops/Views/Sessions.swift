@@ -378,6 +378,16 @@ struct Sessions: View {
                                 .shadow(color: .red.opacity(0.25), radius: 5)
                                 .shadow(color: .red.opacity(0.125), radius: 12.5)
                                 .shadow(color: .red.opacity(0.05), radius: 20)
+                                
+//                                if !hasSessionForToday() {
+//                                    ZStack {
+//                                        Image(systemName: "hourglass")
+//                                            .resizable()
+//                                            .aspectRatio(contentMode: .fit)
+//                                            .frame(width: 13)
+//                                            .foregroundStyle(.gray)
+//                                    }
+//                                }
 
                             }
                             
@@ -507,6 +517,10 @@ struct Sessions: View {
 //        } catch {
 //            print("Failed to save new session: \(error.localizedDescription)")
 //        }
+    }
+    
+    private func hasSessionForToday() -> Bool {
+        return sessions.contains { $0.date.startOfDay == Date().startOfDay }
     }
     
     private func calculateStreak() {

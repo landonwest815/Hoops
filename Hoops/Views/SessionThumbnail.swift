@@ -71,7 +71,7 @@ struct SessionThumbnail: View {
                             Circle()
                                 .stroke(iconColor.opacity(0.2), lineWidth: 2)
                                 .frame(height: 100)
-                                .offset(x: -20, y: -75)
+                                .offset(x: -20, y: -77)
                             
                             Circle()
                                 .stroke(iconColor.opacity(0.2), lineWidth: 2)

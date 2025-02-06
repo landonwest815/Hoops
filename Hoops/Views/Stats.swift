@@ -31,16 +31,27 @@ struct Stats: View {
                 
                 GraphTesting(shotType: $shotType)
                 
-                Text(shotType.rawValue)
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
-                    .font(.title3)
-                    .contentTransition(.numericText())
+                VStack {
+                    HStack(spacing: 15) {
+                        Text(shotType.rawValue)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.title3)
+                            .contentTransition(.numericText())
+                                                
+                        Text("Avg: 6.6")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.headline)
+                            .contentTransition(.numericText())
+                            .foregroundStyle(.gray)
+                    }
                     .padding(.top)
-                
-                CourtTesting(type: $shotType)
-                    .frame(width: 300)
-                    .padding(.bottom)
+                    
+                    
+                    CourtTesting(type: $shotType)
+                }
+                .frame(width: 250)
                     
                 
             }

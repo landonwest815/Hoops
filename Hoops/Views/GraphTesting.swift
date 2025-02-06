@@ -91,11 +91,11 @@ struct GraphTesting: View {
                 //let makes = $0.makes
                 //let length = $0.length / 60
                 
-                PointMark(
-                    x: .value("Index", $0.id.description),
-                    y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
-                )
-                .foregroundStyle(.white)
+//                PointMark(
+//                    x: .value("Index", $0.id.description),
+//                    y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
+//                )
+//                .foregroundStyle(.white)
                     
                 
 //                if let currentActiveSession,currentActiveSession.id == $0.id {
@@ -150,19 +150,20 @@ struct GraphTesting: View {
                     RuleMark(y: .value("Average", averageValue))
                         .lineStyle(.init(lineWidth: 1.5, dash: [5]))
                         .foregroundStyle(.gray)
-                        .annotation(position: .topTrailing) {
-                            Text("Avg: \(String(format: "%.1f", averageValue))")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                                .padding(4)
-                                .offset(x: -66)
-                        }
+//                        .annotation(position: .topTrailing) {
+//                            Text("Avg: \(String(format: "%.1f", averageValue))")
+//                                .font(.caption)
+//                                .foregroundColor(.gray)
+//                                .shadow(color: .white, radius: 0.1)
+//                                .padding(4)
+//                                .offset(x: -66)
+//                        }
                     
                 //}
                 
                 
             }
-            .frame(height: 150)
+            .frame(height: 200)
             .chartYScale(domain: domainStart ... domainEnd)
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)

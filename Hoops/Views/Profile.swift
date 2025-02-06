@@ -14,7 +14,7 @@ struct Profile: View {
     var body: some View {
         ZStack(alignment: .top) {
             
-            VStack(spacing: 25) {
+            VStack(spacing: 20) {
                 HStack(spacing: 12) {
                     
                     Text("My Hoopin' Career")
@@ -22,59 +22,25 @@ struct Profile: View {
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .foregroundStyle(.white)
-                        .padding(.horizontal)
-                    
-//                    Circle()
-//                        .frame(width: 5)
-//                        .foregroundStyle(.gray)
-//                    
-//                    Text("Joined Aug 2024")
-//                        .font(.subheadline)
-//                        .fontWeight(.semibold)
-//                        .fontDesign(.rounded)
-//                        .foregroundStyle(.gray)
                     
                     Spacer()
                     
-                    
-                    
-//                    ZStack {
-//                        Image(systemName: "flame.fill")
-//                            .resizable()
-//                            .frame(width: 35, height: 40)
-//                        Image(systemName: "circle.fill")
-//                            .resizable()
-//                            .frame(width: 22, height: 22)
-//                            .offset(y: 7)
-//                        
-//                        Text("\(3)")
-//                            .font(.title2)
-//                            .fontWeight(.semibold)
-//                            .fontDesign(.rounded)
-//                            .foregroundStyle(.white)
-//                            .offset(x: -0.25, y: 3)
-//                            .shadow(radius: 5)
-//                            .contentTransition(.numericText())
-//                    }
-//                    .foregroundStyle(.red)
-//                    .shadow(color: .red.opacity(0.25), radius: 5)
-//                    .shadow(color: .red.opacity(0.125), radius: 12.5)
-//                    .shadow(color: .red.opacity(0.05), radius: 20)
+                    Button {
+                        // action
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 22)
+                            .foregroundStyle(.gray)
+                    }
                     
                 }
-                
-                
-//                HStack {
-//                    Image(systemName: "basketball.fill")
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .foregroundStyle(.blue)
-//                        .frame(width: 75, height: 75)
-//                }
-//                .frame(height: 150)
+                .padding(.horizontal, 5)
                 
                 
                 VStack(spacing: 20) {
+                    
                     VStack(spacing: 10) {
                         
                         HStack {
@@ -85,7 +51,7 @@ struct Profile: View {
                             //                            .foregroundStyle(.yellow)
                             //                            .fontWeight(.semibold)
                             
-                            Text("Lifetime Stats")
+                            Text("Stats")
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)
@@ -95,139 +61,42 @@ struct Profile: View {
                         }
                         .padding(.horizontal)
                         
-                        HStack(spacing: 10) {
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "basketball.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 15)
-                                        .foregroundStyle(.orange)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("84")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Sessions")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 100)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "scope")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.red)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("732")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Total Makes")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 100)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
+                        HStack {
                             VStack(alignment: .leading) {
                                 HStack {
                                     Image(systemName: "chart.line.uptrend.xyaxis")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
+                                        .frame(height: 18)
                                         .foregroundStyle(.blue)
                                         .fontWeight(.semibold)
-                                        
+                                    
                                     
                                     HStack(spacing: 5) {
                                         Text("\(averageMakesPerMinute, specifier: "%.2f")")
-                                            .font(.headline)
+                                            .font(.title3)
                                             .fontDesign(.rounded)
                                             .fontWeight(.semibold)
                                             .contentTransition(.numericText())
                                             .foregroundStyle(.white)
                                         
                                         Text("/min")
-                                            .font(.caption)
+                                            .font(.headline)
                                             .fontDesign(.rounded)
                                             .foregroundStyle(.gray)
-                                            .offset(y: 1)
+                                            .offset(y: -1)
                                     }
+                                    
+                                    Spacer()
                                 }
                                 
                                 Text("Average Makes")
                                     .font(.caption)
-                                    .fontWeight(.regular)
+                                    .fontWeight(.semibold)
                                     .fontDesign(.rounded)
                                     .foregroundStyle(.gray)
                             }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 150)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
-                        }
-                        
-                        
-                        HStack(spacing: 10) {
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "clock.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 15)
-                                        .foregroundStyle(.green)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("0d 18h 23m 37s")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Total Time Spent Hoopin'")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
+                            .padding(.horizontal, 25)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
                             .frame(height: 75)
@@ -236,165 +105,52 @@ struct Profile: View {
                             
                             VStack(alignment: .leading) {
                                 HStack {
-                                    Image(systemName: "calendar")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.purple)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("14 days")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Days Hooped")
-                                    .font(.caption)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 150)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
-                        }
-                        
-                    }
-                    
-                    
-                    VStack(spacing: 10) {
-                        
-                        HStack {
-                            //                        Image(systemName: "trophy.fill")
-                            //                            .resizable()
-                            //                            .aspectRatio(contentMode: .fit)
-                            //                            .frame(height: 15)
-                            //                            .foregroundStyle(.yellow)
-                            //                            .fontWeight(.semibold)
-                            
-                            Text("Records")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.gray)
-                            
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
-                        HStack(spacing: 10) {
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "basketball.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 15)
-                                        .foregroundStyle(.orange)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("7")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Most Sessions\n(in 1 Day)")
-                                    .font(.caption2)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 110)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "scope")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.red)
-                                        .fontWeight(.semibold)
-                                    
-                                    
-                                    Text("75")
-                                        .font(.headline)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                }
-                                
-                                Text("Most Makes\n(in 1 Session)")
-                                    .font(.caption2)
-                                    .fontWeight(.regular)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 110)
-                            .frame(height: 75)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(18)
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    Image(systemName: "chart.line.uptrend.xyaxis")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 16)
-                                        .foregroundStyle(.blue)
-                                        .fontWeight(.semibold)
-                                    
-                                    HStack(spacing: 5) {
-                                        Text("\(averageMakesPerMinute, specifier: "%.1f")")
-                                            .font(.headline)
-                                            .fontDesign(.rounded)
-                                            .fontWeight(.semibold)
-                                            .contentTransition(.numericText())
-                                            .foregroundStyle(.white)
+                                    ZStack {
+                                        Image(systemName: "flame.fill")
+                                            .resizable()
+                                            .frame(width: 21, height: 23)
+                                            .foregroundStyle(.red)
                                         
-                                        Text("/min")
-                                            .font(.caption2)
-                                            .fontDesign(.rounded)
-                                            .foregroundStyle(.gray)
-                                            .offset(y: 1)
+                                        Image(systemName: "circle.fill")
+                                            .resizable()
+                                            .frame(width: 11, height: 12)
+                                            .offset(y: 3)
+                                            .foregroundStyle(.red)
+                                        
+                                        Image(systemName: "flame.fill")
+                                            .resizable()
+                                            .frame(width: 11, height: 12)
+                                            .offset(y: 3)
+                                            .foregroundStyle(.orange)
                                     }
+                                        
+                                    
+                                    Text("3 Days")
+                                        .font(.title3)
+                                        .fontDesign(.rounded)
+                                        .fontWeight(.semibold)
+                                        .contentTransition(.numericText())
+                                        .foregroundStyle(.white)
+                                    
+                                    Spacer()
                                 }
+
                                 
-                                Text("Highest Average\n(in 1 Session)")
-                                    .font(.caption2)
-                                    .fontWeight(.regular)
+                                Text("Hoopin' Streak")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
                                     .fontDesign(.rounded)
                                     .foregroundStyle(.gray)
                             }
-                            .padding(.horizontal, 15)
+                            .padding(.horizontal, 25)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
                             .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
-                            
                         }
+                        
                     }
-                    
                     
                     VStack(spacing: 10) {
                         
@@ -416,18 +172,19 @@ struct Profile: View {
                         }
                         .padding(.horizontal)
                         
-                        HStack(spacing: 10) {
-                            
-                            VStack {
+                        VStack(spacing: 10) {
+                            HStack(spacing: 10) {
                                 
-                                ZStack {
-                                    Image(systemName: "trophy.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 100)
-                                        .foregroundStyle(.brown)
+                                VStack(spacing: 0) {
                                     
-                                    Image(systemName: "basketball.fill")
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                            .foregroundStyle(.brown)
+                                        
+                                        Image(systemName: "basketball.fill")
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 27.5)
@@ -436,24 +193,41 @@ struct Profile: View {
                                             .blendMode(.multiply)
                                             .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
                                             .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
-                                }
-                                
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 110)
-                            .frame(height: 125)
-                            
-                            VStack(alignment: .leading) {
-                                
-                                ZStack {
-                                    Image(systemName: "trophy.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 100)
-                                        .foregroundStyle(.gray)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
                                     
-                                    Image(systemName: "scope")
+                                    VStack(spacing: 0) {
+                                        Text("25")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Sessions")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
+                                    
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
+                                
+                                VStack(spacing: 0) {
+                                    
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                            .foregroundStyle(.gray)
+                                        
+                                        Image(systemName: "scope")
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .fontWeight(.semibold)
@@ -463,24 +237,41 @@ struct Profile: View {
                                             .blendMode(.multiply)
                                             .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
                                             .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
-                                }
-                                
-                            }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 110)
-                            .frame(height: 125)
-                            
-                            VStack(alignment: .leading) {
-                                
-                                ZStack {
-                                    Image(systemName: "trophy.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: 100)
-                                        .foregroundStyle(.brown)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
                                     
-                                    Image(systemName: "calendar")
+                                    VStack(spacing: 0) {
+                                        Text("200")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Makes")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
+                                
+                                VStack(spacing: 0) {
+                                    
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                        //.foregroundStyle(.brown)
+                                            .foregroundStyle(.gray.opacity(0.1))
+                                        
+                                        Image(systemName: "calendar")
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(width: 25)
@@ -489,17 +280,292 @@ struct Profile: View {
                                             .blendMode(.multiply)
                                             .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
                                             .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
+                                    
+                                    VStack(spacing: 0) {
+                                        Text("14")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Days Hooped")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
                                 }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
                                 
                             }
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 10)
-                            .frame(maxWidth: 110)
-                            .frame(height: 125)
                             
+                            HStack(spacing: 10) {
+                                
+                                VStack(spacing: 0) {
+                                    
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                            .foregroundStyle(.gray)
+                                        
+                                        Image(systemName: "basketball.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 27.5)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
+                                    
+                                    VStack(spacing: 0) {
+                                        Text("25")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Sessions")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
+                                    
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
+                                
+                                VStack(spacing: 0) {
+                                    
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                            .foregroundStyle(.yellow)
+                                        
+                                        Image(systemName: "scope")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .fontWeight(.semibold)
+                                            .frame(width: 30)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
+                                    
+                                    VStack(spacing: 0) {
+                                        Text("200")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Makes")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
+                                
+                                VStack(spacing: 0) {
+                                    
+                                    ZStack {
+                                        Image(systemName: "trophy.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 100)
+                                        //.foregroundStyle(.brown)
+                                            .foregroundStyle(.brown)
+                                        
+                                        Image(systemName: "calendar")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 25)
+                                            .foregroundStyle(.black.opacity(0.2))
+                                            .offset(y: -20)
+                                            .blendMode(.multiply)
+                                            .shadow(color: .white.opacity(0.4), radius: 1, x: 1, y: 1)
+                                            .shadow(color: .black.opacity(0.4), radius: 1, x: -1, y: -1)
+                                    }
+                                    .padding(.top, 5)
+                                    .padding(.horizontal, 5)
+                                    
+                                    VStack(spacing: 0) {
+                                        Text("14")
+                                            .foregroundStyle(.white)
+                                            .font(.subheadline)
+                                        Text("Days Hooped")
+                                            .foregroundStyle(.gray)
+                                            .font(.caption2)
+                                    }
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .padding(.bottom, 5)
+                                    
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 10)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 150)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(18)
+                                
+                            }
                         }
                     }
+                                        
                     
+//                    VStack(spacing: 10) {
+//                        
+//                        HStack {
+//                            //                        Image(systemName: "trophy.fill")
+//                            //                            .resizable()
+//                            //                            .aspectRatio(contentMode: .fit)
+//                            //                            .frame(height: 15)
+//                            //                            .foregroundStyle(.yellow)
+//                            //                            .fontWeight(.semibold)
+//                            
+//                            Text("Records")
+//                                .font(.headline)
+//                                .fontWeight(.semibold)
+//                                .fontDesign(.rounded)
+//                                .foregroundStyle(.gray)
+//                            
+//                            Spacer()
+//                        }
+//                        .padding(.horizontal)
+//                        
+//                        HStack(spacing: 10) {
+//                            
+//                            VStack(alignment: .leading) {
+//                                HStack {
+//                                    Image(systemName: "basketball.fill")
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(height: 15)
+//                                        .foregroundStyle(.orange)
+//                                        .fontWeight(.semibold)
+//                                    
+//                                    
+//                                    Text("7")
+//                                        .font(.headline)
+//                                        .fontDesign(.rounded)
+//                                        .fontWeight(.semibold)
+//                                        .contentTransition(.numericText())
+//                                        .foregroundStyle(.white)
+//                                }
+//                                
+//                                Text("Most Sessions\n(in 1 Day)")
+//                                    .font(.caption2)
+//                                    .fontWeight(.regular)
+//                                    .fontDesign(.rounded)
+//                                    .foregroundStyle(.gray)
+//                            }
+//                            .padding(.horizontal, 15)
+//                            .padding(.vertical, 10)
+//                            .frame(maxWidth: 110)
+//                            .frame(height: 75)
+//                            .background(.ultraThinMaterial)
+//                            .cornerRadius(18)
+//                            
+//                            VStack(alignment: .leading) {
+//                                HStack {
+//                                    Image(systemName: "scope")
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(height: 16)
+//                                        .foregroundStyle(.red)
+//                                        .fontWeight(.semibold)
+//                                    
+//                                    
+//                                    Text("75")
+//                                        .font(.headline)
+//                                        .fontDesign(.rounded)
+//                                        .fontWeight(.semibold)
+//                                        .contentTransition(.numericText())
+//                                        .foregroundStyle(.white)
+//                                }
+//                                
+//                                Text("Most Makes\n(in 1 Session)")
+//                                    .font(.caption2)
+//                                    .fontWeight(.regular)
+//                                    .fontDesign(.rounded)
+//                                    .foregroundStyle(.gray)
+//                            }
+//                            .padding(.horizontal, 15)
+//                            .padding(.vertical, 10)
+//                            .frame(maxWidth: 110)
+//                            .frame(height: 75)
+//                            .background(.ultraThinMaterial)
+//                            .cornerRadius(18)
+//                            
+//                            VStack(alignment: .leading) {
+//                                HStack {
+//                                    Image(systemName: "chart.line.uptrend.xyaxis")
+//                                        .resizable()
+//                                        .aspectRatio(contentMode: .fit)
+//                                        .frame(height: 16)
+//                                        .foregroundStyle(.blue)
+//                                        .fontWeight(.semibold)
+//                                    
+//                                    HStack(spacing: 5) {
+//                                        Text("\(averageMakesPerMinute, specifier: "%.1f")")
+//                                            .font(.headline)
+//                                            .fontDesign(.rounded)
+//                                            .fontWeight(.semibold)
+//                                            .contentTransition(.numericText())
+//                                            .foregroundStyle(.white)
+//                                        
+//                                        Text("/min")
+//                                            .font(.caption2)
+//                                            .fontDesign(.rounded)
+//                                            .foregroundStyle(.gray)
+//                                            .offset(y: 1)
+//                                    }
+//                                }
+//                                
+//                                Text("Highest Average\n(in 1 Session)")
+//                                    .font(.caption2)
+//                                    .fontWeight(.regular)
+//                                    .fontDesign(.rounded)
+//                                    .foregroundStyle(.gray)
+//                            }
+//                            .padding(.horizontal, 15)
+//                            .padding(.vertical, 10)
+//                            .frame(maxWidth: .infinity)
+//                            .frame(height: 75)
+//                            .background(.ultraThinMaterial)
+//                            .cornerRadius(18)
+//                            
+//                        }
+//                    }
                 }
                 
                 Spacer()

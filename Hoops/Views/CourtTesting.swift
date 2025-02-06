@@ -121,7 +121,7 @@ struct CourtTesting: View {
                             }
                             .stroke(Color.blue, lineWidth: 2.5)
                         }
-                        .opacity((type == .midrange || type == .freeThrows || type == .allShots) ? 1.0 : 0.1)
+                        .opacity((type == .midrange || type == .freeThrows/* || type == .allShots*/) ? 1.0 : 0.1)
                     }
                     .onTapGesture {
                         withAnimation {
@@ -175,7 +175,7 @@ struct CourtTesting: View {
                             }
                             .stroke(Color.purple, lineWidth: 2.5)
                         }
-                        .opacity((type == .deep || type == .allShots) ? 1.0 : 0.1)
+                        .opacity((type == .deep/* || type == .allShots*/) ? 1.0 : 0.1)
                         
                     }
                     .onTapGesture {
@@ -240,7 +240,7 @@ struct CourtTesting: View {
                             }
                             .stroke(Color.green, lineWidth: 2.5)
                         }
-                        .opacity((type == .threePointers || type == .allShots) ? 1.0 : 0.1)
+                        .opacity((type == .threePointers/* || type == .allShots*/) ? 1.0 : 0.1)
                         
                     }
                     .onTapGesture {
@@ -294,7 +294,7 @@ struct CourtTesting: View {
                             }
                             .stroke(Color.red, lineWidth: 2.5) // Use the color and line width you want for the stroke
                         }
-                        .opacity((type == .layups || type == .allShots) ? 1.0 : 0.1)
+                        .opacity((type == .layups/* || type == .allShots*/) ? 1.0 : 0.1)
                     }
                     .onTapGesture {
                         withAnimation {
