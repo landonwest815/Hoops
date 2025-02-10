@@ -32,6 +32,8 @@ struct Sessions: View {
     
     @State var isProfileShown = false
     
+    @State var sessionCreationSheet = false
+        
     private var filteredSessions: [HoopSession] {
 //        if selectedShotType != .allShots {
 //            return sessions.filter { $0.shotType == selectedShotType }
@@ -211,6 +213,7 @@ struct Sessions: View {
                 .frame(height: 50)
                 .padding(.horizontal, 15)
                 .padding(.vertical, 5)
+
                 
                 // Date label and buttons
                 HStack {
@@ -303,27 +306,37 @@ struct Sessions: View {
                         }
                     }
                     
-                    Button {
-                        withAnimation {
-                            addRandomSession()
-                        }
-                    } label: {
-                        ZStack {
-                            Circle()
+                    VStack(alignment: .trailing, spacing: 15) {
+                        
+                        
+                        
+                        
+                        Button {
+                            withAnimation {
+                                //addRandomSession()
+                                //showShots.toggle()
+                                sessionCreationSheet = true
+                            }
+                        } label: {
+                            ZStack {
+                                Circle()
                                 //.stroke(Color.orange.opacity(0.75), lineWidth: 1.5)
-                                .fill(.ultraThinMaterial)
-                                .frame(width: 66)
-                            
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 30)
-                                .foregroundStyle(.orange)
-                            
+                                    .fill(.ultraThinMaterial)
+                                    .frame(width: 66)
+                                
+                                Image(systemName: "basketball.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 30)
+                                    .foregroundStyle(.orange)
+                                
+                            }
                         }
-                        .padding()
-                        .padding(.horizontal)
+                        
                     }
+                    .padding(.horizontal, 25)
+                    .padding(.bottom)
+
                 }
             }
             .background(.ultraThinMaterial)
@@ -425,6 +438,16 @@ struct Sessions: View {
                 Profile()
                     .presentationCornerRadius(32)
                     .presentationDetents([.fraction(0.8375)])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(.ultraThickMaterial)
+                    .presentationBackgroundInteraction(.enabled)
+            }
+            .sheet(isPresented: $sessionCreationSheet, onDismiss: {
+                // action
+            }) {
+                CardView()
+                    .presentationCornerRadius(32)
+                    .presentationDetents([.fraction(0.275)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(.ultraThickMaterial)
                     .presentationBackgroundInteraction(.enabled)

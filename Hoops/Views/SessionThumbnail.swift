@@ -191,17 +191,17 @@ struct SessionThumbnail: View {
         
     }
     
-    func getShotPoints(for shotType: ShotType) -> String {
-        switch shotType {
-        case .layups, .midrange, .freeThrows:
-            return "+2"
-        case .threePointers, .deep:
-            return "+3"
-        case .allShots:
-            return "+" // Or another appropriate label
-        }
+}
+
+func getShotPoints(for shotType: ShotType) -> String {
+    switch shotType {
+    case .layups, .midrange, .freeThrows:
+        return "+2"
+    case .threePointers, .deep:
+        return "+3"
+    case .allShots:
+        return "+" // Or another appropriate label
     }
-    
 }
 
 #Preview {
