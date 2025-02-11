@@ -438,19 +438,17 @@ struct Sessions: View {
                 Profile()
                     .presentationCornerRadius(32)
                     .presentationDetents([.fraction(0.8375)])
-                    .presentationDragIndicator(.visible)
+                    //.presentationDragIndicator(.visible)
                     .presentationBackground(.ultraThickMaterial)
-                    .presentationBackgroundInteraction(.enabled)
             }
             .sheet(isPresented: $sessionCreationSheet, onDismiss: {
                 // action
             }) {
                 CardView()
                     .presentationCornerRadius(32)
-                    .presentationDetents([.fraction(0.275)])
-                    .presentationDragIndicator(.visible)
+                    .presentationDetents([.fraction(0.325)])
+                    //.presentationDragIndicator(.visible)
                     .presentationBackground(.ultraThickMaterial)
-                    .presentationBackgroundInteraction(.enabled)
             }
             .onAppear {
                 updateStats()

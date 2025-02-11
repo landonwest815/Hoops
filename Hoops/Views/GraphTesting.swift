@@ -196,36 +196,7 @@ struct GraphTesting: View {
 
 #Preview {
     @Previewable @State var shotType: ShotType = .deep
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: HoopSession.self, configurations: config)
-    
-    let hoopSession3 = HoopSession(date: Date(timeInterval: -86400, since: Date.now), makes: 15, length: 240, shotType: .threePointers)
-    container.mainContext.insert(hoopSession3)
-    
-    let hoopSession1 = HoopSession(date: Date.now, makes: 5, length: 120, shotType: .threePointers)
-    container.mainContext.insert(hoopSession1)
-    
-    let hoopSession6 = HoopSession(date: Date(timeInterval: -8400, since: Date.now), makes: 20, length: 120, shotType: .threePointers)
-    container.mainContext.insert(hoopSession6)
-    
-    let hoopSession2 = HoopSession(date: Date(timeInterval: 86400, since: Date.now), makes: 10, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession2)
-    
-    let hoopSession4 = HoopSession(date: Date(timeInterval: 6 * 86400, since: Date.now), makes: 6, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession4)
-    
-    let hoopSession8 = HoopSession(date: Date(timeInterval: 7 * 86400, since: Date.now), makes: 11, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession8)
-    
-    let hoopSession9 = HoopSession(date: Date(timeInterval: 8 * 86400, since: Date.now), makes: 15, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession9)
-    
-    let hoopSession10 = HoopSession(date: Date(timeInterval: 15 * 86400, since: Date.now), makes: 4, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession10)
-    
-    let hoopSession11 = HoopSession(date: Date(timeInterval: 60 * 86400, since: Date.now), makes: 3, length: 90, shotType: .threePointers)
-    container.mainContext.insert(hoopSession11)
     
     return GraphTesting(shotType: $shotType)
-        .modelContainer(container)
+        .modelContainer(HoopSession.preview)
 }
