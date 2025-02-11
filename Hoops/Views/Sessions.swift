@@ -10,8 +10,8 @@ import SwiftData
 
 enum GraphType: String, Codable, CaseIterable {
     case sessions = "Sessions"
-    case makes = "Shot Makes"
-    case average = "Average/Min"
+    case makes = "Total Makes"
+    case average = "Average Makes"
     case none = "N/A"
 }
 
@@ -26,7 +26,7 @@ struct Sessions: View {
     @State private var totalMakes: Int = 0
     @State private var averageMakesPerMinute: Double = 0
     
-    @State var selectedGraph: GraphType = .none
+    @State var selectedMetric: GraphType = .none
     
     @State var streak = 0
     
@@ -64,11 +64,11 @@ struct Sessions: View {
                     
                     Button {
                         withAnimation {
-                            if selectedGraph != .sessions {
+                            if selectedMetric != .sessions {
                                 isSheetPresented = true
-                                selectedGraph = .sessions
+                                selectedMetric = .sessions
                             } else {
-                                selectedGraph = .none
+                                selectedMetric = .none
                                 isSheetPresented = false
                             }
                         }
@@ -103,7 +103,7 @@ struct Sessions: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(18)
                         .overlay(
-                            selectedGraph == .sessions ?
+                            selectedMetric == .sessions ?
                             RoundedRectangle(cornerRadius: 18)
                                 .stroke(Color.white.opacity(0.66), lineWidth: 2)
                             : nil
@@ -112,11 +112,11 @@ struct Sessions: View {
                         
                     Button {
                         withAnimation {
-                            if selectedGraph != .makes {
+                            if selectedMetric != .makes {
                                 isSheetPresented = true
-                                selectedGraph = .makes
+                                selectedMetric = .makes
                             } else {
-                                selectedGraph = .none
+                                selectedMetric = .none
                                 isSheetPresented = false
                             }
                         }
@@ -150,7 +150,7 @@ struct Sessions: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(18)
                         .overlay(
-                            selectedGraph == .makes ?
+                            selectedMetric == .makes ?
                             RoundedRectangle(cornerRadius: 18)
                                 .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
                             : nil
@@ -159,11 +159,11 @@ struct Sessions: View {
                                             
                     Button {
                         withAnimation {
-                            if selectedGraph != .average {
+                            if selectedMetric != .average {
                                 isSheetPresented = true
-                                selectedGraph = .average
+                                selectedMetric = .average
                             } else {
-                                selectedGraph = .none
+                                selectedMetric = .none
                                 isSheetPresented = false
                             }
                         }
@@ -202,7 +202,7 @@ struct Sessions: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(18)
                         .overlay(
-                            selectedGraph == .average ?
+                            selectedMetric == .average ?
                             RoundedRectangle(cornerRadius: 18)
                                 .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
                             : nil
@@ -290,9 +290,25 @@ struct Sessions: View {
                                         average: Double(session.makes) / (Double(session.length) / 60.0),
                                         shotType: session.shotType
                                     )
-                                    .onLongPressGesture {
-                                        context.delete(session)
+                                    .transition(.opacity)
+                                    .contextMenu {
+                                        Button {
+                                            print("Change country setting")
+                                        } label: {
+                                            Label("Edit Session", systemImage: "pencil")
+                                        }
+
+                                        Button(role: .destructive) {
+                                            withAnimation {
+                                                context.delete(session)
+                                            }
+                                        } label: {
+                                            Label("Delete Session", systemImage: "trash")
+                                        }
                                     }
+//                                    .onLongPressGesture {
+//                                        context.delete(session)
+//                                    }
                                     .frame(height: 75)
                                     .scrollTransition { content, phase in
                                         content
@@ -307,10 +323,7 @@ struct Sessions: View {
                     }
                     
                     VStack(alignment: .trailing, spacing: 15) {
-                        
-                        
-                        
-                        
+                    
                         Button {
                             withAnimation {
                                 //addRandomSession()
@@ -422,10 +435,10 @@ struct Sessions: View {
             }
             .sheet(isPresented: $isSheetPresented, onDismiss: {
                 withAnimation {
-                    selectedGraph = .none
+                    selectedMetric = .none
                 }
             }) {
-                Stats(shotType: $selectedShotType, selectedGraph: $selectedGraph)
+                Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)
                     .presentationCornerRadius(32)
                     .presentationDetents([.fraction(0.6875)])
                     .presentationDragIndicator(.visible)

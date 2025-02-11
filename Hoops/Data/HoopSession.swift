@@ -42,22 +42,34 @@ extension HoopSession {
         let container = try! ModelContainer(for: HoopSession.self,
                                             configurations: ModelConfiguration(isStoredInMemoryOnly: true))
 
+        let shotTypes: [ShotType] = [.layups, .freeThrows, .midrange, .threePointers, .deep, .allShots]
+        let calendar = Calendar.current
         let today = Date()
-        let yesterday = Date(timeInterval: -86400, since: today)
-        let twoDaysAgo = Date(timeInterval: -172800, since: today)
 
-        container.mainContext.insert(HoopSession(date: twoDaysAgo, makes: 15, length: 120, shotType: .allShots))
-        container.mainContext.insert(HoopSession(date: twoDaysAgo, makes: 10, length: 100, shotType: .threePointers))
-        container.mainContext.insert(HoopSession(date: twoDaysAgo, makes: 8, length: 80, shotType: .freeThrows))
+        for dayOffset in 0..<30 { // Generate for the last 30 days
+            let sessionDate = calendar.date(byAdding: .day, value: -dayOffset, to: today)!
+            let sessionCount = Int.random(in: 1...3) // 1 to 3 sessions per day
 
-        container.mainContext.insert(HoopSession(date: yesterday, makes: 12, length: 110, shotType: .midrange))
-        container.mainContext.insert(HoopSession(date: yesterday, makes: 18, length: 130, shotType: .layups))
-        container.mainContext.insert(HoopSession(date: yesterday, makes: 14, length: 90, shotType: .deep))
+            for _ in 0..<sessionCount {
+                let shotType = shotTypes.randomElement()!
 
-        container.mainContext.insert(HoopSession(date: today, makes: 20, length: 140, shotType: .allShots))
-        container.mainContext.insert(HoopSession(date: today, makes: 16, length: 125, shotType: .freeThrows))
-        container.mainContext.insert(HoopSession(date: today, makes: 22, length: 150, shotType: .threePointers))
+                // **Skill Progression Scaling**: The further in the past, the lower the makes.
+                let progressFactor = Double(30 - dayOffset) / 30.0 // 0.03 (earliest) to 1.0 (today)
+                
+                // Shot attempts increase over time, but accuracy also improves
+                let baseMakes = Int(5 + 25 * progressFactor) // Gradual increase from 5 to ~30
+                let variation = Int.random(in: -3...3) // Small natural variation
+                let makes = max(5, baseMakes + variation) // Ensure min makes of 5
+                
+                // Session length increases over time
+                let baseLength = Int(60 + 120 * progressFactor) // Gradual increase from 60 to ~180 minutes
+                let lengthVariation = Int.random(in: -15...15) // Small natural variation
+                let length = max(60, baseLength + lengthVariation) // Ensure min session of 60 min
 
+                container.mainContext.insert(HoopSession(date: sessionDate, makes: makes, length: length, shotType: shotType))
+            }
+        }
+        
         return container
     }
 }

@@ -24,6 +24,8 @@ struct GraphTesting: View {
     @State private var avg: Double = 0.0
     @State private var makes: Int = 0
     
+    @Binding var selectedMetric: GraphType
+    
     var lineColor: Color {
         switch shotType {
         case .freeThrows:    return .blue
@@ -35,168 +37,167 @@ struct GraphTesting: View {
         }
     }
     
+    var filteredSessions: [HoopSession] {
+        let result = shotType == .allShots ? sessions : sessions.filter { $0.shotType == shotType }
+        print("Filtered Sessions for \(shotType):", result.count)
+        return result
+    }
+    
+    var groupedSessions: [String: [HoopSession]] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd" // Ensure consistent formatting
+        formatter.locale = Locale(identifier: "en_US_POSIX") // Avoid localization issues
+
+        let grouped = Dictionary(grouping: filteredSessions) { session in
+            formatter.string(from: session.date)
+        }
+        
+        print("Grouped Sessions:", grouped) // Debugging output
+        return grouped
+    }
+    
+    var computedData: [(date: Date, value: Double)] {
+        let data: [(Date, Double)] = groupedSessions.map { (dateString, sessions) in
+            let totalMakes = sessions.reduce(0) { $0 + $1.makes }
+            let totalTimeInMinutes = sessions.reduce(0) { $0 + ($1.length) } // Convert length to total minutes
+
+            let averageMakesPerMinute = totalTimeInMinutes > 0 ? Double(totalMakes) / (Double(totalTimeInMinutes) / 60.0) : 0
+
+            let sessionCount = Double(sessions.count)
+
+            let yValue: Double
+            switch selectedMetric {
+            case .makes:
+                yValue = Double(totalMakes)
+            case .average:
+                yValue = averageMakesPerMinute
+            case .sessions:
+                yValue = sessionCount
+            case .none:
+                yValue = 0
+            }
+
+            // Convert date string back to actual Date object
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let date = formatter.date(from: dateString) ?? Date()
+
+            print("Date: \(date), Y-Value: \(yValue)") // Debugging output
+            return (date, yValue)
+        }
+        .sorted { $0.0 < $1.0 }
+
+        print("Computed Data Count:", data.count)
+        return data
+    }
+    
       
     var body: some View {
-        
-        let filteredValues = filteredSessions.map {
-            Double($0.makes) / (Double($0.length) / 60.0)
-        }
-        
-        let averageValue = filteredValues.isEmpty ? 0 : filteredValues.reduce(0, +) / Double(filteredValues.count)
 
-        // Provide sensible defaults if there are no sessions:
-        let minYValue = filteredValues.min() ?? 0
-        let maxYValue = filteredValues.max() ?? 1
+        let yValues = computedData.map { $0.value }
+        let averageValue = yValues.isEmpty ? 0 : yValues.reduce(0, +) / Double(yValues.count)
+
+        // Calculate a 10% buffer around the average
+        //let bufferAmount = (yValues.max() ?? 1) * 0.1
+        let ruleMarkPosition = averageValue /*+ bufferAmount*/
         
-        // Add some “padding” around the min/max values.
-        // For example, 10% on top/bottom:
+        let minYValue = yValues.min() ?? 0
+        let maxYValue = yValues.max() ?? 1
+
+        // Add padding around the min/max values
         let range = maxYValue - minYValue
-        let domainStart = max(0, minYValue - 0.1 * range)
-        let domainEnd   = maxYValue + 0.1 * range
-    
+        let padding = max(range * 0.1, 2)
+        let domainStart = minYValue >= 0 ? max(0, minYValue - padding) : minYValue - padding
+        let domainEnd = maxYValue + padding
         
-        ZStack {
+        VStack {
             
-            if filteredSessions.isEmpty {
-                Text("No data available.\nGo shoot some hoops!")
-                    .fontWeight(.regular)
+            HStack(spacing: 15) {
+                
+                Text(selectedMetric.rawValue)
+                    .fontWeight(.semibold)
                     .fontDesign(.rounded)
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-            }
-            
-            Chart(filteredSessions) {
-                LineMark(
-                    x: .value("Month", $0.id.description),
-                    y: .value("Hours of Sunshine", Double($0.makes) / (Double($0.length) / 60.0))
-                )
-                .foregroundStyle(lineColor)
-                .lineStyle(.init(lineWidth: 3))
-                .interpolationMethod(.catmullRom)
+                    .font(.headline)
+                    .foregroundStyle(.white)
                 
-                RuleMark(y: .value("Average", averageValue))
-                    .lineStyle(.init(lineWidth: 1.5, dash: [5]))
+                Text("\(averageValue.formatted(.number.precision(.fractionLength(2))))")
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .font(.headline)
                     .foregroundStyle(.gray)
-//                    .annotation(position: .topTrailing) {
-//                        Text("Avg: \(String(format: "%.2f", averageValue))")
-//                            .font(.caption)
-//                            .foregroundColor(.white)
-//                            .padding(4)
-//                            .background {
-//                                RoundedRectangle(cornerRadius: 4)
-//                                    .fill(.ultraThinMaterial)
-//                            }
-//                    }
                 
-                //let makes = $0.makes
-                //let length = $0.length / 60
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.top)
+            
+            ZStack {
                 
-//                PointMark(
-//                    x: .value("Index", $0.id.description),
-//                    y: .value("Value", Double($0.makes) / (Double($0.length) / 60.0))
-//                )
-//                .foregroundStyle(.white)
+                if filteredSessions.isEmpty {
+                    Text("No data available.\nGo shoot some hoops!")
+                        .fontWeight(.regular)
+                        .fontDesign(.rounded)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                }
+                
+                
+                Chart(computedData, id: \.date) {
+                    LineMark(
+                        x: .value("Date", $0.date),
+                        y: .value("Metric", $0.value)
+                    )
+                    .foregroundStyle(lineColor)
+                    .lineStyle(.init(lineWidth: 3))
+                    .interpolationMethod(.catmullRom)
                     
-                
-//                if let currentActiveSession,currentActiveSession.id == $0.id {
-//                    RuleMark(x: .value("Index", currentActiveSession.id.description))
-//                        .lineStyle(.init(lineWidth: 1.5, miterLimit: 2, dash: [5], dashPhase: 5))
-//                        .foregroundStyle(.white)
-//                        .annotation(position: .top) {
-//                            HStack(spacing: 10) {
-//                                VStack(alignment: .center, spacing: 1) {
-//                                    Text("Makes")
-//                                        .font(.caption)
-//                                        .foregroundStyle(.white)
-//                                        .frame(width: 50)
-//                                    
-//                                    Text(String(makes))
-//                                        .font(.title3.bold())
-//                                        .foregroundStyle(.white)
-//                                        .contentTransition(.numericText())
-//                                        .animation(.easeInOut(duration: 0.3), value: makes)
-//                                        .frame(width: 50)
-//                                }
-//                                .frame(height: 40)
-//                                .padding(2.5)
-//                                .background(.white.opacity(0.2))
-//                                .cornerRadius(10)
-//                                
-//                                VStack(alignment: .center, spacing: 1) {
-//                                    
-//                                    Text("Avg")
-//                                        .font(.caption)
-//                                        .foregroundStyle(.white)
-//                                        .frame(width: 50)
-//                                                                        
-//                                    Text(String(format: "%.1f", avg))
-//                                        .font(.title3.bold())
-//                                        .foregroundStyle(.white)
-//                                        .contentTransition(.numericText())
-//                                        .animation(.easeInOut(duration: 0.3), value: avg)
-//                                        .frame(width: 50)
-//                                        .sensoryFeedback(.increase, trigger: avg)
-//                                }
-//                                .frame(height: 40)
-//                                .padding(2.5)
-//                                .background(.white.opacity(0.2))
-//                                .cornerRadius(10)
-//                                
-//                            }
-//                            .padding(.horizontal, 10)
-//                            .padding(.top, 30)
-//                        }
-//                } else {
-                    RuleMark(y: .value("Average", averageValue))
+                    AreaMark(
+                        x: .value("Date", $0.date),
+                        y: .value("Metric", $0.value)
+                    )
+                    .foregroundStyle(lineColor.opacity(0.25))
+                    .lineStyle(.init(lineWidth: 3))
+                    .interpolationMethod(.catmullRom)
+                    
+                    RuleMark(y: .value("Average", ruleMarkPosition))
                         .lineStyle(.init(lineWidth: 1.5, dash: [5]))
                         .foregroundStyle(.gray)
-//                        .annotation(position: .topTrailing) {
-//                            Text("Avg: \(String(format: "%.1f", averageValue))")
-//                                .font(.caption)
-//                                .foregroundColor(.gray)
-//                                .shadow(color: .white, radius: 0.1)
-//                                .padding(4)
-//                                .offset(x: -66)
-//                        }
-                    
-                //}
-                
+                }
+                .frame(height: 175)
+                .chartYScale(domain: domainStart ... domainEnd)
+                .cornerRadius(15)
+                .chartXAxis(.hidden)
+                .padding(.bottom)
+                //.chartYAxis(.hidden)
                 
             }
-            .frame(height: 200)
-            .chartYScale(domain: domainStart ... domainEnd)
-            .chartXAxis(.hidden)
-            .chartYAxis(.hidden)
-            .cornerRadius(15)
-        }
-        .onChange(of: shotType) {
-            print("Total Sessions: \(sessions.count)")
-            print("Filtered Sessions: \(filteredSessions.count)")
-        }
-        .padding(.horizontal)
-        .onDisappear() {
-            isOn = false
-        }
-        .onChange(of: currentActiveSession) { newSession in
-            if let currentActiveSession = newSession {
-                let newAvg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
-                if avg != newAvg {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        avg = newAvg
+            .onChange(of: shotType) {
+                print("Total Sessions: \(sessions.count)")
+                print("Filtered Sessions: \(filteredSessions.count)")
+            }
+            .padding(.horizontal)
+            .onDisappear() {
+                isOn = false
+            }
+            .onChange(of: currentActiveSession) { newSession in
+                if let currentActiveSession = newSession {
+                    let newAvg = Double(currentActiveSession.makes) / (Double(currentActiveSession.length) / 60.0)
+                    if avg != newAvg {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            avg = newAvg
+                        }
                     }
                 }
             }
         }
     }
-    
-    var filteredSessions: [HoopSession] {
-        shotType == .allShots ? sessions : sessions.filter { $0.shotType == shotType }
-    }
 }
 
 #Preview {
-    @Previewable @State var shotType: ShotType = .deep
+    @Previewable @State var shotType: ShotType = .allShots
+    @Previewable @State var selectedMetric: GraphType = .sessions
+
     
-    return GraphTesting(shotType: $shotType)
+    return GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
         .modelContainer(HoopSession.preview)
 }

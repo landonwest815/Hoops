@@ -9,9 +9,13 @@ import SwiftUI
 
 struct CardView: View {
     
+    @Environment(\.modelContext) var context
+    @Environment(\.dismiss) var dismiss
     @State var selectedTab = 0
+    @State var shotType: ShotType = .allShots
     @State var customTime = false
     @State var customMinutes = 5
+    @State var makes = 25
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -25,7 +29,7 @@ struct CardView: View {
                 
                 HStack {
                     
-                    Image(systemName: "arrowshape.backward.fill")
+                    Image(systemName: "arrowshape.backward")
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .font(.title3)
@@ -43,9 +47,9 @@ struct CardView: View {
                     Spacer()
                     
                     Button {
-                        
+                        dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark.circle")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.title3)
@@ -56,14 +60,32 @@ struct CardView: View {
                 .padding(.vertical, 5)
                 
                 HStack(spacing: 10) {
-                    HabitView(text: "Layups", icon: "basketball.fill", color: .red, shotType: .layups, onButtonPress: { selectedTab = 1 })
-                    HabitView(text: "Free Throws", icon: "basketball.fill", color: .blue, shotType: .freeThrows, onButtonPress: { selectedTab = 1 })
-                    HabitView(text: "Midrange", icon: "basketball.fill", color: .blue, shotType: .midrange, onButtonPress: { selectedTab = 1 })
+                    HabitView(text: "Layups", icon: "basketball.fill", color: .red, shotType: .layups, onButtonPress: {
+                                        selectedTab = 1
+                                        shotType = .layups
+                                    })
+                    HabitView(text: "Free Throws", icon: "basketball.fill", color: .blue, shotType: .freeThrows, onButtonPress: {
+                                                    selectedTab = 1
+                                                    shotType = .freeThrows
+                                                })
+                    HabitView(text: "Midrange", icon: "basketball.fill", color: .blue, shotType: .midrange, onButtonPress: {
+                                        selectedTab = 1
+                                        shotType = .midrange
+                                    })
                 }
                 HStack(spacing: 10) {
-                    HabitView(text: "Threes", icon: "basketball.fill", color: .green, shotType: .threePointers, onButtonPress: { selectedTab = 1 })
-                    HabitView(text: "Deep", icon: "basketball.fill", color: .purple, shotType: .deep, onButtonPress: { selectedTab = 1 })
-                    HabitView(text: "Any Shots", icon: "basketball.fill", color: .orange, shotType: .allShots, onButtonPress: { selectedTab = 1 })
+                    HabitView(text: "Threes", icon: "basketball.fill", color: .green, shotType: .threePointers, onButtonPress: {
+                                            selectedTab = 1
+                                            shotType = .threePointers
+                                        })
+                    HabitView(text: "Deep", icon: "basketball.fill", color: .purple, shotType: .deep, onButtonPress: {
+                                                selectedTab = 1
+                                                shotType = .deep
+                                            })
+                    HabitView(text: "Any Shots", icon: "basketball.fill", color: .orange, shotType: .allShots, onButtonPress: {
+                                                selectedTab = 1
+                                                shotType = .allShots
+                                            })
                 }
                 
                 Spacer()
@@ -83,7 +105,7 @@ struct CardView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: "arrowshape.backward.fill")
+                        Image(systemName: "arrowshape.backward")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.title3)
@@ -102,9 +124,9 @@ struct CardView: View {
                     Spacer()
                     
                     Button {
-                        
+                        dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark.circle")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.title3)
@@ -114,7 +136,7 @@ struct CardView: View {
                 }
                 .padding(.vertical, 5)
                 
-                if !customTime {
+                if false/*!customTime*/ {
                     HStack(spacing: 10) {
                         HabitView(text: "1 min", icon: "basketball.fill", color: .red, onButtonPress: { selectedTab = 2 })
                         HabitView(text: "5 min", icon: "basketball.fill", color: .blue, onButtonPress: { selectedTab = 2 })
@@ -147,7 +169,7 @@ struct CardView: View {
                                 .cornerRadius(5)
                         }
                         
-                        HStack(spacing: 7.5) {
+                        VStack(spacing: 0) {
                             Text("\(customMinutes)")
                                 .font(.system(size: 60))
                                 .fontWeight(.semibold)
@@ -157,12 +179,14 @@ struct CardView: View {
                                 .frame(width: 80)
                             
                             Text("min")
-                                .font(.system(size: 30))
+                                .font(.system(size: 20))
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)
                                 .foregroundStyle(.gray)
-                                .offset(y: 7.5)
+                                .lineLimit(1)
                         }
+                        .frame(width: 90)
+                        .offset(y: 7.5)
                         
                         Button {
                             withAnimation {
@@ -192,15 +216,17 @@ struct CardView: View {
                             Image(systemName: "checkmark.rectangle.fill")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(height: 35)
+                                .frame(width: 50, height: 35)
                                 .font(.title)
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)
-                                .foregroundStyle(.gray)
+                                .foregroundStyle(.green.opacity(0.75))
                                 .padding(5)
                                 .cornerRadius(5)
                         }
                         
+                        Spacer()
+
                     }
                 }
                 
@@ -216,7 +242,7 @@ struct CardView: View {
                             selectedTab -= 1
                         }
                     } label: {
-                        Image(systemName: "arrowshape.backward.fill")
+                        Image(systemName: "arrowshape.backward")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.title3)
@@ -235,9 +261,9 @@ struct CardView: View {
                     Spacer()
                     
                     Button {
-                        
+                        dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark.circle")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
                             .font(.title3)
@@ -247,10 +273,176 @@ struct CardView: View {
                 }
                 .padding(.vertical, 5)
                 
+                HStack(spacing: 25) {
+                    
+                    Spacer()
+                    
+                    Button {
+                        withAnimation {
+                            makes -= 1
+                        }
+                    } label: {
+                        Image(systemName: "minus")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
+                            .frame(width: 25, height: 25)
+                            .padding(5)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(5)
+                    }
+                    
+                    VStack(spacing: 0) {
+                        Text("\(makes)")
+                            .font(.system(size: 60))
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText())
+                        
+                        Text("Shots")
+                            .font(.system(size: 20))
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
+                            .lineLimit(1)
+                    }
+                    .frame(width: 90)
+                    .offset(y: 7.5)
+                    
+                    Button {
+                        withAnimation {
+                            if makes < 99 {
+                                makes += 1
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
+                            .frame(width: 25, height: 25)
+                            .padding(5)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(5)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        withAnimation {
+                            selectedTab = 3
+                        }
+                    } label: {
+                        Image(systemName: "checkmark.rectangle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50, height: 35)
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.green.opacity(0.75))
+                            .padding(5)
+                            .cornerRadius(5)
+                    }
+                    
+                    Spacer()
+                    
+                }
+                
                 Spacer()
             }
             .padding(.horizontal)
             .tag(2)
+            
+            VStack {
+                HStack {
+                    Button {
+                        withAnimation {
+                            selectedTab -= 1
+                        }
+                    } label: {
+                        Image(systemName: "arrowshape.backward")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.title3)
+                            .foregroundStyle(.gray)
+                            .frame(width: 30)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("Everything look good?")
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .font(.title3)
+                        .foregroundStyle(.white)
+                    
+                    Spacer()
+                    
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.title3)
+                            .foregroundStyle(.gray)
+                            .frame(width: 30)
+                    }
+                }
+                .padding(.vertical, 5)
+                
+                SessionThumbnail(date: .now, makes: makes, length: customMinutes * 60, average: Double(makes) / (Double(customMinutes)), shotType: shotType)
+                    .padding(.top, 5)
+                
+                HStack(spacing: 25) {
+                    
+                    Button {
+                        withAnimation {
+                            selectedTab = 2
+                        }
+                    } label: {
+                        Image(systemName: "xmark.rectangle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 35)
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.red.opacity(0.75))
+                            .padding(5)
+                            .cornerRadius(5)
+                    }
+                    
+                    Button {
+                        var session = HoopSession(date: .now, makes: makes, length: customMinutes * 60, shotType: shotType)
+                        withAnimation {
+                            context.insert(session)
+                        }
+                        dismiss()
+                    } label: {
+                        Image(systemName: "checkmark.rectangle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 35)
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.green.opacity(0.75))
+                            .padding(5)
+                            .cornerRadius(5)
+                    }
+                    
+                }
+                .padding(.top, 5)
+                
+                Spacer()
+            }
+            .padding(.horizontal)
+            .tag(3)
         }
         .padding(.top, 12.5)
         .onAppear {

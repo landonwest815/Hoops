@@ -16,7 +16,7 @@ struct Stats: View {
     
     @State private var color: Color = .orange
     @Binding var shotType: ShotType
-    @Binding var selectedGraph: GraphType
+    @Binding var selectedMetric: GraphType
     
     var body: some View {
         
@@ -29,7 +29,7 @@ struct Stats: View {
                 
                 //StatCards(type: $shotType)
                 
-                GraphTesting(shotType: $shotType)
+                GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
                 
                 VStack {
                     HStack(spacing: 15) {
@@ -161,8 +161,8 @@ struct StatCards: View {
 
 #Preview {
     @Previewable @State var shotType = ShotType.threePointers
-    @Previewable @State var selectedGraph = GraphType.none
+    @Previewable @State var selectedMetric = GraphType.none
     
-    return Stats(shotType: $shotType, selectedGraph: $selectedGraph)
+    return Stats(shotType: $shotType, selectedMetric: $selectedMetric)
         .modelContainer(HoopSession.preview)
 }
