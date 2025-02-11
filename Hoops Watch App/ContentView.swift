@@ -32,6 +32,7 @@ struct ContentView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 250, height: 250)
                     .foregroundStyle(.orange.opacity(0.75))
+                    .padding(.top, 5)
             }
             .offset(y: 95)
         }
