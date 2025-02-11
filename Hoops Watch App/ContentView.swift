@@ -10,20 +10,30 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationStack {
-            // MARK: Basketball
-                Image(systemName: "basketball.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundStyle(.orange)
-                    .padding(.bottom, 20)
-            
-            // MARK: New Session Button
-                NavigationLink(destination: ShotSelection()) {
+            VStack(spacing: 15) {
+                
+                Text("hoops.")
+                    .font(.title)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .foregroundStyle(.white)
+                
+                // MARK: New Session Button
+                NavigationLink(destination: SessionSelection()) {
                     Text("New Session")
                 }.simultaneousGesture(TapGesture().onEnded{
                     WKInterfaceDevice.current().play(.click)
                 })
                 .tint(.green)
+                
+                // MARK: Basketball
+                Image(systemName: "basketball.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 250, height: 250)
+                    .foregroundStyle(.orange.opacity(0.75))
+            }
+            .offset(y: 95)
         }
     }
 }

@@ -166,10 +166,17 @@ struct Sessions: View {
                     }
                 }
             }
-            .sheet(isPresented: Binding(
-                get: { activeSheet != .none },
-                set: { if !$0 { activeSheet = .none } }
-            )) {
+            .sheet(
+                isPresented: Binding(
+                    get: { activeSheet != .none },
+                    set: { if !$0 { activeSheet = .none } }
+                ),
+               onDismiss: {
+                   withAnimation {
+                       selectedMetric = .none
+                   }
+               }
+            ) {
                 switch activeSheet {
                 case .stats:
                     Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)

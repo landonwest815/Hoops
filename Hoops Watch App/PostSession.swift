@@ -19,55 +19,69 @@ struct PostSession: View {
     var body: some View {
         
         NavigationView {
-            HStack {
-                Form {
-                    Section(header: Text("Time")) {
+            HStack(spacing: 20) {
+                VStack(spacing: 20) {
+                    
+                    VStack {
+                        Text("Length")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
+                        
                         Text(formatTime(seconds: sessionTimeInSec))
-                            .font(.system(size: 25))
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
                     }
-                    .listRowBackground(Color.clear)
-
-                    Section(header: Text("Makes")) {
-                        Text("\(makes)")
-                            .font(.system(size: 25))
+                    .frame(height: 66)
+                    
+                    VStack {
+                        Text("Makes")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
+                        
+                        Text(String(makes))
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
                     }
-                    .listRowBackground(Color.clear)
-
+                    .frame(height: 66)
                 }
-                .scrollDisabled(true)
-                
-                VStack {
+
+                VStack(spacing: 20) {
                     
-                    Form {
+                    VStack {
+                        Text("Avg")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.gray)
                         
-                        Section(header: Text("AVG/Min")) {
-                            Text(averageMakesPerMinute(sessionLength: sessionTimeInSec, makes: makes))
-                                .font(.system(size: 25))
-                        }
-                        .listRowBackground(Color.clear)
-                        
+                        Text(averageMakesPerMinute(sessionLength: sessionTimeInSec, makes: makes))
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
                     }
-                    .scrollDisabled(true)
-                    
-//                    NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true)) {
-//                        HStack {
-//                            Spacer()
-//                            Image(systemName: "checkmark")
-//                            Spacer()
-//                        }
-//                    }
+                    .frame(height: 66)
+                
                     Button("Done") {
                         sendSessionToiOS()
                         dismiss()
                     }
+                    .frame(width: 66, height: 66)
                     .simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
-                    .navigationBarBackButtonHidden(true)
                     .tint(.green)
-                    .padding(.trailing, 20)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
                     
                 }
+                .navigationBarBackButtonHidden(true)
 
             }
             .navigationTitle("Session Stats")

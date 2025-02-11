@@ -50,7 +50,7 @@ struct ShotSelection: View {
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
-                    .tint(.green)
+                    .tint(.purple)
                 
                 // MARK: All Shots
                 NavigationLink(destination: Session(shotType: .allShots).navigationBarBackButtonHidden(true)) {
@@ -58,7 +58,7 @@ struct ShotSelection: View {
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
-                    .tint(.purple)
+                    .tint(.orange)
             }
             .navigationTitle("Shot Type")
         }

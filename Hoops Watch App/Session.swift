@@ -29,28 +29,43 @@ struct Session: View {
             VStack {
                 HStack {
                     Spacer()
-                    Button {                         showingEndEarlyConfirmation = true
+                    
+                    Button {
+                        showingEndEarlyConfirmation = true
                     } label: {
                         Image(systemName: "x.circle")
                             .resizable()
-                            .frame(width: 25, height: 25)
+                            .frame(width: 22, height: 22)
                             .foregroundStyle(.red)
                     }
                     .clipShape(.circle)
-                    .frame(width: 25, height: 25)
+                    .frame(width: 22, height: 22)
                     .tint(.red)
-                    .confirmationDialog("End Session?", isPresented: $showingEndEarlyConfirmation) {
-                                        Button("Finish Session", role: .destructive) {
-                                            endSessionAndNavigate()
-                                        }
-                                        Button("Keep Hoopin'") {
-                                            
-                                        }
-                                    }
+                    .confirmationDialog(
+                        "End Session?", isPresented: $showingEndEarlyConfirmation) {
+                            Button("Finish Session", role: .destructive) {
+                            endSessionAndNavigate()
+                        }
+                        Button("Keep Hoopin'") {
+                            
+                        }
+                    }
+                    
                     Spacer()
+                    
                     Text(formatTime(seconds: elapsedTime))
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                    
                     Spacer()
+                    
                     Text("\(makes)")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.gray)
+                    
                     Spacer()
                 }
                 .padding(.top, 30)
@@ -63,10 +78,19 @@ struct Session: View {
                     makes += 1
                     WKInterfaceDevice.current().play(.success)
                 }) {
-                    Image(systemName: "basketball")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 125, height: 160)
+                    VStack(spacing: 10) {
+//                        Text("Tap for every Make!")
+//                            .font(.subheadline)
+//                            .fontWeight(.semibold)
+//                            .fontDesign(.rounded)
+//                            .foregroundStyle(.green.opacity(0.75))
+                        Image(systemName: "basketball.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 250, height: 250)
+                            .foregroundStyle(.green.opacity(0.35))
+                    }
+                    .offset(x: 0, y: 65)
                 }
                 .edgesIgnoringSafeArea(.all)
                 .tint(.green)

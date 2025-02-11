@@ -21,6 +21,7 @@
 		91AD54F22B449E4600F4D367 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54F12B449E4600F4D367 /* Session.swift */; };
 		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */; };
+		91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DC6BA42D5C088900C9B409 /* SessionSelection.swift */; };
 		91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		91AD54F12B449E4600F4D367 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchToiOSConnector.swift; sourceTree = "<group>"; };
+		91DC6BA42D5C088900C9B409 /* SessionSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSelection.swift; sourceTree = "<group>"; };
 		91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -150,6 +152,7 @@
 				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
 				91AD54E12B449DDE00F4D367 /* Preview Content */,
 				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
+				91DC6BA42D5C088900C9B409 /* SessionSelection.swift */,
 				91AD54ED2B449E0A00F4D367 /* ShotSelection.swift */,
 				91AD54EF2B449E3600F4D367 /* SessionSettings.swift */,
 				91AD54F12B449E4600F4D367 /* Session.swift */,
@@ -297,6 +300,7 @@
 				91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */,
 				91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */,
 				91AD54DC2B449DDD00F4D367 /* HoopsApp.swift in Sources */,
+				91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */,
 				91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
