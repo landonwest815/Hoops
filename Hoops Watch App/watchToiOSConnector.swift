@@ -7,6 +7,7 @@
 
 import Foundation
 import WatchConnectivity
+import UserNotifications
 
 class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     var session: WCSession
@@ -18,10 +19,31 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         session.activate()
     }
     
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Notification permission error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
             // Handle the error appropriately
             print("WCSession activation failed with error: \(error.localizedDescription)")
+        }
+    }
+    
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        DispatchQueue.main.async {
+            self.handleIncomingData(message)
+        }
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
+        DispatchQueue.main.async {
+            self.handleIncomingData(userInfo)
         }
     }
     
@@ -42,6 +64,27 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         } else {
             // Use transferUserInfo for background transfer when session is not reachable
             session.transferUserInfo(data)
+        }
+    }
+    
+    private func handleIncomingData(_ data: [String: Any]) {
+        guard let shotType = data["shotType"] as? String else { return }
+        
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = "New Basketball Session!"
+        notificationContent.body = "New \(shotType) session from Watch!"
+        notificationContent.sound = .default
+
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: notificationContent,
+            trigger: nil
+        )
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Failed to schedule notification: \(error.localizedDescription)")
+            }
         }
     }
 }

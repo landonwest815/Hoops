@@ -44,12 +44,6 @@ struct Profile: View {
                     VStack(spacing: 10) {
                         
                         HStack {
-                            //                        Image(systemName: "chart.bar.xaxis.ascending")
-                            //                            .resizable()
-                            //                            .aspectRatio(contentMode: .fit)
-                            //                            .frame(height: 15)
-                            //                            .foregroundStyle(.yellow)
-                            //                            .fontWeight(.semibold)
                             
                             Text("Stats")
                                 .font(.headline)
@@ -155,12 +149,6 @@ struct Profile: View {
                     VStack(spacing: 10) {
                         
                         HStack {
-                            //                        Image(systemName: "trophy.fill")
-                            //                            .resizable()
-                            //                            .aspectRatio(contentMode: .fit)
-                            //                            .frame(height: 15)
-                            //                            .foregroundStyle(.yellow)
-                            //                            .fontWeight(.semibold)
                             
                             Text("Accolades")
                                 .font(.headline)

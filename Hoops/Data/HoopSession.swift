@@ -17,6 +17,13 @@ enum ShotType: String, Codable, CaseIterable {
     case allShots = "All Shots"
 }
 
+enum GraphType: String, Codable, CaseIterable {
+    case sessions = "Sessions"
+    case makes = "Total Makes"
+    case average = "Average Makes"
+    case none = "N/A"
+}
+
 @Model
 class HoopSession: Identifiable {
     var id = UUID()

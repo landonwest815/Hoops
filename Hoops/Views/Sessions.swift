@@ -8,214 +8,81 @@
 import SwiftUI
 import SwiftData
 
-enum GraphType: String, Codable, CaseIterable {
-    case sessions = "Sessions"
-    case makes = "Total Makes"
-    case average = "Average Makes"
-    case none = "N/A"
+enum ActiveSheet {
+    case stats, profile, sessionCreation, none
 }
 
 struct Sessions: View {
     @Environment(\.modelContext) var context
     @Query(sort: \HoopSession.date, order: .reverse, animation: .default) var sessions: [HoopSession]
-    @State var selectedShotType: ShotType = .allShots
-    @State private var isSheetPresented = false
-    @State var selectedDate: Date = .now
     
-    @State private var sessionCount: Int = 0
-    @State private var totalMakes: Int = 0
-    @State private var averageMakesPerMinute: Double = 0
-    
-    @State var selectedMetric: GraphType = .none
-    
-    @State var streak = 0
-    
-    @State var isProfileShown = false
-    
-    @State var sessionCreationSheet = false
-        
-    private var filteredSessions: [HoopSession] {
-//        if selectedShotType != .allShots {
-//            return sessions.filter { $0.shotType == selectedShotType }
-//        } else {
-            return sessions
-        //}
-    }
-    
-    private var groupedSessions: [(key: Date, value: [HoopSession])] {
-        Dictionary(grouping: filteredSessions) { $0.date.startOfDay }
-            .sorted { $0.key > $1.key }
-    }
-    
+    // UI State
+    @State private var activeSheet: ActiveSheet = .none
+    @State private var selectedMetric: GraphType = .none
+    @State private var selectedShotType: ShotType = .allShots
+    @State private var selectedDate: Date = .now
+
+    // Session Statistics
+    @State private var sessionCount = 0
+    @State private var totalMakes = 0
+    @State private var averageMakesPerMinute = 0.0
+    @State private var streak = 0
+
     private var selectedDaySessions: [HoopSession] {
-        groupedSessions.first(where: { $0.key == selectedDate.startOfDay })?.value ?? []
+        sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
     }
 
     var body: some View {
-        
         NavigationView {
-                                
             VStack(spacing: 0) {
                 
                 WeekView(selectedDate: $selectedDate)
                     .padding(.top, 5)
                 
                 HStack(spacing: 10) {
-                    
-                    Button {
+                    MetricButton(
+                        icon: "basketball.fill",
+                        title: "Sessions",
+                        value: "\(sessionCount)",
+                        color: .orange,
+                        isSelected: selectedMetric == .sessions,
+                        variant: .compact
+                    ) {
                         withAnimation {
-                            if selectedMetric != .sessions {
-                                isSheetPresented = true
-                                selectedMetric = .sessions
-                            } else {
-                                selectedMetric = .none
-                                isSheetPresented = false
-                            }
+                            toggleMetric(.sessions)
                         }
-                    } label: {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Image(systemName: "basketball.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 16)
-                                    .foregroundStyle(.orange)
-                                    .fontWeight(.semibold)
-                                
-                                
-                                Text("\(sessionCount)")
-                                    .font(.title3)
-                                    .fontDesign(.rounded)
-                                    .fontWeight(.semibold)
-                                    .contentTransition(.numericText())
-                                    .foregroundStyle(.white)
-                            }
-                            
-                            Text("Sessions")
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.gray)
-                        }
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 10)
-                        .frame(maxWidth: 90)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(18)
-                        .overlay(
-                            selectedMetric == .sessions ?
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color.white.opacity(0.66), lineWidth: 2)
-                            : nil
-                        )
-                    }
-                        
-                    Button {
-                        withAnimation {
-                            if selectedMetric != .makes {
-                                isSheetPresented = true
-                                selectedMetric = .makes
-                            } else {
-                                selectedMetric = .none
-                                isSheetPresented = false
-                            }
-                        }
-                    } label: {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Image(systemName: "scope")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 16)
-                                    .foregroundStyle(.red)
-                                    .fontWeight(.semibold)
-                                
-                                Text("\(totalMakes)")
-                                    .font(.title3)
-                                    .fontDesign(.rounded)
-                                    .fontWeight(.semibold)
-                                    .contentTransition(.numericText())
-                                    .foregroundStyle(.white)
-                            }
-                            
-                            Text("Total Makes")
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.gray)
-                        }
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 10)
-                        .frame(maxWidth: 105)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(18)
-                        .overlay(
-                            selectedMetric == .makes ?
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
-                            : nil
-                        )
-                    }
-                                            
-                    Button {
-                        withAnimation {
-                            if selectedMetric != .average {
-                                isSheetPresented = true
-                                selectedMetric = .average
-                            } else {
-                                selectedMetric = .none
-                                isSheetPresented = false
-                            }
-                        }
-                    } label: {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Image(systemName: "chart.line.uptrend.xyaxis")
-                                    .foregroundStyle(.blue)
-                                    .fontWeight(.semibold)
-                                
-                                HStack(spacing: 5) {
-                                    Text("\(averageMakesPerMinute, specifier: "%.2f")")
-                                        .font(.title3)
-                                        .fontDesign(.rounded)
-                                        .fontWeight(.semibold)
-                                        .contentTransition(.numericText())
-                                        .foregroundStyle(.white)
-                                    
-                                    Text("/min")
-                                        .font(.caption)
-                                        .fontDesign(.rounded)
-                                        .foregroundStyle(.gray)
-                                        .offset(y: 1)
-                                }
-                            }
-                            
-                            Text("Average Makes")
-                                .font(.caption)
-                                .fontWeight(.regular)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.gray)
-                        }
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 10)
-                        .frame(maxWidth: .infinity)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(18)
-                        .overlay(
-                            selectedMetric == .average ?
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
-                            : nil
-                        )
                     }
                     
+                    MetricButton(
+                        icon: "scope",
+                        title: "Total Makes",
+                        value: "\(totalMakes)",
+                        color: .red,
+                        isSelected: selectedMetric == .makes,
+                        variant: .compact
+                    ) {
+                        withAnimation {
+                            toggleMetric(.makes)
+                        }
+                    }
+                    
+                    MetricButton(
+                        icon: "chart.line.uptrend.xyaxis",
+                        title: "Average Makes",
+                        value: String(format: "%.2f", averageMakesPerMinute),
+                        color: .blue,
+                        isSelected: selectedMetric == .average,
+                        variant: .expanded
+                    ) {
+                        withAnimation {
+                            toggleMetric(.average)
+                        }
+                    }
                 }
                 .frame(height: 50)
                 .padding(.horizontal, 15)
                 .padding(.vertical, 5)
-
                 
-                // Date label and buttons
                 HStack {
                     Text(selectedDate, style: .date)
                         .font(.title3)
@@ -225,156 +92,38 @@ struct Sessions: View {
                     
                     Spacer()
                     
-                    Button {
-                        
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .foregroundStyle(.clear)
-                                .frame(width: 30, height: 30)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Circle())
-                            Image(systemName: "arrow.up.arrow.down")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 17.5)
-                                .foregroundStyle(.orange)
-                                .fontWeight(.semibold)
-                        }
+                    Button(action: {}) {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .buttonStyle()
                     }
                     
-                    Button {
-                        
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .foregroundStyle(.clear)
-                                .frame(width: 30, height: 30)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Circle())
-                            Image(systemName: "line.3.horizontal.decrease")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 17.5)
-                                .foregroundStyle(.orange)
-                                .fontWeight(.semibold)
-                        }
+                    Button(action: {}) {
+                        Image(systemName: "line.3.horizontal.decrease")
+                            .buttonStyle()
                     }
-                    
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal)
                 
                 ZStack(alignment: .bottomTrailing) {
-                    
-                    // List of sessions
-                    ScrollView {
-                        LazyVStack(spacing: 10) {
-                            
-                            // Show message if there are no sessions
-                            if selectedDaySessions.isEmpty {
-                                VStack {
-                                    Text(selectedDate.startOfDay == .now.startOfDay ? "Go shoot some hoops!" : "No sessions for today!")
-                                        .font(.subheadline)
-                                        .fontWeight(.regular)
-                                        .foregroundStyle(.secondary)
-                                        .padding(.top, 20)
-                                }
-                            } else {
-                                // Filtered session list
-                                ForEach(selectedDaySessions, id: \.self) { session in
-                                    SessionThumbnail(
-                                        date: session.date,
-                                        makes: session.makes,
-                                        length: session.length,
-                                        average: Double(session.makes) / (Double(session.length) / 60.0),
-                                        shotType: session.shotType
-                                    )
-                                    .transition(.opacity)
-                                    .contextMenu {
-                                        Button {
-                                            print("Change country setting")
-                                        } label: {
-                                            Label("Edit Session", systemImage: "pencil")
-                                        }
-
-                                        Button(role: .destructive) {
-                                            withAnimation {
-                                                context.delete(session)
-                                            }
-                                        } label: {
-                                            Label("Delete Session", systemImage: "trash")
-                                        }
-                                    }
-//                                    .onLongPressGesture {
-//                                        context.delete(session)
-//                                    }
-                                    .frame(height: 75)
-                                    .scrollTransition { content, phase in
-                                        content
-                                            .opacity(phase.isIdentity ? 1 : 0)
-                                            .scaleEffect(phase.isIdentity ? 1 : 0.85)
-                                            .blur(radius: phase.isIdentity ? 0 : 10)
-                                    }
-                                    .padding(.horizontal)
-                                }
-                            }
-                        }
+                    SessionListView(sessions: selectedDaySessions, context: context)
+                    FloatingActionButton {
+                        withAnimation { activeSheet = .sessionCreation }
                     }
-                    
-                    VStack(alignment: .trailing, spacing: 15) {
-                    
-                        Button {
-                            withAnimation {
-                                //addRandomSession()
-                                //showShots.toggle()
-                                sessionCreationSheet = true
-                            }
-                        } label: {
-                            ZStack {
-                                Circle()
-                                //.stroke(Color.orange.opacity(0.75), lineWidth: 1.5)
-                                    .fill(.ultraThinMaterial)
-                                    .frame(width: 66)
-                                
-                                Image(systemName: "basketball.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 30)
-                                    .foregroundStyle(.orange)
-                                
-                            }
-                        }
-                        
-                    }
-                    .padding(.horizontal, 25)
-                    .padding(.bottom)
-
                 }
             }
             .background(.ultraThinMaterial)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
-                    Button {
-                        withAnimation {
-                            addRandomSession()
-                        }
-                    } label: {
-                        Image(systemName: "gearshape.fill")
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
+                    Button(action: { addRandomSession() }) {
+                        Image(systemName: "gearshape.fill").iconStyle()
                     }
-                    .foregroundStyle(.secondary)
                 }
                 
                 ToolbarItemGroup(placement: .principal) {
-                    
-                    Button {
-                        isProfileShown = true
-                    } label: {
+                    Button(action: { activeSheet = .profile }) {
                         HStack(spacing: 7.5) {
-                            
                             Text("hoops.")
                                 .font(.title2)
                                 .fontWeight(.semibold)
@@ -386,10 +135,12 @@ struct Sessions: View {
                                     Image(systemName: "flame.fill")
                                         .resizable()
                                         .frame(width: 21, height: 23)
+                                    
                                     Image(systemName: "circle.fill")
                                         .resizable()
                                         .frame(width: 11, height: 11)
                                         .offset(y: 4)
+                                    
                                     Text("\(streak)")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
@@ -404,125 +155,81 @@ struct Sessions: View {
                                 .shadow(color: .red.opacity(0.25), radius: 5)
                                 .shadow(color: .red.opacity(0.125), radius: 12.5)
                                 .shadow(color: .red.opacity(0.05), radius: 20)
-                                
-//                                if !hasSessionForToday() {
-//                                    ZStack {
-//                                        Image(systemName: "hourglass")
-//                                            .resizable()
-//                                            .aspectRatio(contentMode: .fit)
-//                                            .frame(width: 13)
-//                                            .foregroundStyle(.gray)
-//                                    }
-//                                }
-
                             }
-                            
                         }
                     }
                 }
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: { isSheetPresented = true }) {
-                        Image(systemName: "chart.bar.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 22.5, height: 22.5)
-                            .foregroundStyle(.orange)
-                            .fontWeight(.semibold)
+                    Button(action: {}) {
+                        Image(systemName: "calendar").iconStyle()
                     }
                 }
-                
             }
-            .sheet(isPresented: $isSheetPresented, onDismiss: {
-                withAnimation {
-                    selectedMetric = .none
+            .sheet(isPresented: Binding(
+                get: { activeSheet != .none },
+                set: { if !$0 { activeSheet = .none } }
+            )) {
+                switch activeSheet {
+                case .stats:
+                    Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)
+                        .presentationCornerRadius(32)
+                        .presentationDetents([.fraction(0.6875)])
+                        .presentationDragIndicator(.visible)
+                        .presentationBackground(.ultraThickMaterial)
+                        .presentationBackgroundInteraction(.enabled)
+                    
+                case .profile:
+                    Profile()
+                        .presentationCornerRadius(32)
+                        .presentationDetents([.fraction(0.8375)])
+                        .presentationBackground(.ultraThickMaterial)
+                    
+                case .sessionCreation:
+                    CardView()
+                        .presentationCornerRadius(32)
+                        .presentationDetents([.fraction(0.325)])
+                        .presentationBackground(.ultraThickMaterial)
+                    
+                case .none:
+                    EmptyView()
                 }
-            }) {
-                Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)
-                    .presentationCornerRadius(32)
-                    .presentationDetents([.fraction(0.6875)])
-                    .presentationDragIndicator(.visible)
-                    .presentationBackground(.ultraThickMaterial)
-                    .presentationBackgroundInteraction(.enabled)
             }
-            .sheet(isPresented: $isProfileShown, onDismiss: {
-                // action
-            }) {
-                Profile()
-                    .presentationCornerRadius(32)
-                    .presentationDetents([.fraction(0.8375)])
-                    //.presentationDragIndicator(.visible)
-                    .presentationBackground(.ultraThickMaterial)
-            }
-            .sheet(isPresented: $sessionCreationSheet, onDismiss: {
-                // action
-            }) {
-                CardView()
-                    .presentationCornerRadius(32)
-                    .presentationDetents([.fraction(0.325)])
-                    //.presentationDragIndicator(.visible)
-                    .presentationBackground(.ultraThickMaterial)
-            }
-            .onAppear {
+            .onAppear(perform: {
+                updateStats()
+                calculateStreak()
+            })
+            .onChange(of: sessions) {
                 updateStats()
                 calculateStreak()
             }
-            .onChange(of: sessions) {
-                withAnimation {
-                    updateStats()
-                    calculateStreak()
-                }
-            }
             .onChange(of: selectedDate) {
-                print("test")
-                withAnimation {
-                    updateStats()
-                    calculateStreak()
-
-                }
+                updateStats()
+                calculateStreak()
             }
         }
     }
     
+    private func toggleMetric(_ metric: GraphType) {
+        if selectedMetric != metric {
+            activeSheet = .stats
+            selectedMetric = metric
+        } else {
+            activeSheet = .none
+            selectedMetric = .none
+        }
+    }
+
     private func updateStats() {
-        let selectedDaySessions = sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
         sessionCount = selectedDaySessions.count
         totalMakes = selectedDaySessions.reduce(0) { $0 + $1.makes }
-        
         let totalTime = selectedDaySessions.reduce(0) { $0 + $1.length }
         averageMakesPerMinute = totalTime > 0 ? Double(totalMakes) / Double(totalTime) * 60 : 0
-    }
-
-    
-    private func deleteSessionsForSelectedShotType() {
-        let sessionsToDelete: [HoopSession]
-        
-        if selectedShotType != .allShots {
-            // Filter sessions by the selected shot type
-            sessionsToDelete = sessions.filter { $0.shotType == selectedShotType }
-        } else {
-            // If "All Shots" is selected, delete all sessions
-            sessionsToDelete = sessions
-        }
-        
-        // Perform deletion
-        withAnimation {
-            for session in sessionsToDelete {
-                context.delete(session)
-            }
-        }
-        
-        do {
-            try context.save()
-            print("Deleted \(sessionsToDelete.count) session(s) for \(selectedShotType.rawValue.capitalized).")
-        } catch {
-            print("Failed to delete sessions: \(error.localizedDescription)")
-        }
     }
     
     private func addRandomSession() {
         let shotTypeToAdd = selectedShotType
-        let currentTime = Date() // Capture the current time
+        let currentTime = Date()
 
         let calendar = Calendar.current
         var selectedDateTime = calendar.date(
@@ -530,31 +237,18 @@ struct Sessions: View {
             minute: calendar.component(.minute, from: currentTime),
             second: calendar.component(.second, from: currentTime),
             of: selectedDate
-        ) ?? selectedDate  // Fallback in case of failure
+        ) ?? selectedDate
 
-        // Ensure uniqueness by adding a slight millisecond offset
         selectedDateTime = selectedDateTime.addingTimeInterval(Double.random(in: 0.001...0.999))
 
         let randomSession = HoopSession(
-            date: selectedDateTime,  // ✅ Now has a unique timestamp
+            date: selectedDateTime,
             makes: Int.random(in: 5...40),
             length: Int.random(in: 60...600),
             shotType: shotTypeToAdd
         )
 
         context.insert(randomSession)
-        
-        
-//        do {
-//            try context.save()
-//            print("New random session added at \(selectedDateTime)!")
-//        } catch {
-//            print("Failed to save new session: \(error.localizedDescription)")
-//        }
-    }
-    
-    private func hasSessionForToday() -> Bool {
-        return sessions.contains { $0.date.startOfDay == Date().startOfDay }
     }
     
     private func calculateStreak() {
@@ -571,9 +265,7 @@ struct Sessions: View {
 
         // Ensure yesterday had a session
         guard uniqueDays.contains(yesterday) else {
-            withAnimation {
-                streak = 0
-            }
+            withAnimation { streak = 0 }
             return
         }
 
@@ -589,12 +281,155 @@ struct Sessions: View {
             }
         }
 
-        withAnimation {
-            streak = currentStreak
-        }
+        withAnimation { streak = currentStreak }
+    }
+}
+
+extension Image {
+    func iconStyle() -> some View {
+        self.resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 22, height: 22)
+            .foregroundStyle(.gray)
+            .fontWeight(.semibold)
     }
     
+    func buttonStyle() -> some View {
+        self.resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 17.5, height: 17.5)
+            .foregroundStyle(.orange)
+            .fontWeight(.semibold)
+            .padding(6)
+            .background(.ultraThinMaterial)
+            .cornerRadius(20)
+    }
 }
+
+enum MetricButtonVariant {
+    case compact
+    case expanded
+}
+
+struct MetricButton: View {
+    let icon: String
+    let title: String
+    let value: String
+    let color: Color
+    let isSelected: Bool
+    let variant: MetricButtonVariant
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: icon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 16)
+                        .foregroundStyle(color)
+                        .fontWeight(.semibold)
+                    
+                    Text(value)
+                        .font(.title3)
+                        .fontDesign(.rounded)
+                        .fontWeight(.semibold)
+                        .contentTransition(.numericText())
+                        .foregroundStyle(.white)
+                }
+                
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.regular)
+                    .fontDesign(.rounded)
+                    .foregroundStyle(.gray)
+            }
+            .padding(.horizontal, 15)
+            .padding(.vertical, 10)
+            .frame(maxWidth: variant == .compact ? 105 : .infinity) // Dynamically set maxWidth
+            .background(.ultraThinMaterial)
+            .cornerRadius(18)
+            .overlay(
+                isSelected ? RoundedRectangle(cornerRadius: 18)
+                    .stroke(Color.white.opacity(0.66), lineWidth: 2.5)
+                : nil
+            )
+        }
+    }
+}
+
+struct SessionListView: View {
+    let sessions: [HoopSession]
+    let context: ModelContext
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(spacing: 10) {
+                if sessions.isEmpty {
+                    Text("No sessions for today!")
+                        .font(.subheadline)
+                        .fontWeight(.regular)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 20)
+                } else {
+                    ForEach(sessions, id: \.self) { session in
+                        SessionThumbnail(
+                            date: session.date,
+                            makes: session.makes,
+                            length: session.length,
+                            average: Double(session.makes) / (Double(session.length) / 60.0),
+                            shotType: session.shotType
+                        )
+                        .transition(.opacity)
+                        .contextMenu {
+                            Button {
+                                print("Edit Session")
+                            } label: {
+                                Label("Edit Session", systemImage: "pencil")
+                            }
+
+                            Button(role: .destructive) {
+                                withAnimation {
+                                    context.delete(session)
+                                }
+                            } label: {
+                                Label("Delete Session", systemImage: "trash")
+                            }
+                        }
+                        .frame(height: 75)
+                        .padding(.horizontal)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct FloatingActionButton: View {
+    let action: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .trailing, spacing: 15) {
+            Button(action: action) {
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 66)
+                    
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 30)
+                        .foregroundStyle(.orange)
+                }
+            }
+        }
+        .padding(.horizontal, 25)
+        .padding(.bottom)
+    }
+}
+
 
 #Preview {
         Sessions()
