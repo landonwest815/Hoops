@@ -18,12 +18,12 @@ struct SessionThumbnail: View {
     
     var iconColor: Color {
         switch shotType {
-        case .freeThrows:    return .blue
-        case .midrange:      return .blue
-        case .layups:        return .red
-        case .threePointers: return .green
-        case .deep:          return .purple
-        case .allShots:      return .orange
+            case .freeThrows:    return .blue
+            case .midrange:      return .blue
+            case .layups:        return .red
+            case .threePointers: return .green
+            case .deep:          return .purple
+            case .allShots:      return .orange
         }
     }
     
@@ -41,12 +41,6 @@ struct SessionThumbnail: View {
         
             ZStack {
                 HStack(spacing: 0) {
-                    
-//                    Image(systemName: "figure.basketball")
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 35, height: 35)
-//                        .foregroundStyle(iconColor)
                     
                     ZStack {
                         
@@ -205,5 +199,5 @@ func getShotPoints(for shotType: ShotType) -> String {
 }
 
 #Preview {
-    SessionThumbnail(date: Date.now, makes: 125, length: 0, average: 2.3, shotType: .deep)
+    SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
 }

@@ -10,11 +10,28 @@ import SwiftData
 
 enum ShotType: String, Codable, CaseIterable {
     case layups = "Layups"
-    case freeThrows = "FTs"
+    case freeThrows = "Free Throws"
     case midrange = "Midrange"
     case threePointers = "Threes"
     case deep = "Deep"
     case allShots = "All Shots"
+
+    // Custom decoding to handle legacy data
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+
+        switch rawValue {
+        case "FTs": // Old value
+            self = .freeThrows
+        default:
+            if let validValue = ShotType(rawValue: rawValue) {
+                self = validValue
+            } else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown ShotType: \(rawValue)")
+            }
+        }
+    }
 }
 
 enum GraphType: String, Codable, CaseIterable {

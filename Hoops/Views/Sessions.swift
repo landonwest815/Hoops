@@ -9,12 +9,12 @@ import SwiftUI
 import SwiftData
 
 enum ActiveSheet {
-    case stats, profile, sessionCreation, none
+    case stats, profile, sessionCreation, sessionDetails, none
 }
 
 struct Sessions: View {
     @Environment(\.modelContext) var context
-    @Query(sort: \HoopSession.date, order: .reverse, animation: .default) var sessions: [HoopSession]
+    @Query(sort: \HoopSession.date, order: .reverse, animation: .bouncy) var sessions: [HoopSession]
     
     // UI State
     @State private var activeSheet: ActiveSheet = .none
@@ -27,6 +27,9 @@ struct Sessions: View {
     @State private var totalMakes = 0
     @State private var averageMakesPerMinute = 0.0
     @State private var streak = 0
+    
+    // Session Details
+    @State var selectedSession: HoopSession = HoopSession(date: .now, makes: 0, length: 0, shotType: .allShots)
 
     private var selectedDaySessions: [HoopSession] {
         sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
@@ -106,7 +109,9 @@ struct Sessions: View {
                 .padding(.horizontal)
                 
                 ZStack(alignment: .bottomTrailing) {
-                    SessionListView(sessions: selectedDaySessions, context: context)
+                    SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, onSessionSelected: {
+                        activeSheet = .sessionDetails
+                    })
                     FloatingActionButton {
                         withAnimation { activeSheet = .sessionCreation }
                     }
@@ -174,6 +179,7 @@ struct Sessions: View {
                onDismiss: {
                    withAnimation {
                        selectedMetric = .none
+                       updateStats()
                    }
                }
             ) {
@@ -195,12 +201,20 @@ struct Sessions: View {
                 case .sessionCreation:
                     CardView()
                         .presentationCornerRadius(32)
-                        .presentationDetents([.fraction(0.325)])
+                        .presentationDetents([.fraction(0.3)])
                         .presentationBackground(.ultraThickMaterial)
+                    
+                case .sessionDetails:
+                    SessionDetails(session: $selectedSession)
+                        .presentationCornerRadius(32)
+                        .presentationDetents([.fraction(0.3)])
+                        .presentationBackground(.ultraThickMaterial)
+                    
                     
                 case .none:
                     EmptyView()
                 }
+                
             }
             .onAppear(perform: {
                 updateStats()
@@ -369,6 +383,8 @@ struct MetricButton: View {
 struct SessionListView: View {
     let sessions: [HoopSession]
     let context: ModelContext
+    @Binding var selectedSession: HoopSession
+    let onSessionSelected: () -> Void // Callback
 
     var body: some View {
         ScrollView {
@@ -380,7 +396,7 @@ struct SessionListView: View {
                         .foregroundStyle(.secondary)
                         .padding(.top, 20)
                 } else {
-                    ForEach(sessions, id: \.self) { session in
+                    ForEach(sessions, id: \.id) { session in
                         SessionThumbnail(
                             date: session.date,
                             makes: session.makes,
@@ -388,7 +404,7 @@ struct SessionListView: View {
                             average: Double(session.makes) / (Double(session.length) / 60.0),
                             shotType: session.shotType
                         )
-                        .transition(.opacity)
+                        .transition(.identity)
                         .contextMenu {
                             Button {
                                 print("Edit Session")
@@ -404,11 +420,16 @@ struct SessionListView: View {
                                 Label("Delete Session", systemImage: "trash")
                             }
                         }
+                        .onTapGesture {
+                            selectedSession = session
+                            onSessionSelected()
+                        }
                         .frame(height: 75)
                         .padding(.horizontal)
                     }
                 }
             }
+            .animation(.smooth, value: sessions)
         }
     }
 }
