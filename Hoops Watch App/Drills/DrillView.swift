@@ -83,7 +83,7 @@ struct DrillView: View {
                 
             }
             .navigationDestination(isPresented: $sessionEnd) {
-                DrillResults(shotType: .allShots, sessionTimeInSec: elapsedTime, makes: makes)
+                DrillResults(shotType: shotType, sessionTimeInSec: elapsedTime, makes: makes)
                     .navigationBarBackButtonHidden()
                     .navigationBarTitleDisplayMode(.inline)
                         }

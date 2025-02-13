@@ -72,7 +72,7 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     private func sendLocalNotification(shotType: ShotType, sessionType: SessionType, length: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "New \(sessionType.rawValue) Session!"
+        content.title = "New \(sessionType.rawValue) Session"
         content.body = "\(shotType.rawValue)  |  \(length / 60) min \(length % 60) sec"
         content.sound = .default
 

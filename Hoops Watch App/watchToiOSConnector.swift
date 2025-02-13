@@ -74,7 +74,7 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         guard let length = data["length"] as? Int else { return }
         
         let notificationContent = UNMutableNotificationContent()
-        notificationContent.title = "New \(sessionType) Session!"
+        notificationContent.title = "New \(sessionType) Session"
         notificationContent.body = "\(shotType)  |  \(length / 60) min \(length % 60) sec"
         notificationContent.sound = .default
 

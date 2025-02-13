@@ -81,6 +81,7 @@ struct DrillResults: View {
     }
     
     func sendSessionToiOS() {
+        print(shotType.rawValue)
         let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec, shotType: shotType, sessionType: .drill)
         watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
     }

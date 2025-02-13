@@ -109,7 +109,7 @@ struct Sessions: View {
                 .padding(.horizontal)
                 
                 ZStack(alignment: .bottomTrailing) {
-                    SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, onSessionSelected: {
+                    SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, onSessionSelected: {
                         activeSheet = .sessionDetails
                     })
                     FloatingActionButton {
@@ -274,7 +274,8 @@ struct Sessions: View {
             date: selectedDateTime,
             makes: Int.random(in: 5...40),
             length: Int.random(in: 60...600),
-            shotType: shotTypeToAdd
+            shotType: shotTypeToAdd,
+            sessionType: SessionType.allCases.randomElement() ?? .freestyle
         )
 
         context.insert(randomSession)
@@ -392,6 +393,7 @@ struct SessionListView: View {
     let sessions: [HoopSession]
     let context: ModelContext
     @Binding var selectedSession: HoopSession
+    @Binding var selectedDate: Date // Added binding to track date change
     let onSessionSelected: () -> Void // Callback
     
     let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"] // Define all session types
@@ -407,73 +409,85 @@ struct SessionListView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 25) {
-                ForEach(sessionTypes, id: \.self) { sessionType in
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack {
-                            Image(systemName: iconName(for: sessionType))
-                            Text(sessionType)
-                            
-                            Spacer()
-                        }
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .padding(.horizontal)
-                        .foregroundStyle(.gray)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 25) {
 
-                        if let sessions = groupedSessions[sessionType], !sessions.isEmpty {
-                            ForEach(sessions, id: \.id) { session in
-                                SessionThumbnail(
-                                    date: session.date,
-                                    makes: session.makes,
-                                    length: session.length,
-                                    average: Double(session.makes) / (Double(session.length) / 60.0),
-                                    shotType: session.shotType
-                                )
-                                .transition(.identity)
-                                .contextMenu {
-                                    Button {
-                                        print("Edit Session")
-                                    } label: {
-                                        Label("Edit Session", systemImage: "pencil")
-                                    }
-
-                                    Button(role: .destructive) {
-                                        withAnimation {
-                                            context.delete(session)
-                                        }
-                                    } label: {
-                                        Label("Delete Session", systemImage: "trash")
-                                    }
-                                }
-                                .onTapGesture {
-                                    selectedSession = session
-                                    onSessionSelected()
-                                }
-                                .frame(height: 75)
-                                .padding(.horizontal)
-                            }
-                        } else {
-                            
+                    ForEach(sessionTypes, id: \.self) { sessionType in
+                        VStack(alignment: .leading, spacing: 10) {
                             HStack {
-                                Spacer()
-                                
-                                Text(promptText(for: sessionType))
-                                    .font(.subheadline)
-                                    .foregroundStyle(.gray.opacity(0.6))
-                                    .padding(.horizontal)
-                                    .frame(height: 45)
-                                    .multilineTextAlignment(.center)
+                                Image(systemName: iconName(for: sessionType))
+                                Text(sessionType)
                                 
                                 Spacer()
                             }
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .padding(.horizontal)
+                            .foregroundStyle(.gray)
                             
+                            if let sessions = groupedSessions[sessionType], !sessions.isEmpty {
+                                ForEach(sessions, id: \.id) { session in
+                                    SessionThumbnail(
+                                        date: session.date,
+                                        makes: session.makes,
+                                        length: session.length,
+                                        average: Double(session.makes) / (Double(session.length) / 60.0),
+                                        shotType: session.shotType
+                                    )
+                                    .transition(.identity)
+                                    .contextMenu {
+                                        Button {
+                                            print("Edit Session")
+                                        } label: {
+                                            Label("Edit Session", systemImage: "pencil")
+                                        }
+                                        
+                                        Button(role: .destructive) {
+                                            withAnimation {
+                                                context.delete(session)
+                                            }
+                                        } label: {
+                                            Label("Delete Session", systemImage: "trash")
+                                        }
+                                    }
+                                    .onTapGesture {
+                                        selectedSession = session
+                                        onSessionSelected()
+//                                        withAnimation {
+//                                            proxy.scrollTo(session.id, anchor: .bottom) // Slightly above center
+//                                            
+//                                        }
+                                    }
+                                    .frame(height: 75)
+                                    .padding(.horizontal)
+                                    .id(session.id)
+                                }
+                            } else {
+                                
+                                HStack {
+                                    Spacer()
+                                    
+                                    Text(promptText(for: sessionType))
+                                        .font(.subheadline)
+                                        .foregroundStyle(.gray.opacity(0.6))
+                                        .padding(.horizontal)
+                                        .frame(height: 45)
+                                        .multilineTextAlignment(.center)
+                                    
+                                    Spacer()
+                                }
+                                
+                            }
                         }
                     }
+                    
+                    Spacer(minLength: 250)
+
                 }
+                .animation(.smooth, value: sessions)
             }
-            .animation(.smooth, value: sessions)
+            .id(selectedDate)
         }
     }
     
