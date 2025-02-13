@@ -14,9 +14,7 @@ struct ContentView: View {
     
     var body: some View {
         
-        ZStack {
-            Sessions()
-        }
+        Sessions()
         .onAppear() {
             watchConnecter.modelContext = context
         }
@@ -26,4 +24,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(HoopSession.preview)
 }

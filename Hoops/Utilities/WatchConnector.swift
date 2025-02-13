@@ -48,12 +48,18 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
         
         let shotTypeRawValue = message["shotType"] as? String
         let shotType = ShotType(rawValue: shotTypeRawValue ?? "") ?? .allShots
+        
+        let sessionTypeRawValue = message["sessionType"] as? String
+        let sessionType = SessionType(rawValue: sessionTypeRawValue ?? "") ?? .challenge
+        
+        guard let length = message["length"] as? Int else { return }
 
         let hoopSession = HoopSession(
             date: message["date"] as? Date ?? Date.now,
             makes: message["makes"] as? Int ?? 0,
             length: message["length"] as? Int ?? 0,
-            shotType: shotType
+            shotType: shotType,
+            sessionType: sessionType
         )
         
         DispatchQueue.main.async {
@@ -61,13 +67,13 @@ class WatchConnector: NSObject, WCSessionDelegate, ObservableObject {
         }
 
         // Send a notification
-        sendLocalNotification(for: shotType)
+        sendLocalNotification(shotType: shotType, sessionType: sessionType, length: length)
     }
     
-    private func sendLocalNotification(for shotType: ShotType) {
+    private func sendLocalNotification(shotType: ShotType, sessionType: SessionType, length: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "New Basketball Session!"
-        content.body = "New \(shotType.rawValue) session from Watch!"
+        content.title = "New \(sessionType.rawValue) Session!"
+        content.body = "\(shotType.rawValue)  |  \(length / 60) min \(length % 60) sec"
         content.sound = .default
 
         let request = UNNotificationRequest(

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9174635F2B45B10F00A147A0 /* PostSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9174635E2B45B10F00A147A0 /* PostSession.swift */; };
+		916D6CB82D5E6C7300FF515D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916D6CAD2D5E6C7300FF515D /* ContentView.swift */; };
 		91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54C92B449DDC00F4D367 /* HoopsApp.swift */; };
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
 		91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */; };
@@ -16,13 +16,10 @@
 		91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54DD2B449DDD00F4D367 /* ContentView.swift */; };
 		91AD54E02B449DDE00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54DF2B449DDE00F4D367 /* Assets.xcassets */; };
 		91AD54E32B449DDE00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54E22B449DDE00F4D367 /* Preview Assets.xcassets */; };
-		91AD54EE2B449E0A00F4D367 /* ShotSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54ED2B449E0A00F4D367 /* ShotSelection.swift */; };
 		91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54EF2B449E3600F4D367 /* SessionSettings.swift */; };
-		91AD54F22B449E4600F4D367 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54F12B449E4600F4D367 /* Session.swift */; };
 		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */; };
 		91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DC6BA42D5C088900C9B409 /* SessionSelection.swift */; };
-		91DC6BA72D5C13E800C9B409 /* DrillView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DC6BA62D5C13E800C9B409 /* DrillView.swift */; };
 		91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,7 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9174635E2B45B10F00A147A0 /* PostSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSession.swift; sourceTree = "<group>"; };
+		916D6CAD2D5E6C7300FF515D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C92B449DDC00F4D367 /* HoopsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoopsApp.swift; sourceTree = "<group>"; };
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -61,13 +58,10 @@
 		91AD54DD2B449DDD00F4D367 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		91AD54DF2B449DDE00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91AD54E22B449DDE00F4D367 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		91AD54ED2B449E0A00F4D367 /* ShotSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotSelection.swift; sourceTree = "<group>"; };
 		91AD54EF2B449E3600F4D367 /* SessionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSettings.swift; sourceTree = "<group>"; };
-		91AD54F12B449E4600F4D367 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchToiOSConnector.swift; sourceTree = "<group>"; };
 		91DC6BA42D5C088900C9B409 /* SessionSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSelection.swift; sourceTree = "<group>"; };
-		91DC6BA62D5C13E800C9B409 /* DrillView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillView.swift; sourceTree = "<group>"; };
 		91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -85,6 +79,9 @@
 		9101D9A72D4A8EAD00C5DBB2 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		9101D9A82D4A8ED500C5DBB2 /* Data */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9101D9A92D4A8EE100C5DBB2 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Data; sourceTree = "<group>"; };
 		9101D9AA2D4A8EED00C5DBB2 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
+		91F8BCD32D5E69D400816511 /* Drills */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Drills; sourceTree = "<group>"; };
+		91F8BCD42D5E69D900816511 /* Freestyle */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Freestyle; sourceTree = "<group>"; };
+		91F8BCD52D5E69DF00816511 /* Challenges */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Challenges; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +126,7 @@
 		91AD54C82B449DDC00F4D367 /* Hoops */ = {
 			isa = PBXGroup;
 			children = (
+				916D6CAD2D5E6C7300FF515D /* ContentView.swift */,
 				9101D9AA2D4A8EED00C5DBB2 /* Utilities */,
 				9101D9A82D4A8ED500C5DBB2 /* Data */,
 				9101D9A72D4A8EAD00C5DBB2 /* Views */,
@@ -150,17 +148,16 @@
 		91AD54DA2B449DDD00F4D367 /* Hoops Watch App */ = {
 			isa = PBXGroup;
 			children = (
-				91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */,
-				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
-				91AD54E12B449DDE00F4D367 /* Preview Content */,
 				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
 				91DC6BA42D5C088900C9B409 /* SessionSelection.swift */,
-				91AD54ED2B449E0A00F4D367 /* ShotSelection.swift */,
+				91F8BCD42D5E69D900816511 /* Freestyle */,
+				91F8BCD52D5E69DF00816511 /* Challenges */,
+				91F8BCD32D5E69D400816511 /* Drills */,
+				91AD54E12B449DDE00F4D367 /* Preview Content */,
+				91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */,
+				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
 				91AD54EF2B449E3600F4D367 /* SessionSettings.swift */,
-				91AD54F12B449E4600F4D367 /* Session.swift */,
-				9174635E2B45B10F00A147A0 /* PostSession.swift */,
 				91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */,
-				91DC6BA62D5C13E800C9B409 /* DrillView.swift */,
 			);
 			path = "Hoops Watch App";
 			sourceTree = "<group>";
@@ -220,6 +217,11 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				91F8BCD32D5E69D400816511 /* Drills */,
+				91F8BCD42D5E69D900816511 /* Freestyle */,
+				91F8BCD52D5E69DF00816511 /* Challenges */,
 			);
 			name = "Hoops Watch App";
 			productName = "Hoops Watch App";
@@ -290,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */,
+				916D6CB82D5E6C7300FF515D /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,14 +300,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91AD54F22B449E4600F4D367 /* Session.swift in Sources */,
-				91AD54EE2B449E0A00F4D367 /* ShotSelection.swift in Sources */,
-				9174635F2B45B10F00A147A0 /* PostSession.swift in Sources */,
 				91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */,
 				91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */,
 				91AD54DC2B449DDD00F4D367 /* HoopsApp.swift in Sources */,
 				91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */,
-				91DC6BA72D5C13E800C9B409 /* DrillView.swift in Sources */,
 				91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -108,7 +108,7 @@ struct PostSession: View {
     }
     
     func sendSessionToiOS() {
-        let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec, shotType: shotType)
+        let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec, shotType: shotType, sessionType: .freestyle)
         watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
     }
 }

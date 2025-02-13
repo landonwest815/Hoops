@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct SessionDetails: View {
-    
+    @Environment(\.modelContext) var context
+    @Environment(\.dismiss) var dismiss
+
     @Binding var session: HoopSession
     let dateFormatter = DateFormatter()
     
@@ -59,6 +61,19 @@ struct SessionDetails: View {
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .foregroundStyle(.white)
+                        
+                        Spacer()
+                        
+                        Button {
+                            context.delete(session)
+                            dismiss()
+                        } label: {
+                            Image(systemName: "trash.fill")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.red)
+                        }
                     }
                     .padding(5)
                     

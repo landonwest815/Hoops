@@ -1,19 +1,20 @@
 //
-//  ShotSelection.swift
-//  WatchTest Watch App
+//  ShotSelection 2.swift
+//  Hoops
 //
-//  Created by Landon West on 1/2/24.
+//  Created by Landon West on 2/13/25.
 //
 
 import SwiftUI
 
-struct ShotSelection: View {
+struct DrillSelection: View {
+    
     var body: some View {
         NavigationStack {
             ScrollView {
                 
                 // MARK: Layups
-                NavigationLink(destination: Session(shotType: .layups).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillView(shotType: .layups).navigationBarBackButtonHidden(true)) {
                         Text("Layups")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -21,7 +22,7 @@ struct ShotSelection: View {
                     .tint(.red)
                 
                 // MARK: Free Throws
-                NavigationLink(destination: Session(shotType: .freeThrows).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillView(shotType: .freeThrows).navigationBarBackButtonHidden(true)) {
                         Text("Free Throws")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -29,7 +30,7 @@ struct ShotSelection: View {
                     .tint(.blue)
                 
                 // MARK: Midrange
-                NavigationLink(destination: Session(shotType: .midrange).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillView(shotType: .midrange).navigationBarBackButtonHidden(true)) {
                         Text("Midrange")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -37,7 +38,7 @@ struct ShotSelection: View {
                     .tint(.blue)
                 
                 // MARK: Three Pointers
-                NavigationLink(destination: Session(shotType: .threePointers).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillView(shotType: .threePointers).navigationBarBackButtonHidden(true)) {
                         Text("Three Pointers")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
@@ -45,26 +46,26 @@ struct ShotSelection: View {
                     .tint(.green)
                 
                 // MARK: Deep
-                NavigationLink(destination: Session(shotType: .deep).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillView(shotType: .deep).navigationBarBackButtonHidden(true)) {
                         Text("Deep")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
                     .tint(.purple)
                 
-                // MARK: All Shots
-                NavigationLink(destination: Session(shotType: .allShots).navigationBarBackButtonHidden(true)) {
-                        Text("All Shots")
-                    }.simultaneousGesture(TapGesture().onEnded{
-                        WKInterfaceDevice.current().play(.click)
-                    })
-                    .tint(.orange)
+//                // MARK: All Shots
+//                NavigationLink(destination: DrillView(shotType: .allShots).navigationBarBackButtonHidden(true)) {
+//                        Text("All Shots")
+//                    }.simultaneousGesture(TapGesture().onEnded{
+//                        WKInterfaceDevice.current().play(.click)
+//                    })
+//                    .tint(.orange)
             }
-            .navigationTitle("Shot Type")
+            .navigationTitle("Which Drill")
         }
     }
 }
 
 #Preview {
-    ShotSelection()
+    DrillSelection()
 }

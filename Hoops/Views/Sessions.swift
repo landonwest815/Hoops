@@ -220,6 +220,14 @@ struct Sessions: View {
                 updateStats()
                 calculateStreak()
             })
+//            .onAppear {
+//                for session in sessions {
+//                    if session.sessionType == nil {
+//                        session.sessionType = .freestyle
+//                    }
+//                }
+//                try? context.save() // Save updated sessions
+//            }
             .onChange(of: sessions) {
                 updateStats()
                 calculateStreak()
@@ -385,51 +393,105 @@ struct SessionListView: View {
     let context: ModelContext
     @Binding var selectedSession: HoopSession
     let onSessionSelected: () -> Void // Callback
+    
+    let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"] // Define all session types
+
+    var groupedSessions: [String: [HoopSession]] {
+        var grouped = Dictionary(grouping: sessions, by: { $0.sessionType.rawValue })
+        for type in sessionTypes {
+            if grouped[type] == nil {
+                grouped[type] = [] // Ensure each session type has an entry
+            }
+        }
+        return grouped
+    }
 
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 10) {
-                if sessions.isEmpty {
-                    Text("No sessions for today!")
-                        .font(.subheadline)
-                        .fontWeight(.regular)
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 20)
-                } else {
-                    ForEach(sessions, id: \.id) { session in
-                        SessionThumbnail(
-                            date: session.date,
-                            makes: session.makes,
-                            length: session.length,
-                            average: Double(session.makes) / (Double(session.length) / 60.0),
-                            shotType: session.shotType
-                        )
-                        .transition(.identity)
-                        .contextMenu {
-                            Button {
-                                print("Edit Session")
-                            } label: {
-                                Label("Edit Session", systemImage: "pencil")
-                            }
-
-                            Button(role: .destructive) {
-                                withAnimation {
-                                    context.delete(session)
-                                }
-                            } label: {
-                                Label("Delete Session", systemImage: "trash")
-                            }
+            LazyVStack(spacing: 25) {
+                ForEach(sessionTypes, id: \.self) { sessionType in
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            Image(systemName: iconName(for: sessionType))
+                            Text(sessionType)
+                            
+                            Spacer()
                         }
-                        .onTapGesture {
-                            selectedSession = session
-                            onSessionSelected()
-                        }
-                        .frame(height: 75)
+                        .font(.headline)
+                        .fontWeight(.bold)
                         .padding(.horizontal)
+                        .foregroundStyle(.gray)
+
+                        if let sessions = groupedSessions[sessionType], !sessions.isEmpty {
+                            ForEach(sessions, id: \.id) { session in
+                                SessionThumbnail(
+                                    date: session.date,
+                                    makes: session.makes,
+                                    length: session.length,
+                                    average: Double(session.makes) / (Double(session.length) / 60.0),
+                                    shotType: session.shotType
+                                )
+                                .transition(.identity)
+                                .contextMenu {
+                                    Button {
+                                        print("Edit Session")
+                                    } label: {
+                                        Label("Edit Session", systemImage: "pencil")
+                                    }
+
+                                    Button(role: .destructive) {
+                                        withAnimation {
+                                            context.delete(session)
+                                        }
+                                    } label: {
+                                        Label("Delete Session", systemImage: "trash")
+                                    }
+                                }
+                                .onTapGesture {
+                                    selectedSession = session
+                                    onSessionSelected()
+                                }
+                                .frame(height: 75)
+                                .padding(.horizontal)
+                            }
+                        } else {
+                            
+                            HStack {
+                                Spacer()
+                                
+                                Text(promptText(for: sessionType))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.gray.opacity(0.6))
+                                    .padding(.horizontal)
+                                    .frame(height: 45)
+                                    .multilineTextAlignment(.center)
+                                
+                                Spacer()
+                            }
+                            
+                        }
                     }
                 }
             }
             .animation(.smooth, value: sessions)
+        }
+    }
+    
+    func iconName(for sessionType: String) -> String {
+        switch sessionType {
+        case "Freestyle": return "figure.cooldown"
+        case "Challenge": return "figure.bowling"
+        case "Drill": return "figure.basketball"
+        default: return "questionmark.circle"
+        }
+    }
+    
+    func promptText(for sessionType: String) -> String {
+        switch sessionType {
+        case "Freestyle": return "Shoot hoops!"
+        case "Challenge": return "Challenge yourself!"
+        case "Drill": return "Hit some Drills!"
+        default: return "Shoot hoops!"
         }
     }
 }

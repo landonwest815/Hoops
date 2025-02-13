@@ -37,7 +37,7 @@ struct SessionSelection: View {
                     .tint(.red)
                 
                 // MARK: Three Pointers
-                NavigationLink(destination: DrillView().navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: DrillSelection().navigationBarBackButtonHidden(false)) {
                         Text("Shooting Drills")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)

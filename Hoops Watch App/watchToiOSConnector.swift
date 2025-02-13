@@ -53,7 +53,8 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
             "date": hoopSession.date,
             "makes": hoopSession.makes,
             "length": hoopSession.length,
-            "shotType": hoopSession.shotType.rawValue
+            "shotType": hoopSession.shotType.rawValue,
+            "sessionType": hoopSession.sessionType.rawValue
         ]
 
         // Check if the session is reachable and prefer sendMessage for instant transfer if possible
@@ -69,10 +70,12 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
     
     private func handleIncomingData(_ data: [String: Any]) {
         guard let shotType = data["shotType"] as? String else { return }
+        guard let sessionType = data["sessionType"] as? String else { return }
+        guard let length = data["length"] as? Int else { return }
         
         let notificationContent = UNMutableNotificationContent()
-        notificationContent.title = "New Basketball Session!"
-        notificationContent.body = "New \(shotType) session from Watch!"
+        notificationContent.title = "New \(sessionType) Session!"
+        notificationContent.body = "\(shotType)  |  \(length / 60) min \(length % 60) sec"
         notificationContent.sound = .default
 
         let request = UNNotificationRequest(

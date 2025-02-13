@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 struct DrillView: View {
+    @Environment(\.dismiss) private var dismiss
     
     @State var startTime = Date()
     @State private var elapsedTime = 0
@@ -18,14 +19,16 @@ struct DrillView: View {
     
     @State var showingEndConfirmation = false
     @State private var showingEndEarlyConfirmation = false
+    
+    @State var currentStage = 1
+    @State var shotType: ShotType
         
     var body: some View {
         NavigationStack {
             
             VStack {
-                HStack {
-                    Spacer()
                     
+                HStack {
                     Button {
                         showingEndEarlyConfirmation = true
                     } label: {
@@ -38,14 +41,14 @@ struct DrillView: View {
                     .frame(width: 22, height: 22)
                     .tint(.red)
                     .confirmationDialog(
-                        "End Session?", isPresented: $showingEndEarlyConfirmation) {
-                            Button("Finish Session", role: .destructive) {
-                            endSessionAndNavigate()
+                        "Abandon Drill?", isPresented: $showingEndEarlyConfirmation) {
+                            Button("Quit", role: .destructive) {
+                                endSessionAndNavigate()
+                            }
+                            Button("Keep Hoopin'") {
+                                
+                            }
                         }
-                        Button("Keep Hoopin'") {
-                            
-                        }
-                    }
                     
                     Spacer()
                     
@@ -56,100 +59,31 @@ struct DrillView: View {
                     
                     Spacer()
                     
-                    Text("\(makes)")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.gray)
+                    Button {
+                        // show the shot chart location
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .resizable()
+                            .frame(width: 22, height: 22)
+                            .foregroundStyle(.gray)
+                    }
+                    .clipShape(.circle)
+                    .frame(width: 22, height: 22)
+                    .tint(.gray)
                     
-                    Spacer()
                 }
                 .padding(.top, 30)
+                .padding(.horizontal, 20)
                 .font(.system(size: 30))
                 .fontWeight(.semibold)
                 
                 Spacer()
                 
-                Button(action: {
-                    makes += 1
-                    WKInterfaceDevice.current().play(.success)
-                }) {
-                    VStack(spacing: 5) {
-                        
-                        Spacer()
-                        
-                        HStack(spacing: 10) {
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 35)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.green.opacity(0.75))
-                                
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 35)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.green.opacity(0.75))
-                        }
-                        
-                        HStack(spacing: 10) {
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 35)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.green.opacity(0.25))
-                                
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 35)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.green.opacity(0.25))
-                            
-                            Image(systemName: "basketball.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 35)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.green.opacity(0.25))
-                        }
-                        
-                        Spacer()
-                        
-                        VStack(spacing: 0) {
-                            Text("Left Corner Three")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.green.opacity(1))
-                            
-//                                Text("x5")
-//                                    .font(.subheadline)
-//                                    .fontWeight(.semibold)
-//                                    .fontDesign(.rounded)
-//                                    .foregroundStyle(.green.opacity(0.5))
-                        }
-                        
-                        Spacer()
-                        
-                    }
-                    
-                }
-                .edgesIgnoringSafeArea(.all)
-                .tint(.green)
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.roundedRectangle(radius: 40))
+                LogMakeButton(currentStage: $currentStage, shotType: shotType, onComplete: { endSessionAndNavigate() })
+                
             }
             .navigationDestination(isPresented: $sessionEnd) {
-                PostSession(shotType: .allShots, sessionTimeInSec: elapsedTime, makes: makes)
+                DrillResults(shotType: .allShots, sessionTimeInSec: elapsedTime, makes: makes)
                     .navigationBarBackButtonHidden()
                     .navigationBarTitleDisplayMode(.inline)
                         }
@@ -164,8 +98,10 @@ struct DrillView: View {
     }
 
     func endSessionAndNavigate() {
-        sessionEnd = true
         stopTimer()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+            sessionEnd = true
+        }
     }
     
     func startTimer() {
@@ -197,6 +133,115 @@ struct DrillView: View {
         return String(format: "%02d:%02d", minutes, remainingSeconds)
     }
     
+}
+
+struct LogMakeButton: View {
+    
+    @State var makes: Int = 0
+    @Binding var currentStage: Int
+    var shotType: ShotType
+
+    var stages: Int { shotType.shots.count }
+    
+    let onComplete: () -> Void
+        
+    
+    var body: some View {
+        Button(action: {
+            WKInterfaceDevice.current().play(.success)
+            
+            if makes < 4 {
+                makes += 1
+            } else {
+                makes += 1
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    withAnimation {
+                        makes = 0
+                        if currentStage < stages {
+                            currentStage += 1
+                        } else {
+                            onComplete() // Finish when all stages are done
+                        }
+                    }
+                }
+            }
+            
+        }) {
+            VStack(spacing: 5) {
+                 
+                Spacer()
+                
+                HStack(spacing: 10) {
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.green.opacity(makes > 0 ? 0.75 : 0.25))
+                        
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.green.opacity(makes > 1 ? 0.75 : 0.25))
+                }
+                
+                HStack(spacing: 10) {
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.green.opacity(makes > 2 ? 0.75 : 0.25))
+                        
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.green.opacity(makes > 3 ? 0.75 : 0.25))
+                    
+                    Image(systemName: "basketball.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.green.opacity(makes > 4 ? 0.75 : 0.25))
+                }
+                
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text(shotType.shots[currentStage - 1])
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .foregroundStyle(.green.opacity(1))
+                        .contentTransition(.numericText())
+                    
+//                                Text("x5")
+//                                    .font(.subheadline)
+//                                    .fontWeight(.semibold)
+//                                    .fontDesign(.rounded)
+//                                    .foregroundStyle(.green.opacity(0.5))
+                }
+                
+                Spacer()
+                
+            }
+            
+        }
+        .edgesIgnoringSafeArea(.all)
+        .tint(.green)
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle(radius: 40))
+    }
 }
 
 struct CourtLines: View {
@@ -257,5 +302,5 @@ struct CourtLines: View {
 }
 
 #Preview {
-    DrillView()
+    DrillView(shotType: .deep)
 }
