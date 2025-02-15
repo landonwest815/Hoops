@@ -72,7 +72,7 @@ struct SessionDetails: View {
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)
-                                .foregroundStyle(.red)
+                                .foregroundStyle(.white)
                         }
                     }
                     .padding(5)

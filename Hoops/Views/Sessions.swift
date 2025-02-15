@@ -30,6 +30,18 @@ struct Sessions: View {
     
     // Session Details
     @State var selectedSession: HoopSession = HoopSession(date: .now, makes: 0, length: 0, shotType: .allShots)
+    
+    @State var showFilters: Bool = false
+    
+    @State private var shotTypeVisibility: [ShotType: Bool] = [
+        .layups: false,
+        .freeThrows: false,
+        .midrange: false,
+        .threePointers: false,
+        .deep: false,
+        .allShots: false
+    ]
+
 
     private var selectedDaySessions: [HoopSession] {
         sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
@@ -42,80 +54,242 @@ struct Sessions: View {
                 WeekView(selectedDate: $selectedDate)
                     .padding(.top, 5)
                 
-                HStack(spacing: 10) {
-                    MetricButton(
-                        icon: "basketball.fill",
-                        title: "Sessions",
-                        value: "\(sessionCount)",
-                        color: .orange,
-                        isSelected: selectedMetric == .sessions,
-                        variant: .compact
-                    ) {
-                        withAnimation {
-                            toggleMetric(.sessions)
+                VStack(spacing: 20) {
+                    HStack(spacing: 10) {
+                        MetricButton(
+                            icon: "basketball.fill",
+                            title: "Sessions",
+                            value: "\(sessionCount)",
+                            color: .orange,
+                            isSelected: selectedMetric == .sessions,
+                            variant: .compact
+                        ) {
+                            withAnimation {
+                                toggleMetric(.sessions)
+                            }
+                        }
+                        
+                        MetricButton(
+                            icon: "scope",
+                            title: "Total Makes",
+                            value: "\(totalMakes)",
+                            color: .red,
+                            isSelected: selectedMetric == .makes,
+                            variant: .compact
+                        ) {
+                            withAnimation {
+                                toggleMetric(.makes)
+                            }
+                        }
+                        
+                        MetricButton(
+                            icon: "chart.line.uptrend.xyaxis",
+                            title: "Average Makes",
+                            value: String(format: "%.2f", averageMakesPerMinute),
+                            color: .blue,
+                            isSelected: selectedMetric == .average,
+                            variant: .expanded
+                        ) {
+                            withAnimation {
+                                toggleMetric(.average)
+                            }
                         }
                     }
+                    .frame(height: 50)
+                    .padding(.horizontal, 15)
+                    .padding(.top, 5)
                     
-                    MetricButton(
-                        icon: "scope",
-                        title: "Total Makes",
-                        value: "\(totalMakes)",
-                        color: .red,
-                        isSelected: selectedMetric == .makes,
-                        variant: .compact
-                    ) {
-                        withAnimation {
-                            toggleMetric(.makes)
+                    VStack {
+                        HStack {
+                            Button(action: {}) {
+                                HStack {
+                                    Image(systemName: "calendar")
+                                    Text(selectedDate, style: .date)
+                                }
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.orange)
+                                .contentTransition(.numericText())
+                                .foregroundStyle(.orange)
+                                .fontWeight(.semibold)
+                                .padding(5)
+                                .padding(.horizontal, 5)
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(20)
+                                
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {}) {
+                                Image(systemName: "arrow.up.arrow.down")
+                                    .buttonStyle()
+                            }
+                            
+                            Button(action: {
+                                withAnimation {
+                                    showFilters.toggle()
+                                }
+                            }) {
+                                Image(systemName: "line.3.horizontal.decrease")
+                                    .buttonStyle()
+                            }
+                        }
+                        
+                        if showFilters {
+                            VStack {
+                                HStack {
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.layups]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("Layups")
+                                                .foregroundStyle(.red)
+                                                .opacity(shotTypeVisibility[.layups] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.layups] == true ? .red.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.freeThrows]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("Free Throws")
+                                                .foregroundStyle(.blue)
+                                                .opacity(shotTypeVisibility[.freeThrows] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.freeThrows] == true ? .blue.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.midrange]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("Midrange")
+                                                .foregroundStyle(.blue)
+                                                .opacity(shotTypeVisibility[.midrange] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.midrange] == true ? .blue.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                }
+                                
+                                HStack {
+                                    Spacer()
+                                    
+                                    if shotTypeVisibility.values.contains(true) {
+                                        Button(action: {
+                                            withAnimation {
+                                                for key in shotTypeVisibility.keys {
+                                                    shotTypeVisibility[key] = false
+                                                }
+                                            }
+                                        }) {
+                                            HStack {
+                                                Image(systemName: "xmark")
+                                                    .foregroundStyle(.gray)
+                                            }
+                                            .padding(5)
+                                            .padding(.horizontal, 5)
+                                            .background(.ultraThinMaterial)
+                                            .cornerRadius(20)
+                                        }
+                                    }
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.threePointers]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("Threes")
+                                                .foregroundStyle(.green)
+                                                .opacity(shotTypeVisibility[.threePointers] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.threePointers] == true ? .green.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.deep]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("Deep")
+                                                .foregroundStyle(.purple)
+                                                .opacity(shotTypeVisibility[.deep] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.deep] == true ? .purple.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            shotTypeVisibility[.allShots]?.toggle()
+                                        }
+                                    }) {
+                                        HStack {
+                                            Text("All Shots")
+                                                .foregroundStyle(.orange)
+                                                .opacity(shotTypeVisibility[.allShots] == true ? 1 : 0.8)
+                                        }
+                                        .padding(5)
+                                        .padding(.horizontal, 5)
+                                        .background(.ultraThinMaterial)
+                                        .background(shotTypeVisibility[.allShots] == true ? .orange.opacity(0.5) : .clear)
+                                        .cornerRadius(20)
+                                    }
+                                }
+                            }
+                            .padding(.top, 2.5)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.orange)
+                            .contentTransition(.numericText())
+                            .foregroundStyle(.orange)
+                            .fontWeight(.semibold)
                         }
                     }
+                    .padding(.horizontal)
+                    .padding(.top, 5)
                     
-                    MetricButton(
-                        icon: "chart.line.uptrend.xyaxis",
-                        title: "Average Makes",
-                        value: String(format: "%.2f", averageMakesPerMinute),
-                        color: .blue,
-                        isSelected: selectedMetric == .average,
-                        variant: .expanded
-                    ) {
-                        withAnimation {
-                            toggleMetric(.average)
+                    ZStack(alignment: .bottomTrailing) {
+                        SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, shotTypeVisibility: shotTypeVisibility, onSessionSelected: {
+                            activeSheet = .sessionDetails
+                        })
+                        .padding(.horizontal)
+                        FloatingActionButton {
+                            withAnimation { activeSheet = .sessionCreation }
                         }
                     }
                 }
-                .frame(height: 50)
-                .padding(.horizontal, 15)
-                .padding(.vertical, 5)
                 
-                HStack {
-                    Text(selectedDate, style: .date)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText())
-                    
-                    Spacer()
-                    
-                    Button(action: {}) {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .buttonStyle()
-                    }
-                    
-                    Button(action: {}) {
-                        Image(systemName: "line.3.horizontal.decrease")
-                            .buttonStyle()
-                    }
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal)
-                
-                ZStack(alignment: .bottomTrailing) {
-                    SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, onSessionSelected: {
-                        activeSheet = .sessionDetails
-                    })
-                    FloatingActionButton {
-                        withAnimation { activeSheet = .sessionCreation }
-                    }
-                }
             }
             .background(.ultraThinMaterial)
             .navigationBarTitleDisplayMode(.inline)
@@ -257,7 +431,7 @@ struct Sessions: View {
     }
     
     private func addRandomSession() {
-        let shotTypeToAdd = selectedShotType
+        let shotTypeToAdd = ShotType.allCases.randomElement() ?? .allShots
         let currentTime = Date()
 
         let calendar = Calendar.current
@@ -394,17 +568,30 @@ struct SessionListView: View {
     let context: ModelContext
     @Binding var selectedSession: HoopSession
     @Binding var selectedDate: Date // Added binding to track date change
-    let onSessionSelected: () -> Void // Callback
-    
-    let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"] // Define all session types
+    let shotTypeVisibility: [ShotType: Bool]
+    let onSessionSelected: () -> Void
+
+    let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"]
 
     var groupedSessions: [String: [HoopSession]] {
-        var grouped = Dictionary(grouping: sessions, by: { $0.sessionType.rawValue })
+        // Check if all toggles are false
+        let allTogglesOff = shotTypeVisibility.values.allSatisfy { !$0 }
+
+        // Determine which sessions to show
+        let filteredSessions = allTogglesOff ? sessions : sessions.filter { session in
+            shotTypeVisibility[session.shotType] == true
+        }
+
+        // Group sessions by sessionType
+        var grouped = Dictionary(grouping: filteredSessions, by: { $0.sessionType.rawValue })
+
+        // Ensure every session type appears, even if empty
         for type in sessionTypes {
             if grouped[type] == nil {
-                grouped[type] = [] // Ensure each session type has an entry
+                grouped[type] = []
             }
         }
+
         return grouped
     }
 
@@ -412,20 +599,18 @@ struct SessionListView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 25) {
-
                     ForEach(sessionTypes, id: \.self) { sessionType in
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
                                 Image(systemName: iconName(for: sessionType))
                                 Text(sessionType)
-                                
                                 Spacer()
                             }
                             .font(.headline)
                             .fontWeight(.bold)
-                            .padding(.horizontal)
-                            .foregroundStyle(.gray)
-                            
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 15)
+
                             if let sessions = groupedSessions[sessionType], !sessions.isEmpty {
                                 ForEach(sessions, id: \.id) { session in
                                     SessionThumbnail(
@@ -442,7 +627,7 @@ struct SessionListView: View {
                                         } label: {
                                             Label("Edit Session", systemImage: "pencil")
                                         }
-                                        
+
                                         Button(role: .destructive) {
                                             withAnimation {
                                                 context.delete(session)
@@ -454,49 +639,52 @@ struct SessionListView: View {
                                     .onTapGesture {
                                         selectedSession = session
                                         onSessionSelected()
-//                                        withAnimation {
-//                                            proxy.scrollTo(session.id, anchor: .bottom) // Slightly above center
-//                                            
-//                                        }
                                     }
                                     .frame(height: 75)
-                                    .padding(.horizontal)
                                     .id(session.id)
                                 }
                             } else {
-                                
                                 HStack {
                                     Spacer()
-                                    
                                     Text(promptText(for: sessionType))
                                         .font(.subheadline)
-                                        .foregroundStyle(.gray.opacity(0.6))
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(.gray.opacity(0.75))
                                         .padding(.horizontal)
                                         .frame(height: 45)
                                         .multilineTextAlignment(.center)
-                                    
                                     Spacer()
                                 }
-                                
                             }
                         }
                     }
-                    
                     Spacer(minLength: 250)
-
                 }
+                .scrollIndicators(.hidden)
                 .animation(.smooth, value: sessions)
             }
+            .scrollIndicators(.hidden)
             .id(selectedDate)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .ignoresSafeArea()
         }
     }
     
     func iconName(for sessionType: String) -> String {
         switch sessionType {
-        case "Freestyle": return "figure.cooldown"
-        case "Challenge": return "figure.bowling"
-        case "Drill": return "figure.basketball"
-        default: return "questionmark.circle"
+            case "Freestyle": return "figure.cooldown"
+            case "Challenge": return "figure.bowling"
+            case "Drill": return "figure.basketball"
+            default: return "questionmark.circle"
+        }
+    }
+    
+    func iconColor(for sessionType: String) -> Color {
+        switch sessionType {
+            case "Freestyle": return .red
+            case "Challenge": return .blue
+            case "Drill": return .green
+            default: return .white
         }
     }
     
