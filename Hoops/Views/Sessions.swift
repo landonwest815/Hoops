@@ -99,194 +99,17 @@ struct Sessions: View {
                     .padding(.horizontal, 15)
                     .padding(.top, 5)
                     
-                    VStack {
-                        HStack {
-                            Button(action: {}) {
-                                HStack {
-                                    Image(systemName: "calendar")
-                                    Text(selectedDate, style: .date)
-                                }
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.orange)
-                                .contentTransition(.numericText())
-                                .foregroundStyle(.orange)
-                                .fontWeight(.semibold)
-                                .padding(5)
-                                .padding(.horizontal, 5)
-                                .background(.ultraThinMaterial)
-                                .cornerRadius(20)
-                                
-                            }
-                            
-                            Spacer()
-                            
-                            Button(action: {}) {
-                                Image(systemName: "arrow.up.arrow.down")
-                                    .buttonStyle()
-                            }
-                            
-                            Button(action: {
-                                withAnimation {
-                                    showFilters.toggle()
-                                }
-                            }) {
-                                Image(systemName: "line.3.horizontal.decrease")
-                                    .buttonStyle()
+                    ZStack(alignment: .topTrailing) {
+                        ZStack(alignment: .bottomTrailing) {
+                            SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, shotTypeVisibility: shotTypeVisibility, onSessionSelected: {
+                                activeSheet = .sessionDetails
+                            })
+                            .padding(.horizontal)
+                            FloatingActionButton {
+                                withAnimation { activeSheet = .sessionCreation }
                             }
                         }
-                        
-                        if showFilters {
-                            VStack {
-                                HStack {
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.layups]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("Layups")
-                                                .foregroundStyle(.red)
-                                                .opacity(shotTypeVisibility[.layups] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.layups] == true ? .red.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.freeThrows]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("Free Throws")
-                                                .foregroundStyle(.blue)
-                                                .opacity(shotTypeVisibility[.freeThrows] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.freeThrows] == true ? .blue.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.midrange]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("Midrange")
-                                                .foregroundStyle(.blue)
-                                                .opacity(shotTypeVisibility[.midrange] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.midrange] == true ? .blue.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    
-                                    if shotTypeVisibility.values.contains(true) {
-                                        Button(action: {
-                                            withAnimation {
-                                                for key in shotTypeVisibility.keys {
-                                                    shotTypeVisibility[key] = false
-                                                }
-                                            }
-                                        }) {
-                                            HStack {
-                                                Image(systemName: "xmark")
-                                                    .foregroundStyle(.gray)
-                                            }
-                                            .padding(5)
-                                            .padding(.horizontal, 5)
-                                            .background(.ultraThinMaterial)
-                                            .cornerRadius(20)
-                                        }
-                                    }
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.threePointers]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("Threes")
-                                                .foregroundStyle(.green)
-                                                .opacity(shotTypeVisibility[.threePointers] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.threePointers] == true ? .green.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.deep]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("Deep")
-                                                .foregroundStyle(.purple)
-                                                .opacity(shotTypeVisibility[.deep] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.deep] == true ? .purple.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            shotTypeVisibility[.allShots]?.toggle()
-                                        }
-                                    }) {
-                                        HStack {
-                                            Text("All Shots")
-                                                .foregroundStyle(.orange)
-                                                .opacity(shotTypeVisibility[.allShots] == true ? 1 : 0.8)
-                                        }
-                                        .padding(5)
-                                        .padding(.horizontal, 5)
-                                        .background(.ultraThinMaterial)
-                                        .background(shotTypeVisibility[.allShots] == true ? .orange.opacity(0.5) : .clear)
-                                        .cornerRadius(20)
-                                    }
-                                }
-                            }
-                            .padding(.top, 2.5)
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.orange)
-                            .contentTransition(.numericText())
-                            .foregroundStyle(.orange)
-                            .fontWeight(.semibold)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 5)
-                    
-                    ZStack(alignment: .bottomTrailing) {
-                        SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, shotTypeVisibility: shotTypeVisibility, onSessionSelected: {
-                            activeSheet = .sessionDetails
-                        })
-                        .padding(.horizontal)
-                        FloatingActionButton {
-                            withAnimation { activeSheet = .sessionCreation }
-                        }
+                        ShotFilterView(shotTypeVisibility: $shotTypeVisibility)
                     }
                 }
                 
@@ -302,46 +125,60 @@ struct Sessions: View {
                 
                 ToolbarItemGroup(placement: .principal) {
                     Button(action: { activeSheet = .profile }) {
-                        HStack(spacing: 7.5) {
-                            Text("hoops.")
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.white)
-                            
-                            if streak > 1 {
-                                ZStack {
-                                    Image(systemName: "flame.fill")
-                                        .resizable()
-                                        .frame(width: 21, height: 23)
-                                    
-                                    Image(systemName: "circle.fill")
-                                        .resizable()
-                                        .frame(width: 11, height: 11)
-                                        .offset(y: 4)
-                                    
-                                    Text("\(streak)")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .fontDesign(.rounded)
-                                        .foregroundStyle(.white)
-                                        .offset(x: -0.25, y: 1.75)
-                                        .shadow(radius: 5)
-                                        .contentTransition(.numericText())
-                                }
-                                .foregroundStyle(.red)
-                                .symbolEffect(.bounce, value: streak)
-                                .shadow(color: .red.opacity(0.25), radius: 5)
-                                .shadow(color: .red.opacity(0.125), radius: 12.5)
-                                .shadow(color: .red.opacity(0.05), radius: 20)
-                            }
+//                        HStack(spacing: 7.5) {
+//                            Text("hoops.")
+//                                .font(.title2)
+//                                .fontWeight(.semibold)
+//                                .fontDesign(.rounded)
+//                                .foregroundStyle(.white)
+//
+//                        }
+                        HStack {
+                            Image(systemName: "calendar")
+                            Text(selectedDate, style: .date)
                         }
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .contentTransition(.numericText())
+                        .foregroundStyle(.orange)
+                        .fontWeight(.semibold)
+                        //.padding(5)
+                        //.padding(.horizontal, 5)
+                        //.background(.ultraThinMaterial)
+                        //.cornerRadius(20)
                     }
                 }
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "calendar").iconStyle()
+                    Button(action: { activeSheet = .profile }) {
+                        //Image(systemName: "calendar").iconStyle()
+                        if streak > 1 {
+                            ZStack {
+                                Image(systemName: "flame.fill")
+                                    .resizable()
+                                    .frame(width: 24, height: 28)
+                                
+                                Image(systemName: "circle.fill")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .offset(y: 4)
+                                
+                                Text("\(streak)")
+                                    .font(.system(size: 14))
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.white)
+                                    .offset(x: -0.25, y: 1.75)
+                                    .shadow(color: .black, radius: 3)
+                                    .contentTransition(.numericText())
+                            }
+                            .foregroundStyle(.red)
+                            .symbolEffect(.bounce, value: streak)
+                            .shadow(color: .red.opacity(0.125), radius: 2.5)
+                            .shadow(color: .red.opacity(0.075), radius: 7.5)
+                            .shadow(color: .red.opacity(0.025), radius: 15)
+                        }
                     }
                 }
             }
@@ -599,6 +436,7 @@ struct SessionListView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 25) {
+                                        
                     ForEach(sessionTypes, id: \.self) { sessionType in
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
@@ -610,6 +448,13 @@ struct SessionListView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 15)
+                            .padding(.top, 5)
+                            .scrollTransition { content, phase in
+                                content
+                                    .opacity(phase.isIdentity ? 1 : 0)
+                                    //.scaleEffect(phase.isIdentity ? 1 : 0.75)
+                                    //.blur(radius: phase.isIdentity ? 0 : 10)
+                            }
 
                             if let sessions = groupedSessions[sessionType], !sessions.isEmpty {
                                 ForEach(sessions, id: \.id) { session in
@@ -642,6 +487,12 @@ struct SessionListView: View {
                                     }
                                     .frame(height: 75)
                                     .id(session.id)
+                                    .scrollTransition { content, phase in
+                                        content
+                                            .opacity(phase.isIdentity ? 1 : 0.5)
+                                            //.scaleEffect(phase.isIdentity ? 1 : 0.75)
+                                            //.blur(radius: phase.isIdentity ? 0 : 10)
+                                    }
                                 }
                             } else {
                                 HStack {
@@ -722,6 +573,112 @@ struct FloatingActionButton: View {
     }
 }
 
+struct ShotFilterView: View {
+    @Binding var shotTypeVisibility: [ShotType: Bool]
+
+    var body: some View {
+        VStack {
+            HeaderView(shotTypeVisibility: $shotTypeVisibility)
+        }
+        .padding(.horizontal)
+    }
+}
+
+struct HeaderView: View {
+
+    @Binding var shotTypeVisibility: [ShotType: Bool]
+    
+    var body: some View {
+        HStack {
+
+            Spacer()
+
+            FilterMenuView(shotTypeVisibility: $shotTypeVisibility)
+
+            Button(action: {
+                
+            }) {
+                Image(systemName: "line.3.horizontal.decrease")
+                    .buttonStyle()
+            }
+        }
+    }
+}
+
+struct FilterMenuView: View {
+
+    @Binding var shotTypeVisibility: [ShotType: Bool]
+
+    var body: some View {
+        Menu {
+            
+            Button {
+                withAnimation {
+                    // Set all shot types to false
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                }
+            } label: {
+                let anyShotSelected = shotTypeVisibility.values.contains(true)
+                Label("All Shots", systemImage: anyShotSelected ? "" : "checkmark")
+            }
+            
+            Divider()
+            
+            Button {
+                withAnimation {
+                    shotTypeVisibility[.layups, default: false].toggle()
+                }
+            } label: {
+                Label("All Shots", systemImage: shotTypeVisibility[.layups, default: false] ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotTypeVisibility[.freeThrows, default: false].toggle()
+                }
+            } label: {
+                Label("Free Throws", systemImage: shotTypeVisibility[.freeThrows, default: false] ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotTypeVisibility[.midrange, default: false].toggle()
+                }
+            } label: {
+                Label("Midrange", systemImage: shotTypeVisibility[.midrange, default: false] ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotTypeVisibility[.threePointers, default: false].toggle()
+                }
+            } label: {
+                Label("Threes", systemImage: shotTypeVisibility[.threePointers, default: false] ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotTypeVisibility[.deep, default: false].toggle()
+                }
+            } label: {
+                Label("Deep", systemImage: shotTypeVisibility[.deep, default: false] ? "checkmark" : "")
+            }
+        }
+        label: {
+            Image(systemName: "arrow.up.arrow.down")
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 17.5, height: 17.5)
+                .foregroundStyle(shotTypeVisibility.values.contains(true) ? .white : .orange)
+                .fontWeight(.semibold)
+                .padding(6)
+                .background(.ultraThinMaterial)
+                .background(shotTypeVisibility.values.contains(true) ? .orange : .clear)
+                .cornerRadius(20)
+        }
+    }
+}
 
 #Preview {
         Sessions()
