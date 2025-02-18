@@ -119,6 +119,7 @@ struct GraphTesting: View {
                     .fontDesign(.rounded)
                     .font(.headline)
                     .foregroundStyle(.white)
+                    .contentTransition(.numericText())
                 
                 Text("\(averageValue.formatted(.number.precision(.fractionLength(2))))")
                     .fontWeight(.semibold)

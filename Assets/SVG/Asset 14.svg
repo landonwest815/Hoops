@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #f7931e;
+        font-family: SFProDisplay-Regular, 'SF Pro Display';
+        font-size: 1161.08px;
+      }
+
+      .cls-3 {
+        fill: #fff;
+        font-family: SFCompactRounded-Semibold, 'SF Compact Rounded';
+        font-size: 250px;
+        font-weight: 600;
+      }
+
+      .cls-4 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" width="1024" height="1024"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g class="cls-4">
+      <text class="cls-2" transform="translate(-102 1440.66)"><tspan x="0" y="0">􁗊</tspan></text>
+    </g>
+    <text class="cls-3" transform="translate(150.19 349.01)"><tspan x="0" y="0">hoops.</tspan></text>
+  </g>
+</svg>

@@ -39,12 +39,12 @@ struct Stats: View {
                             .font(.title3)
                             .contentTransition(.numericText())
                                                 
-                        Text("Avg: 6.6")
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .font(.headline)
-                            .contentTransition(.numericText())
-                            .foregroundStyle(.gray)
+//                        Text("Avg: 6.6")
+//                            .fontWeight(.semibold)
+//                            .fontDesign(.rounded)
+//                            .font(.headline)
+//                            .contentTransition(.numericText())
+//                            .foregroundStyle(.gray)
                     }
                     .padding(.top)
                     

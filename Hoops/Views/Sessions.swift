@@ -99,7 +99,9 @@ struct Sessions: View {
                     .padding(.horizontal, 15)
                     .padding(.top, 5)
                     
-                    ZStack(alignment: .topTrailing) {
+                    VStack() {
+                        //ShotFilterView(shotTypeVisibility: $shotTypeVisibility)
+
                         ZStack(alignment: .bottomTrailing) {
                             SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, shotTypeVisibility: shotTypeVisibility, onSessionSelected: {
                                 activeSheet = .sessionDetails
@@ -109,7 +111,6 @@ struct Sessions: View {
                                 withAnimation { activeSheet = .sessionCreation }
                             }
                         }
-                        ShotFilterView(shotTypeVisibility: $shotTypeVisibility)
                     }
                 }
                 
@@ -152,32 +153,45 @@ struct Sessions: View {
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: { activeSheet = .profile }) {
-                        //Image(systemName: "calendar").iconStyle()
                         if streak > 1 {
-                            ZStack {
-                                Image(systemName: "flame.fill")
-                                    .resizable()
-                                    .frame(width: 24, height: 28)
-                                
-                                Image(systemName: "circle.fill")
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                    .offset(y: 4)
-                                
+                            
+                            HStack(spacing: 5) {
+                                ZStack {
+                                    Image(systemName: "flame.fill")
+                                        .resizable()
+                                        .frame(width: 18, height: 20)
+                                        .foregroundStyle(.red)
+                                    
+                                    Image(systemName: "circle.fill")
+                                        .resizable()
+                                        .frame(width: 8, height: 10)
+                                        .offset(y: 3)
+                                        .foregroundStyle(.red)
+                                    
+                                    Image(systemName: "flame.fill")
+                                        .resizable()
+                                        .frame(width: 9, height: 11)
+                                        .offset(y: 2.5)
+                                        .foregroundStyle(.orange)
+                                }
+                                    
                                 Text("\(streak)")
-                                    .font(.system(size: 14))
-                                    .fontWeight(.semibold)
+                                    .font(.headline)
                                     .fontDesign(.rounded)
-                                    .foregroundStyle(.white)
-                                    .offset(x: -0.25, y: 1.75)
-                                    .shadow(color: .black, radius: 3)
+                                    .fontWeight(.semibold)
                                     .contentTransition(.numericText())
+                                    .foregroundStyle(.white)
+                                
                             }
                             .foregroundStyle(.red)
                             .symbolEffect(.bounce, value: streak)
                             .shadow(color: .red.opacity(0.125), radius: 2.5)
                             .shadow(color: .red.opacity(0.075), radius: 7.5)
                             .shadow(color: .red.opacity(0.025), radius: 15)
+                            .padding(5)
+                            .padding(.horizontal, 5)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Capsule())
                         }
                     }
                 }
@@ -198,7 +212,7 @@ struct Sessions: View {
                 case .stats:
                     Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)
                         .presentationCornerRadius(32)
-                        .presentationDetents([.fraction(0.6875)])
+                        .presentationDetents([.fraction(0.7325)])
                         .presentationDragIndicator(.visible)
                         .presentationBackground(.ultraThickMaterial)
                         .presentationBackgroundInteraction(.enabled)
@@ -261,10 +275,12 @@ struct Sessions: View {
     }
 
     private func updateStats() {
-        sessionCount = selectedDaySessions.count
-        totalMakes = selectedDaySessions.reduce(0) { $0 + $1.makes }
-        let totalTime = selectedDaySessions.reduce(0) { $0 + $1.length }
-        averageMakesPerMinute = totalTime > 0 ? Double(totalMakes) / Double(totalTime) * 60 : 0
+        withAnimation {
+            sessionCount = selectedDaySessions.count
+            totalMakes = selectedDaySessions.reduce(0) { $0 + $1.makes }
+            let totalTime = selectedDaySessions.reduce(0) { $0 + $1.length }
+            averageMakesPerMinute = totalTime > 0 ? Double(totalMakes) / Double(totalTime) * 60 : 0
+        }
     }
     
     private func addRandomSession() {
@@ -435,7 +451,7 @@ struct SessionListView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: 25) {
+                LazyVStack(spacing: 15) {
                                         
                     ForEach(sessionTypes, id: \.self) { sessionType in
                         VStack(alignment: .leading, spacing: 10) {
@@ -495,21 +511,22 @@ struct SessionListView: View {
                                     }
                                 }
                             } else {
-                                HStack {
-                                    Spacer()
-                                    Text(promptText(for: sessionType))
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.gray.opacity(0.75))
-                                        .padding(.horizontal)
-                                        .frame(height: 45)
-                                        .multilineTextAlignment(.center)
-                                    Spacer()
-                                }
+//                                HStack {
+//                                    Spacer()
+//                                    Text(promptText(for: sessionType))
+//                                        .font(.subheadline)
+//                                        .fontWeight(.semibold)
+//                                        .foregroundStyle(.gray.opacity(0.75))
+//                                        .padding(.horizontal)
+//                                        .frame(height: 45)
+//                                        .multilineTextAlignment(.center)
+//                                    Spacer()
+//                                }
+                                PlaceholderThumbnail(prompt: promptText(for: sessionType))
                             }
                         }
                     }
-                    Spacer(minLength: 250)
+                    Spacer(minLength: 200)
                 }
                 .scrollIndicators(.hidden)
                 .animation(.smooth, value: sessions)

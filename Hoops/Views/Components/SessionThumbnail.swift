@@ -198,6 +198,37 @@ func getShotPoints(for shotType: ShotType) -> String {
     }
 }
 
+struct PlaceholderThumbnail: View {
+    
+    let prompt: String
+    
+    var body: some View {
+            
+            ZStack {
+                HStack(spacing: 0) {
+                        
+                    Text(prompt)
+                        .foregroundStyle(.gray.opacity(0.33))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                    
+                }
+                .frame(height: 75)
+                .frame(maxWidth: .infinity)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(style: StrokeStyle(lineWidth: 2, dash: [7.5, 7.5])) // Dashed stroke
+                        .foregroundColor(.gray.opacity(0.33))
+                )
+                .padding(.horizontal, 1)
+            }
+        
+    }
+    
+}
+
 #Preview {
-    SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
+    //SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
+    PlaceholderThumbnail(prompt: "Go hit some Drills!")
 }
