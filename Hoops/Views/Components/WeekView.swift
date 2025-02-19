@@ -76,13 +76,17 @@ struct WeeklyShotTrackerView: View {
                     .padding(.vertical, 5)
                     .frame(maxWidth: .infinity)
                     .background(.ultraThinMaterial)
-                    .opacity(isFuture ? 0.5 : 1.0)
                     .cornerRadius(12)
                     .overlay(
                         isSelected ?
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white.opacity(0.66), lineWidth: 2)
                         : nil
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(style: StrokeStyle(lineWidth: 1))
+                            .foregroundColor(.gray.opacity(0.33))
                     )
                     .onTapGesture {
                         withAnimation(.snappy) {
@@ -91,6 +95,7 @@ struct WeeklyShotTrackerView: View {
                             }
                         }
                     }
+                    .opacity(isFuture ? 0.5 : 1.0)
                 }
             }
         }

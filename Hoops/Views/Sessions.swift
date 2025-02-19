@@ -33,6 +33,8 @@ struct Sessions: View {
     
     @State var showFilters: Bool = false
     
+    @State var shotType: ShotType = .allShots
+    
     @State private var shotTypeVisibility: [ShotType: Bool] = [
         .layups: false,
         .freeThrows: false,
@@ -99,7 +101,13 @@ struct Sessions: View {
                     .padding(.horizontal, 15)
                     .padding(.top, 5)
                     
-                    VStack() {
+                    if selectedMetric != .none {
+                        GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
+                            .padding(.horizontal)
+                            .transition(.opacity)
+                    }
+                    
+                    VStack {
                         //ShotFilterView(shotTypeVisibility: $shotTypeVisibility)
 
                         ZStack(alignment: .bottomTrailing) {
@@ -120,7 +128,25 @@ struct Sessions: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button(action: { addRandomSession() }) {
-                        Image(systemName: "gearshape.fill").iconStyle()
+                            
+                        Image(systemName: "gear")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20)
+                            .foregroundStyle(.gray)
+                            .fontWeight(.semibold)
+                            .frame(width: 20, height: 20)
+                            .padding(5)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(18)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                                    .foregroundColor(.gray.opacity(0.25))
+                            )
+                            
+                    
+                            
                     }
                 }
                 
@@ -136,18 +162,19 @@ struct Sessions: View {
 //                        }
                         HStack {
                             Image(systemName: "calendar")
-                            Text(selectedDate, style: .date)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 16)
+                            Text(selectedDate, format: Date.FormatStyle().month(.abbreviated).day())
                         }
-                        .font(.headline)
+                        .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
                         .contentTransition(.numericText())
                         .foregroundStyle(.orange)
                         .fontWeight(.semibold)
-                        //.padding(5)
-                        //.padding(.horizontal, 5)
-                        //.background(.ultraThinMaterial)
-                        //.cornerRadius(20)
+                        .frame(height: 20)
+                        
                     }
                 }
                 
@@ -188,13 +215,21 @@ struct Sessions: View {
                             .shadow(color: .red.opacity(0.125), radius: 2.5)
                             .shadow(color: .red.opacity(0.075), radius: 7.5)
                             .shadow(color: .red.opacity(0.025), radius: 15)
+                            .frame(width: 50, height: 20)
                             .padding(5)
                             .padding(.horizontal, 5)
                             .background(.ultraThinMaterial)
-                            .clipShape(Capsule())
+                            .cornerRadius(18)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                                    .foregroundColor(.gray.opacity(0.25))
+                            )
                         }
                     }
                 }
+                
+                
             }
             .sheet(
                 isPresented: Binding(
@@ -218,7 +253,7 @@ struct Sessions: View {
                         .presentationBackgroundInteraction(.enabled)
                     
                 case .profile:
-                    Profile()
+                    Profile(averageMakesPerMinute: calculateAllTimeAverage(), streak: $streak)
                         .presentationCornerRadius(32)
                         .presentationDetents([.fraction(0.8375)])
                         .presentationBackground(.ultraThickMaterial)
@@ -266,10 +301,10 @@ struct Sessions: View {
     
     private func toggleMetric(_ metric: GraphType) {
         if selectedMetric != metric {
-            activeSheet = .stats
+            //activeSheet = .stats
             selectedMetric = metric
         } else {
-            activeSheet = .none
+            //activeSheet = .none
             selectedMetric = .none
         }
     }
@@ -281,6 +316,12 @@ struct Sessions: View {
             let totalTime = selectedDaySessions.reduce(0) { $0 + $1.length }
             averageMakesPerMinute = totalTime > 0 ? Double(totalMakes) / Double(totalTime) * 60 : 0
         }
+    }
+    
+    private func calculateAllTimeAverage() -> Double {
+        let totalMakes = sessions.reduce(0) { $0 + $1.makes }
+        let totalTime = sessions.reduce(0) { $0 + $1.length }
+        return totalTime > 0 ? Double(totalMakes) / Double(totalTime) * 60 : 0
     }
     
     private func addRandomSession() {
@@ -413,6 +454,11 @@ struct MetricButton: View {
                 : nil
             )
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(style: StrokeStyle(lineWidth: 1))
+                .foregroundColor(.gray.opacity(0.25))
+        )
     }
 }
 
@@ -533,7 +579,7 @@ struct SessionListView: View {
             }
             .scrollIndicators(.hidden)
             .id(selectedDate)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipShape(RoundedRectangle(cornerRadius: 18))
             .ignoresSafeArea()
         }
     }
@@ -583,10 +629,17 @@ struct FloatingActionButton: View {
                         .frame(width: 30)
                         .foregroundStyle(.orange)
                 }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 50)
+                        .stroke(style: StrokeStyle(lineWidth: 1))
+                        .foregroundColor(.gray.opacity(0.25))
+                )
             }
+            
         }
         .padding(.horizontal, 25)
         .padding(.bottom)
+        
     }
 }
 

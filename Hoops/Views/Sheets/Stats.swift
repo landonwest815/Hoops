@@ -23,39 +23,49 @@ struct Stats: View {
         NavigationStack {
             
             // MARK: - List of Wants
-            VStack(spacing: 10) {
+            VStack(spacing: 15) {
                 
-                
+                Spacer()
                 
                 //StatCards(type: $shotType)
                 
                 GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
+//                    .background(.ultraThinMaterial)
+//                    .cornerRadius(18)
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 18)
+//                            .stroke(style: StrokeStyle(lineWidth: 1))
+//                            .foregroundColor(.gray.opacity(0.25))
+//                    )
+//                    .padding(.horizontal, 2.5)
                 
-                VStack {
-                    HStack(spacing: 15) {
-                        Text(shotType.rawValue)
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .font(.title3)
-                            .contentTransition(.numericText())
-                                                
-//                        Text("Avg: 6.6")
+//                VStack {
+//                    HStack(spacing: 15) {
+//                        Text(shotType.rawValue)
 //                            .fontWeight(.semibold)
 //                            .fontDesign(.rounded)
-//                            .font(.headline)
+//                            .font(.title3)
 //                            .contentTransition(.numericText())
-//                            .foregroundStyle(.gray)
-                    }
-                    .padding(.top)
+//                                                
+////                        Text("Avg: 6.6")
+////                            .fontWeight(.semibold)
+////                            .fontDesign(.rounded)
+////                            .font(.headline)
+////                            .contentTransition(.numericText())
+////                            .foregroundStyle(.gray)
+//                    }
+//                    .padding(.top)
                     
                     
-                    CourtTesting(type: $shotType)
-                }
-                .frame(width: 250)
+                   // CourtTesting(type: $shotType)
+                //}
+                //.frame(width: 250)
                     
                 
             }
             .padding(.horizontal)
+            .padding(.top)
+            .ignoresSafeArea(.all)
         }
 //        .onDisappear() {
 //            withAnimation {

@@ -181,6 +181,12 @@ struct SessionThumbnail: View {
                 .frame(height: 75)
                 .background(.ultraThinMaterial)
                 .cornerRadius(18)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(style: StrokeStyle(lineWidth: 1))
+                        .foregroundColor(.gray.opacity(0.25))
+                )
+                .padding(1)
             }
         
     }
@@ -208,20 +214,20 @@ struct PlaceholderThumbnail: View {
                 HStack(spacing: 0) {
                         
                     Text(prompt)
-                        .foregroundStyle(.gray.opacity(0.33))
+                        .foregroundStyle(.gray.opacity(0.25))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                     
                 }
-                .frame(height: 75)
+                .frame(height: 72.5)
                 .frame(maxWidth: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 18)
                         .stroke(style: StrokeStyle(lineWidth: 2, dash: [7.5, 7.5])) // Dashed stroke
-                        .foregroundColor(.gray.opacity(0.33))
+                        .foregroundColor(.gray.opacity(0.25))
                 )
-                .padding(.horizontal, 1)
+                .padding(2)
             }
         
     }
@@ -229,6 +235,8 @@ struct PlaceholderThumbnail: View {
 }
 
 #Preview {
-    //SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
-    PlaceholderThumbnail(prompt: "Go hit some Drills!")
+    VStack(spacing: 25) {
+        SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
+        PlaceholderThumbnail(prompt: "Go hit some Drills!")
+    }
 }

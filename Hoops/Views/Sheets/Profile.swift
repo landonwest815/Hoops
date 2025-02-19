@@ -9,7 +9,8 @@ import SwiftUI
 
 struct Profile: View {
     
-    @State var averageMakesPerMinute = 9.74
+    let averageMakesPerMinute: Double
+    @Binding var streak: Int
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -17,8 +18,8 @@ struct Profile: View {
             VStack(spacing: 20) {
                 HStack(spacing: 12) {
                     
-                    Text("My Hoopin' Career")
-                        .font(.title2)
+                    Text("My Hoops")
+                        .font(.title3)
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .foregroundStyle(.white)
@@ -31,7 +32,7 @@ struct Profile: View {
                         Image(systemName: "info.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 22)
+                            .frame(height: 20)
                             .foregroundStyle(.gray)
                     }
                     
@@ -96,6 +97,11 @@ struct Profile: View {
                             .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                                    .foregroundColor(.gray.opacity(0.25))
+                            )
                             
                             VStack(alignment: .leading) {
                                 HStack {
@@ -119,7 +125,7 @@ struct Profile: View {
                                     }
                                         
                                     
-                                    Text("3 Days")
+                                    Text("\(streak) Days")
                                         .font(.title3)
                                         .fontDesign(.rounded)
                                         .fontWeight(.semibold)
@@ -142,6 +148,11 @@ struct Profile: View {
                             .frame(height: 75)
                             .background(.ultraThinMaterial)
                             .cornerRadius(18)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                                    .foregroundColor(.gray.opacity(0.25))
+                            )
                         }
                         
                     }
@@ -205,6 +216,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                                 VStack(spacing: 0) {
                                     
@@ -248,6 +264,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                                 VStack(spacing: 0) {
                                     
@@ -291,6 +312,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                             }
                             
@@ -338,6 +364,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                                 VStack(spacing: 0) {
                                     
@@ -381,6 +412,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                                 VStack(spacing: 0) {
                                     
@@ -424,6 +460,11 @@ struct Profile: View {
                                 .frame(height: 150)
                                 .background(.ultraThinMaterial)
                                 .cornerRadius(18)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .stroke(style: StrokeStyle(lineWidth: 1))
+                                        .foregroundColor(.gray.opacity(0.25))
+                                )
                                 
                             }
                         }
@@ -654,5 +695,7 @@ struct ResizableTextView: View {
 }
 
 #Preview {
-    Profile()
+    @Previewable @State var streak = 4
+    var avg = 5.35
+    Profile(averageMakesPerMinute: avg, streak: $streak)
 }
