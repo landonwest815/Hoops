@@ -22,7 +22,6 @@ struct GraphTesting: View {
     
     @State private var isOn = false
     
-    @State private var selectedRange: TimeRange = .sevenDays
     @Binding var shotType: ShotType
     let dateFormatter: () = DateFormatter().dateFormat = "d MMM"
     
@@ -33,6 +32,7 @@ struct GraphTesting: View {
     @State private var makes: Int = 0
     
     @Binding var selectedMetric: GraphType
+    @Binding var selectedDate: Date
     
     var lineColor: Color {
         switch shotType {
@@ -47,16 +47,7 @@ struct GraphTesting: View {
     
     var filteredSessions: [HoopSession] {
         let allSessions = shotType == .allShots ? sessions : sessions.filter { $0.shotType == shotType }
-        let now = Date()
-        
-        switch selectedRange {
-        case .sevenDays:
-            return allSessions.filter { $0.date >= Calendar.current.date(byAdding: .day, value: -7, to: now)! }
-        case .month:
-            return allSessions.filter { $0.date >= Calendar.current.date(byAdding: .month, value: -1, to: now)! }
-        case .allTime:
-            return allSessions
-        }
+        return allSessions
     }
     
     var groupedSessions: [String: [HoopSession]] {
@@ -114,44 +105,75 @@ struct GraphTesting: View {
 
         // Add padding around the min/max values
         let range = maxYValue - minYValue
-        let padding = max(range * 0.1, 2)
+        let padding = max(range * 0.5, 2)
         let domainStart = minYValue >= 0 ? max(0, minYValue - padding) : minYValue - padding
         let domainEnd = maxYValue + padding
         
-        VStack {
+        ZStack(alignment: .bottom) {
             
-            HStack(alignment: .top, spacing: 15) {
-                
-                VStack(alignment: .leading) {
+            VStack {
+                HStack {
                     Text(selectedMetric.rawValue)
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .font(.title2)
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top)
+                
+                HStack(alignment: .top, spacing: 30) {
+                    
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Average")
+                        }
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
                         .font(.headline)
                         .foregroundStyle(.gray)
                         .contentTransition(.numericText())
+                        
+                        Text("\(averageValue.formatted(.number.precision(.fractionLength(1))))")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.title)
+                            .foregroundStyle(.white)
+                    }
                     
-                    Text("\(averageValue.formatted(.number.precision(.fractionLength(1))))")
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Today")
+                        }
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
-                        .font(.title)
-                        .foregroundStyle(.white)
+                        .font(.headline)
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                        
+                        if let latest = computedData.last {
+                            Text("\(latest.value.formatted(.number.precision(.fractionLength(0))))")
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .font(.title)
+                                .foregroundStyle(.white)
+                        } else {
+                            Text("N/a")
+                        }
+                    }
+                    
+                    Spacer()
+                    
                 }
+                .padding(.horizontal)
+                .padding(.top, 1)
                 
                 Spacer()
-                
-                Picker("Select Range", selection: $selectedRange) {
-                    ForEach(TimeRange.allCases, id: \.self) { range in
-                        Text(range.rawValue).tag(range)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .onChange(of: selectedRange) { _ in
-                    withAnimation(.easeInOut(duration: 0.5)) { } // Ensures the transition is smooth
-                }
             }
-            .padding(.horizontal)
-            .padding(.top)
+            .frame(height: 200)
             
             ZStack {
                 
@@ -166,6 +188,10 @@ struct GraphTesting: View {
                 
                 if let firstDate = computedData.first?.date,
                    let lastDate = computedData.last?.date {
+                    
+                    let totalDuration = lastDate.timeIntervalSince(firstDate)
+                    let padding = totalDuration * 0.1 // 10% padding, adjust as needed
+                    
                     Chart(computedData, id: \.date) {
                         LineMark(
                             x: .value("Date", $0.date),
@@ -184,18 +210,28 @@ struct GraphTesting: View {
                         .interpolationMethod(.catmullRom)
                         
                         RuleMark(y: .value("Average", ruleMarkPosition))
-                            .lineStyle(.init(lineWidth: 1.5, dash: [5]))
+                            .lineStyle(.init(lineWidth: 1.5, dash: [2.5]))
                             .foregroundStyle(.gray)
                         
-                        if let latestPoint = computedData.last {
+                        if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }),
+                            let currentPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: Date()) }) {
+                            
+                            // Orange dot for the current date
                             PointMark(
-                                x: .value("Date", latestPoint.date),
-                                y: .value("Metric", latestPoint.value)
+                                x: .value("Date", currentPoint.date),
+                                y: .value("Metric", currentPoint.value)
+                            )
+                            .foregroundStyle(.orange)
+                            .symbol(.circle)
+                            
+                            PointMark(
+                                x: .value("Date", selectedPoint.date),
+                                y: .value("Metric", selectedPoint.value)
                             )
                             .foregroundStyle(.white)
                             .symbol(.circle)
                             .annotation(position: .top, alignment: .center) {
-                                Text("\(latestPoint.value, specifier: "%.1f")")
+                                Text("\(selectedPoint.value, specifier: "%.1f")")
                                     .font(.caption)
                                     .foregroundStyle(.white)
                                     .bold()
@@ -206,13 +242,15 @@ struct GraphTesting: View {
                         }
                     }
                     .chartYScale(domain: 0 ... domainEnd)
-                    .chartXScale(domain: firstDate ... lastDate.addingTimeInterval(100000)) // Slightly reduce right side
+                    .chartXScale(domain: firstDate ... lastDate.addingTimeInterval(padding)) // Proportional right-side padding
                     .cornerRadius(15)
                     .chartXAxis(.hidden)
                     .chartYAxis(.hidden)
+
                 }
                 
             }
+            .frame(height: 125)
             .onChange(of: shotType) {
                 print("Total Sessions: \(sessions.count)")
                 print("Filtered Sessions: \(filteredSessions.count)")
@@ -247,9 +285,10 @@ struct GraphTesting: View {
 
 #Preview {
     @Previewable @State var shotType: ShotType = .allShots
-    @Previewable @State var selectedMetric: GraphType = .sessions
+    @Previewable @State var selectedMetric: GraphType = .makes
+    @Previewable @State var selectedDate: Date = .now
 
     
-    return GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
+    return GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
         .modelContainer(HoopSession.preview)
 }

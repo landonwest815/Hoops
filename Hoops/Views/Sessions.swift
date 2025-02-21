@@ -102,19 +102,25 @@ struct Sessions: View {
                     .padding(.top, 5)
                     
                     if selectedMetric != .none {
-                        GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
+                        GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
                             .padding(.horizontal)
                             .transition(.opacity)
                     }
                     
                     VStack {
-                        //ShotFilterView(shotTypeVisibility: $shotTypeVisibility)
+                        HeaderView(shotTypeVisibility: $shotTypeVisibility, selectedDate: $selectedDate)
+                            .padding(.bottom, 5)
 
                         ZStack(alignment: .bottomTrailing) {
                             SessionListView(sessions: selectedDaySessions, context: context, selectedSession: $selectedSession, selectedDate: $selectedDate, shotTypeVisibility: shotTypeVisibility, onSessionSelected: {
                                 activeSheet = .sessionDetails
                             })
                             .padding(.horizontal)
+                            .background(.black.opacity(0.25))
+                            .cornerRadius(32)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            
+                            
                             FloatingActionButton {
                                 withAnimation { activeSheet = .sessionCreation }
                             }
@@ -161,13 +167,9 @@ struct Sessions: View {
 //
 //                        }
                         HStack {
-                            Image(systemName: "calendar")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 16)
-                            Text(selectedDate, format: Date.FormatStyle().month(.abbreviated).day())
+                            Text("hoops.")
                         }
-                        .font(.title3)
+                        .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundStyle(.white)
                         .contentTransition(.numericText())
@@ -245,7 +247,7 @@ struct Sessions: View {
             ) {
                 switch activeSheet {
                 case .stats:
-                    Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric)
+                    Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
                         .presentationCornerRadius(32)
                         .presentationDetents([.fraction(0.7325)])
                         .presentationDragIndicator(.visible)
@@ -420,7 +422,7 @@ struct MetricButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 2.5) {
                 HStack {
                     Image(systemName: icon)
                         .resizable()
@@ -498,6 +500,9 @@ struct SessionListView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 15) {
+                    
+                    Color.clear
+                        .frame(height: 1)
                                         
                     ForEach(sessionTypes, id: \.self) { sessionType in
                         VStack(alignment: .leading, spacing: 10) {
@@ -551,8 +556,8 @@ struct SessionListView: View {
                                     .id(session.id)
                                     .scrollTransition { content, phase in
                                         content
-                                            .opacity(phase.isIdentity ? 1 : 0.5)
-                                            //.scaleEffect(phase.isIdentity ? 1 : 0.75)
+                                            .opacity(phase.isIdentity ? 1 : 0.25)
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.95)
                                             //.blur(radius: phase.isIdentity ? 0 : 10)
                                     }
                                 }
@@ -569,6 +574,12 @@ struct SessionListView: View {
 //                                    Spacer()
 //                                }
                                 PlaceholderThumbnail(prompt: promptText(for: sessionType))
+                                    .scrollTransition { content, phase in
+                                        content
+                                            .opacity(phase.isIdentity ? 1 : 0.25)
+                                            .scaleEffect(phase.isIdentity ? 1 : 0.95)
+                                            //.blur(radius: phase.isIdentity ? 0 : 10)
+                                    }
                             }
                         }
                     }
@@ -643,23 +654,32 @@ struct FloatingActionButton: View {
     }
 }
 
-struct ShotFilterView: View {
-    @Binding var shotTypeVisibility: [ShotType: Bool]
-
-    var body: some View {
-        VStack {
-            HeaderView(shotTypeVisibility: $shotTypeVisibility)
-        }
-        .padding(.horizontal)
-    }
-}
-
 struct HeaderView: View {
 
     @Binding var shotTypeVisibility: [ShotType: Bool]
+    @Binding var selectedDate: Date
     
     var body: some View {
         HStack {
+            
+            Button(action: { /*activeSheet = .profile*/ }) {
+                HStack {
+                    Image(systemName: "calendar")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 18)
+                    Text(selectedDate, format: Date.FormatStyle().month(.wide).day().year())
+                }
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .contentTransition(.numericText())
+                .foregroundStyle(.orange)
+                .fontWeight(.semibold)
+                .frame(height: 20)
+                .padding(.leading, 5)
+                
+            }
 
             Spacer()
 
@@ -668,10 +688,16 @@ struct HeaderView: View {
             Button(action: {
                 
             }) {
-                Image(systemName: "line.3.horizontal.decrease")
+                Image(systemName: "arrow.up.arrow.down")
                     .buttonStyle()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 25)
+                            .stroke(style: StrokeStyle(lineWidth: 1))
+                            .foregroundColor(.gray.opacity(0.25))
+                    )
             }
         }
+        .padding(.horizontal)
     }
 }
 
@@ -681,10 +707,9 @@ struct FilterMenuView: View {
 
     var body: some View {
         Menu {
-            
             Button {
                 withAnimation {
-                    // Set all shot types to false
+                    // Clear all selections
                     for key in shotTypeVisibility.keys {
                         shotTypeVisibility[key] = false
                     }
@@ -698,15 +723,22 @@ struct FilterMenuView: View {
             
             Button {
                 withAnimation {
-                    shotTypeVisibility[.layups, default: false].toggle()
+                    // Deselect all other shots and select only this one
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                    shotTypeVisibility[.layups] = true
                 }
             } label: {
-                Label("All Shots", systemImage: shotTypeVisibility[.layups, default: false] ? "checkmark" : "")
+                Label("Layups", systemImage: shotTypeVisibility[.layups, default: false] ? "checkmark" : "")
             }
             
             Button {
                 withAnimation {
-                    shotTypeVisibility[.freeThrows, default: false].toggle()
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                    shotTypeVisibility[.freeThrows] = true
                 }
             } label: {
                 Label("Free Throws", systemImage: shotTypeVisibility[.freeThrows, default: false] ? "checkmark" : "")
@@ -714,7 +746,10 @@ struct FilterMenuView: View {
             
             Button {
                 withAnimation {
-                    shotTypeVisibility[.midrange, default: false].toggle()
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                    shotTypeVisibility[.midrange] = true
                 }
             } label: {
                 Label("Midrange", systemImage: shotTypeVisibility[.midrange, default: false] ? "checkmark" : "")
@@ -722,7 +757,10 @@ struct FilterMenuView: View {
             
             Button {
                 withAnimation {
-                    shotTypeVisibility[.threePointers, default: false].toggle()
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                    shotTypeVisibility[.threePointers] = true
                 }
             } label: {
                 Label("Threes", systemImage: shotTypeVisibility[.threePointers, default: false] ? "checkmark" : "")
@@ -730,22 +768,30 @@ struct FilterMenuView: View {
             
             Button {
                 withAnimation {
-                    shotTypeVisibility[.deep, default: false].toggle()
+                    for key in shotTypeVisibility.keys {
+                        shotTypeVisibility[key] = false
+                    }
+                    shotTypeVisibility[.deep] = true
                 }
             } label: {
                 Label("Deep", systemImage: shotTypeVisibility[.deep, default: false] ? "checkmark" : "")
             }
         }
         label: {
-            Image(systemName: "arrow.up.arrow.down")
+            Image(systemName: "line.3.horizontal.decrease")
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 17.5, height: 17.5)
-                .foregroundStyle(shotTypeVisibility.values.contains(true) ? .white : .orange)
+                .foregroundStyle(shotTypeVisibility.values.contains(true) ? .black.opacity(0.875) : .orange)
                 .fontWeight(.semibold)
                 .padding(6)
                 .background(.ultraThinMaterial)
                 .background(shotTypeVisibility.values.contains(true) ? .orange : .clear)
                 .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 25)
+                        .stroke(style: StrokeStyle(lineWidth: 1))
+                        .foregroundColor(.gray.opacity(0.25))
+                )
         }
     }
 }

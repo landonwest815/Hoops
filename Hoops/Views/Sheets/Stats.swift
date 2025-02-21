@@ -17,6 +17,7 @@ struct Stats: View {
     @State private var color: Color = .orange
     @Binding var shotType: ShotType
     @Binding var selectedMetric: GraphType
+    @Binding var selectedDate: Date
     
     var body: some View {
         
@@ -29,7 +30,7 @@ struct Stats: View {
                 
                 //StatCards(type: $shotType)
                 
-                GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric)
+                GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
 //                    .background(.ultraThinMaterial)
 //                    .cornerRadius(18)
 //                    .overlay(
@@ -172,7 +173,8 @@ struct StatCards: View {
 #Preview {
     @Previewable @State var shotType = ShotType.threePointers
     @Previewable @State var selectedMetric = GraphType.none
+    @Previewable @State var selectedDate: Date = .now
     
-    return Stats(shotType: $shotType, selectedMetric: $selectedMetric)
+    return Stats(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
         .modelContainer(HoopSession.preview)
 }

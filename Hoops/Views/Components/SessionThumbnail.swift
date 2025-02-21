@@ -106,10 +106,10 @@ struct SessionThumbnail: View {
                             
                             Divider()
                                 .frame(width: 1)
-                                .overlay(iconColor.opacity(0.66))
-                                .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
-                                .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
-                                .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
+                                .overlay(iconColor.opacity(0.5))
+                                .shadow(color: iconColor.opacity(0.4), radius: 5, x: 1.5)
+                                .shadow(color: iconColor.opacity(0.3), radius: 4, x: 1.5)
+                                .shadow(color: iconColor.opacity(0.2), radius: 3, x: 1.5)
                             
                         }
                     }
@@ -188,6 +188,7 @@ struct SessionThumbnail: View {
                 )
                 .padding(1)
             }
+            .transition(.opacity)
         
     }
     
