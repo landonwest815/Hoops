@@ -109,71 +109,28 @@ struct GraphTesting: View {
         let domainStart = minYValue >= 0 ? max(0, minYValue - padding) : minYValue - padding
         let domainEnd = maxYValue + padding
         
-        ZStack(alignment: .bottom) {
+        VStack(spacing: 20) {
             
-            VStack {
-                HStack {
-                    Text(selectedMetric.rawValue)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.title2)
-                        .foregroundStyle(.gray)
-                        .contentTransition(.numericText())
-                    
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.top)
+            HStack {
+                Spacer()
                 
-                HStack(alignment: .top, spacing: 30) {
-                    
-                    VStack(alignment: .leading) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("Average")
-                        }
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.headline)
-                        .foregroundStyle(.gray)
-                        .contentTransition(.numericText())
-                        
-                        Text("\(averageValue.formatted(.number.precision(.fractionLength(1))))")
-                            .fontWeight(.semibold)
-                            .fontDesign(.rounded)
-                            .font(.title)
-                            .foregroundStyle(.white)
-                    }
-                    
-                    VStack(alignment: .leading) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("Today")
-                        }
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .font(.headline)
-                        .foregroundStyle(.gray)
-                        .contentTransition(.numericText())
-                        
-                        if let latest = computedData.last {
-                            Text("\(latest.value.formatted(.number.precision(.fractionLength(0))))")
-                                .fontWeight(.semibold)
-                                .fontDesign(.rounded)
-                                .font(.title)
-                                .foregroundStyle(.white)
-                        } else {
-                            Text("N/a")
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                }
-                .padding(.horizontal)
-                .padding(.top, 1)
+                Text(selectedMetric.rawValue)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                    .contentTransition(.numericText())
+                    .frame(width: 175)
+                
+                Spacer()
+                Spacer()
+                
+                ShotTypePicker(shotType: $shotType)
                 
                 Spacer()
             }
-            .frame(height: 200)
+            .padding(.horizontal)
+            .padding(.top)
             
             ZStack {
                 
@@ -205,23 +162,30 @@ struct GraphTesting: View {
                             x: .value("Date", $0.date),
                             y: .value("Metric", $0.value)
                         )
-                        .foregroundStyle(lineColor.opacity(0.25))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [lineColor.opacity(0.5), lineColor.opacity(0.125)]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                         .lineStyle(.init(lineWidth: 3))
                         .interpolationMethod(.catmullRom)
                         
                         RuleMark(y: .value("Average", ruleMarkPosition))
-                            .lineStyle(.init(lineWidth: 1.5, dash: [2.5]))
-                            .foregroundStyle(.gray)
+                            .lineStyle(.init(lineWidth: 1, dash: [2.5]))
+                            .foregroundStyle(.gray.opacity(0.25))
+                            .opacity(0.25)
                         
                         if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }),
-                            let currentPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: Date()) }) {
+                           let currentPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: Date()) }) {
                             
                             // Orange dot for the current date
                             PointMark(
                                 x: .value("Date", currentPoint.date),
                                 y: .value("Metric", currentPoint.value)
                             )
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(lineColor)
                             .symbol(.circle)
                             
                             PointMark(
@@ -231,13 +195,21 @@ struct GraphTesting: View {
                             .foregroundStyle(.white)
                             .symbol(.circle)
                             .annotation(position: .top, alignment: .center) {
-                                Text("\(selectedPoint.value, specifier: "%.1f")")
+                                Text("\(selectedPoint.value, specifier: "%.0f")")
                                     .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
                                     .foregroundStyle(.white)
-                                    .bold()
-                                    .padding(4)
-                                    .background(.ultraThinMaterial)
+                                    .padding(5)
+                                    .padding(.horizontal, 2.5)
+                                    .background(.ultraThickMaterial)
                                     .cornerRadius(5)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .stroke(style: StrokeStyle(lineWidth: 1))
+                                            .foregroundColor(.gray.opacity(0.25))
+                                            .opacity(0.25)
+                                    )
                             }
                         }
                     }
@@ -246,7 +218,7 @@ struct GraphTesting: View {
                     .cornerRadius(15)
                     .chartXAxis(.hidden)
                     .chartYAxis(.hidden)
-
+                    
                 }
                 
             }
@@ -269,23 +241,177 @@ struct GraphTesting: View {
                     }
                 }
             }
+            .background(.black.opacity(0.125))
+            .cornerRadius(25)
+            .overlay(
+                RoundedRectangle(cornerRadius: 25)
+                    .stroke(style: StrokeStyle(lineWidth: 1))
+                    .foregroundColor(.gray.opacity(0.25))
+            )
+            .padding(.horizontal)
             
             
+            VStack {
+                
+                HStack(alignment: .top, spacing: 50) {
+                    
+                    
+                    VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Average")
+                        }
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .font(.headline)
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                        
+                        Text("\(averageValue.formatted(.number.precision(.fractionLength(1))))")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                    }
+                                        
+                    VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Today")
+                        }
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .font(.headline)
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                        
+                        if let latest = computedData.last {
+                            Text("\(latest.value.formatted(.number.precision(.fractionLength(0))))")
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .font(.largeTitle)
+                                .foregroundStyle(.white)
+                        } else {
+                            Text("N/a")
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("-----")
+                        }
+                        .fontWeight(.semibold)
+                        .fontDesign(.rounded)
+                        .font(.headline)
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                        
+                        Text("--")
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                    }
+                    
+                }
+                .padding(.horizontal)
+                .padding(.top, 1)
+                
+                Spacer()
+            }
         }
-        .frame(height: 200)
-        .background(.ultraThinMaterial)
-        .cornerRadius(18)
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(style: StrokeStyle(lineWidth: 1))
-                .foregroundColor(.gray.opacity(0.25))
-        )
+        .padding(.horizontal)
+        .padding(.top)
+        //.background(.ultraThinMaterial)
+    }
+}
+
+struct ShotTypePicker: View {
+
+    @Binding var shotType: ShotType
+    
+    var lineColor: Color {
+        switch shotType {
+        case .freeThrows:    return .blue
+        case .midrange:      return .blue
+        case .layups:        return .red
+        case .threePointers: return .green
+        case .deep:          return .purple
+        case .allShots:      return .orange
+        }
+    }
+
+    var body: some View {
+        Menu {
+            Button {
+                withAnimation {
+                    shotType = .allShots
+                }
+            } label: {
+                Label("All Shots", systemImage: false ? "" : "checkmark")
+            }
+            
+            Divider()
+            
+            Button {
+                withAnimation {
+                    shotType = .layups
+                }
+            } label: {
+                Label("Layups", systemImage: false ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotType = .freeThrows
+                }
+            } label: {
+                Label("Free Throws", systemImage: false ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotType = .midrange
+                }
+            } label: {
+                Label("Midrange", systemImage: false ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotType = .threePointers
+                }
+            } label: {
+                Label("Threes", systemImage: false ? "checkmark" : "")
+            }
+            
+            Button {
+                withAnimation {
+                    shotType = .deep
+                }
+            } label: {
+                Label("Deep", systemImage: false ? "checkmark" : "")
+            }
+        }
+        label: {
+            Text(shotType.rawValue)
+                .frame(width: 125, height: 17.5)
+                .foregroundStyle(lineColor)
+                .fontWeight(.semibold)
+                .padding(6)
+                .background(.ultraThinMaterial)
+                //.background(shotTypeVisibility.values.contains(true) ? .orange : .clear)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(style: StrokeStyle(lineWidth: 1))
+                        .foregroundColor(.gray.opacity(0.25))
+                )
+        }
     }
 }
 
 #Preview {
     @Previewable @State var shotType: ShotType = .allShots
-    @Previewable @State var selectedMetric: GraphType = .makes
+    @Previewable @State var selectedMetric: GraphType = .average
     @Previewable @State var selectedDate: Date = .now
 
     

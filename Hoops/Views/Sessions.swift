@@ -101,11 +101,11 @@ struct Sessions: View {
                     .padding(.horizontal, 15)
                     .padding(.top, 5)
                     
-                    if selectedMetric != .none {
-                        GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
-                            .padding(.horizontal)
-                            .transition(.opacity)
-                    }
+//                    if selectedMetric != .none {
+//                        GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
+//                            .padding(.horizontal)
+//                            .transition(.opacity)
+//                    }
                     
                     VStack {
                         HeaderView(shotTypeVisibility: $shotTypeVisibility, selectedDate: $selectedDate)
@@ -247,9 +247,10 @@ struct Sessions: View {
             ) {
                 switch activeSheet {
                 case .stats:
-                    Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
+                    //Stats(shotType: $selectedShotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
+                    GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
                         .presentationCornerRadius(32)
-                        .presentationDetents([.fraction(0.7325)])
+                        .presentationDetents([.fraction(0.68)])
                         .presentationDragIndicator(.visible)
                         .presentationBackground(.ultraThickMaterial)
                         .presentationBackgroundInteraction(.enabled)
@@ -302,11 +303,13 @@ struct Sessions: View {
     }
     
     private func toggleMetric(_ metric: GraphType) {
+        if activeSheet != .stats {
+            activeSheet = .stats
+        }
         if selectedMetric != metric {
-            //activeSheet = .stats
             selectedMetric = metric
         } else {
-            //activeSheet = .none
+            activeSheet = .none
             selectedMetric = .none
         }
     }
