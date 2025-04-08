@@ -45,6 +45,67 @@ struct GraphTesting: View {
         }
     }
     
+    /// Enum representing the trend direction.
+    private enum Trend {
+        case up, same, down
+    }
+
+    /// Computes the overall trend by comparing the latest data value with the all-time average.
+    /// The last value must differ from the average by at least 5% (i.e. significantly) to register
+    /// as 'up' or 'down'. Otherwise, the trend is considered stable.
+    private var trend: Trend {
+        // Ensure there is at least one data point.
+        guard !computedData.isEmpty, let lastValue = computedData.last?.value else {
+            return .same
+        }
+        
+        // Calculate the overall average.
+        let total = computedData.reduce(0.0) { $0 + $1.value }
+        let average = total / Double(computedData.count)
+        
+        // Define a 15% threshold (15% difference).
+        let threshold = 0.15
+        
+        // For a non-zero average, compare the relative difference.
+        if average != 0 {
+            if lastValue > average * (1 + threshold) {
+                return .up
+            } else if lastValue < average * (1 - threshold) {
+                return .down
+            } else {
+                return .same
+            }
+        } else {
+            // When average is zero, use the sign of the last value.
+            return lastValue > 0 ? .up : (lastValue < 0 ? .down : .same)
+        }
+    }
+
+    /// Returns the appropriate SF Symbol based on the trend.
+    private var trendIcon: String {
+        switch trend {
+        case .up:
+            return "arrow.up.right"   // upward trend
+        case .down:
+            return "arrow.down.right" // downward trend
+        case .same:
+            return "arrow.right"      // stable
+        }
+    }
+
+    /// Returns the color corresponding to the trend.
+    private var trendColor: Color {
+        switch trend {
+        case .up:
+            return .green
+        case .down:
+            return .red
+        case .same:
+            return .gray
+        }
+    }
+
+    
     var body: some View {
         let yValues = computedData.map { $0.value }
         let averageValue = yValues.isEmpty ? 0 : yValues.reduce(0, +) / Double(yValues.count)
@@ -54,28 +115,55 @@ struct GraphTesting: View {
         let minYValue = yValues.min() ?? 0
         let maxYValue = yValues.max() ?? 1
         let range = maxYValue - minYValue
-        let padding = max(range * 1, 2)
+        let padding = averageValue//max(range * 1, 2)
         let domainEnd = maxYValue + padding
         
-        VStack(spacing: 20) {
+        // Calculate best and worst from your computed values.
+        // The best value is simply the maximum.
+        let bestValue = yValues.max() ?? 0
+        // For worstValue, we ignore zeros by filtering out any values equal to 0.
+        let worstValue = yValues.filter { $0 > 0 }.min() ?? 0
+        
+        VStack(spacing: 15) {
             // Header
-            HStack {
+            HStack(spacing: 15) {
                 Text(selectedMetric.rawValue)
                     .font(.title3)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
                     .foregroundStyle(.white)
-                    .frame(width: 175)
+                
+                HStack {
+                    Image(systemName: "calendar")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 18)
+                    
+                    // Add an id and a fade transition so that when selectedDate changes,
+                    // SwiftUI treats the text as new and animates its appearance.
+                    Text(selectedDate, format: Date.FormatStyle().month(.wide).day().year())
+                        .id(selectedDate)
+                        .transition(.opacity)
+                }
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundStyle(.gray)
+                .contentTransition(.numericText())
+                .frame(height: 20)
+                .padding(.leading, 5)
             }
             .padding(.horizontal)
-            .padding(.top)
+            .padding(.top, 5)
+            .animation(.easeInOut(duration: 0.5), value: selectedDate)
             
             // Chart view
             ZStack {
                 if filteredSessions.isEmpty {
                     Text("No data available.\nGo shoot some hoops!")
                         .multilineTextAlignment(.center)
+                        .foregroundStyle(.gray.opacity(0.5))
                         .font(.subheadline)
+                        .fontWeight(.semibold)
                         .fontDesign(.rounded)
                 }
                 
@@ -138,32 +226,32 @@ struct GraphTesting: View {
                         }
 
                         // If the selected date is different from the latest point, mark it with a white dot.
-                        if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }),
-                           let latestPoint = computedData.max(by: { $0.date < $1.date }) {
-                            // Draw the white dot if either the selected date isn’t the latest,
-                            // or if the selected date is today (even if it is the latest).
-                            if !Calendar.current.isDate(selectedPoint.date, inSameDayAs: latestPoint.date)
-                               || Calendar.current.isDate(selectedPoint.date, inSameDayAs: Date()) {
-                                PointMark(
-                                    x: .value("Date", selectedPoint.date),
-                                    y: .value("Metric", selectedPoint.value)
-                                )
-                                .foregroundStyle(.white)
-                                .symbol(.circle)
-                                .annotation(position: .top, alignment: .center) {
-                                    Text("\(selectedPoint.value, specifier: "%.0f")")
-                                        .font(.headline)
-                                        .fontWeight(.semibold)
-                                        .fontDesign(.rounded)
-                                        .foregroundStyle(.white)
-                                        .frame(minWidth: 25)
-                                        .padding(5)
-                                        .padding(.horizontal, 2.5)
-                                        .background(.ultraThickMaterial)
-                                        .cornerRadius(5)
-                                }
+                        if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                            // Determine if this selected point is the first entry in computedData
+                            let isFirstEntry = computedData.count > 1 && computedData.first?.date == selectedPoint.date
+                            
+                            PointMark(
+                                x: .value("Date", selectedPoint.date),
+                                y: .value("Metric", selectedPoint.value)
+                            )
+                            .foregroundStyle(.white)
+                            .symbol(.circle)
+                            .annotation(position: .top, alignment: .center) {
+                                Text("\(selectedPoint.value, specifier: "%.0f")")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.white)
+                                    .frame(width: 50)
+                                    .padding(5)
+                                    .padding(.horizontal, 2.5)
+                                    .padding(.bottom, 10)
+                                    .cornerRadius(5)
+                                    // Apply an x-offset when it is the very first entry
+                                    .offset(x: isFirstEntry ? 20 : 0, y: 0)
                             }
                         }
+
 
                     }
                     .chartYScale(domain: 0 ... domainEnd)
@@ -173,7 +261,7 @@ struct GraphTesting: View {
                     .chartYAxis(.hidden)
                 }
             }
-            .frame(height: 125)
+            .frame(width: 350, height: 175)
             .background(.black.opacity(0.125))
             .cornerRadius(25)
             .overlay(
@@ -184,6 +272,7 @@ struct GraphTesting: View {
             
             // Shot type filter
             ShotTypePicker(shotType: $shotType)
+                .padding(.top, 5)
             
             // Metrics display
             VStack {
@@ -195,11 +284,11 @@ struct GraphTesting: View {
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
                             .foregroundStyle(.gray)
-                        Text("\(averageValue, specifier: "%.1f")")
+                        Text(averageValue == 0 ? "-" : String(format: "%.1f", averageValue))
                             .font(.largeTitle)
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(averageValue == 0 ? .gray : .white)
                     }
                     
                     // Today’s metric
@@ -209,29 +298,67 @@ struct GraphTesting: View {
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
                             .foregroundStyle(.gray)
-                        if let latest = computedData.last {
+                        if let latest = computedData.last,
+                           Calendar.current.isDate(latest.date, inSameDayAs: Date()) {
                             Text("\(latest.value, specifier: "%.0f")")
                                 .font(.largeTitle)
                                 .fontDesign(.rounded)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
                         } else {
-                            Text("N/a")
+                            Text("-")
+                                .font(.largeTitle)
+                                .fontDesign(.rounded)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.gray)
                         }
                     }
                     
-                    // Placeholder for additional metric
+                    // Trend Metric: Shows an arrow icon (up, down, right) with corresponding color.
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("-----")
+                        Text("Trend")
                             .font(.headline)
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
                             .foregroundStyle(.gray)
-                        Text("--")
+                        Image(systemName: trendIcon)
                             .font(.largeTitle)
                             .fontDesign(.rounded)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.white)
+                            .foregroundColor(trendColor)
+                            .padding(.top, 5)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 1)
+                
+                HStack(alignment: .top, spacing: 50) {
+                    // Average Metric
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Best")
+                            .font(.headline)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.gray)
+                        Text(bestValue == 0 ? "-" : String(format: "%.1f", bestValue))
+                            .font(.largeTitle)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(bestValue == 0 ? .gray : .white)
+                    }
+                    
+                    // Today’s metric
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Worst")
+                            .font(.headline)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.gray)
+                        Text(worstValue == 0 ? "-" : String(format: "%.1f", worstValue))
+                            .font(.largeTitle)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(worstValue == 0 ? .gray : .white)
                     }
                 }
                 .padding(.horizontal)
@@ -239,40 +366,49 @@ struct GraphTesting: View {
                 
                 Spacer()
             }
+            .padding(.top, 20)
         }
         .padding(.horizontal)
         .padding(.top)
         .onAppear(perform: updateComputedData)
-        .onChange(of: sessions) { _ in updateComputedData() }
-        .onChange(of: shotType) { _ in updateComputedData() }
-        .onChange(of: selectedMetric) { _ in updateComputedData() }
+        .onChange(of: sessions) { _, _ in
+            updateComputedData()
+        }
+        .onChange(of: shotType) { _, _ in
+            updateComputedData()
+        }
+        .onChange(of: selectedMetric) { _, _ in
+            updateComputedData()
+        }
     }
     
     /// Groups the filtered sessions by day and computes a value for each day based on the selected metric.
     private func updateComputedData() {
-        let grouped = Dictionary(grouping: filteredSessions) { session in
-            Calendar.current.startOfDay(for: session.date)
-        }
-        
-        computedData = grouped.map { (date, sessions) in
-            let totalMakes = sessions.reduce(0) { $0 + $1.makes }
-            let sessionCount = Double(sessions.count)
-            let yValue: Double
-            
-            switch selectedMetric {
-            case .makes:
-                yValue = Double(totalMakes)
-            case .average:
-                let totalTimeInMinutes = sessions.reduce(0) { $0 + $1.length }
-                yValue = totalTimeInMinutes > 0 ? Double(totalMakes) / (Double(totalTimeInMinutes) / 60.0) : 0
-            case .sessions:
-                yValue = sessionCount
-            case .none:
-                yValue = 0
+        withAnimation(.easeInOut(duration: 0.5)) {
+            let grouped = Dictionary(grouping: filteredSessions) { session in
+                Calendar.current.startOfDay(for: session.date)
             }
-            return (date, yValue)
+            
+            computedData = grouped.map { (date, sessions) in
+                let totalMakes = sessions.reduce(0) { $0 + $1.makes }
+                let sessionCount = Double(sessions.count)
+                let yValue: Double
+                
+                switch selectedMetric {
+                case .makes:
+                    yValue = Double(totalMakes)
+                case .average:
+                    let totalTimeInMinutes = sessions.reduce(0) { $0 + $1.length }
+                    yValue = totalTimeInMinutes > 0 ? Double(totalMakes) / (Double(totalTimeInMinutes) / 60.0) : 0
+                case .sessions:
+                    yValue = sessionCount
+                case .none:
+                    yValue = 0
+                }
+                return (date, yValue)
+            }
+            .sorted { $0.date < $1.date }
         }
-        .sorted { $0.date < $1.date }
     }
 }
 

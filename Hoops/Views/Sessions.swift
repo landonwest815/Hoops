@@ -41,7 +41,7 @@ struct Sessions: View {
         .deep: false,
         .allShots: false
     ]
-    
+        
     // Filter sessions by selected day.
     private var selectedDaySessions: [HoopSession] {
         sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
@@ -49,36 +49,40 @@ struct Sessions: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                WeekView(selectedDate: $selectedDate)
-                    .padding(.top, 5)
-                
-                VStack(spacing: 20) {
-                    metricsView
-                    contentView
-                }
-            }
-            .background(.ultraThinMaterial)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { toolbarContent }
-            .sheet(
-                isPresented: Binding(get: { activeSheet != .none },
-                                       set: { if !$0 { activeSheet = .none } }),
-                onDismiss: {
-                    withAnimation {
-                        selectedMetric = .none
-                        refreshStats()
+            
+            ZStack {
+                VStack(spacing: 0) {
+                    WeekView(selectedDate: $selectedDate)
+                        .padding(.top, 5)
+                    
+                    VStack(spacing: 20) {
+                        metricsView
+                        contentView
                     }
                 }
-            ) {
-                sheetContent
-            }
-            .onAppear(perform: refreshStats)
-            .onChange(of: sessions) { _, _ in
-                refreshStats()
-            }
-            .onChange(of: selectedDate) { _, _ in
-                refreshStats()
+                .background(.ultraThinMaterial)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { toolbarContent }
+                .sheet(
+                    isPresented: Binding(get: { activeSheet != .none },
+                                         set: { if !$0 { activeSheet = .none } }),
+                    onDismiss: {
+                        withAnimation {
+                            selectedMetric = .none
+                            refreshStats()
+                        }
+                    }
+                ) {
+                    sheetContent
+                }
+                .onAppear(perform: refreshStats)
+                .onChange(of: sessions) { _, _ in
+                    refreshStats()
+                }
+                .onChange(of: selectedDate) { _, _ in
+                    refreshStats()
+                }
+                
             }
         }
     }
@@ -94,7 +98,7 @@ struct Sessions: View {
                 title: "Sessions",
                 value: "\(sessionCount)",
                 color: .orange,
-                isSelected: selectedMetric == .sessions,
+                isSelected: withAnimation { selectedMetric == .sessions },
                 variant: .compact
             ) { toggleMetric(.sessions) }
             
@@ -103,7 +107,7 @@ struct Sessions: View {
                 title: "Total Makes",
                 value: "\(totalMakes)",
                 color: .red,
-                isSelected: selectedMetric == .makes,
+                isSelected: withAnimation { selectedMetric == .makes },
                 variant: .compact
             ) { toggleMetric(.makes) }
             
@@ -112,7 +116,7 @@ struct Sessions: View {
                 title: "Average Makes",
                 value: String(format: "%.2f", averageMakesPerMinute),
                 color: .blue,
-                isSelected: selectedMetric == .average,
+                isSelected: withAnimation { selectedMetric == .average },
                 variant: .expanded
             ) { toggleMetric(.average) }
         }
@@ -246,7 +250,7 @@ struct Sessions: View {
         case .stats:
             GraphTesting(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
                 .presentationCornerRadius(32)
-                .presentationDetents([.fraction(0.68)])
+                .presentationDetents([.fraction(0.7375)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.ultraThickMaterial)
                 .presentationBackgroundInteraction(.enabled)
@@ -254,7 +258,10 @@ struct Sessions: View {
         case .profile:
             Profile(
                 averageMakesPerMinute: SessionLogic.calculateAllTimeAverage(for: sessions),
-                streak: $streak
+                streak: $streak,
+                sessionsCount: sessions.count,
+                makesCount: SessionLogic.calculateTotalMakes(for: sessions),
+                daysHoopedCount: SessionLogic.calculateDaysHooped(for: sessions)
             )
             .presentationCornerRadius(32)
             .presentationDetents([.fraction(0.8375)])
@@ -285,10 +292,14 @@ struct Sessions: View {
             activeSheet = .stats
         }
         if selectedMetric != metric {
-            selectedMetric = metric
+            withAnimation {
+                selectedMetric = metric
+            }
         } else {
             activeSheet = .none
-            selectedMetric = .none
+            withAnimation {
+                selectedMetric = .none
+            }
         }
     }
     
@@ -377,6 +388,17 @@ struct SessionLogic {
             shotType: shotTypeToAdd,
             sessionType: SessionType.allCases.randomElement() ?? .freestyle
         )
+    }
+    
+    // Calculates the total number of makes for all sessions.
+    static func calculateTotalMakes(for sessions: [HoopSession]) -> Int {
+        return sessions.reduce(0) { $0 + $1.makes }
+    }
+    
+    // Calculates the number of unique days on which sessions occurred.
+    static func calculateDaysHooped(for sessions: [HoopSession]) -> Int {
+        let uniqueDays = Set(sessions.map { $0.date.startOfDay })
+        return uniqueDays.count
     }
 }
 
@@ -787,7 +809,7 @@ struct FilterMenuView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 25)
                         .stroke(style: StrokeStyle(lineWidth: 1))
-                        .foregroundColor(.gray.opacity(0.25))
+                        .foregroundColor(.gray.opacity(shotTypeVisibility.values.contains(true) ? 0 : 0.25))
                 )
         }
     }

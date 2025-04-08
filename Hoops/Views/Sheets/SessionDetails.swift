@@ -250,4 +250,5 @@ struct FullWidthStepper: View {
     @Previewable @State var session = HoopSession(date: .now, makes: 15, length: 180, shotType: .threePointers)
     
     SessionDetails(session: $session)
+        .modelContainer(HoopSession.preview)
 }

@@ -447,11 +447,11 @@ struct EditableNumberField: View {
                 }
             }
         }
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(style: StrokeStyle(lineWidth: 1))
-                .foregroundColor(color.opacity(0.25))
-        )
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 18)
+//                .stroke(style: StrokeStyle(lineWidth: 1))
+//                .foregroundColor(color.opacity(0.25))
+//        )
     }
 }
 
@@ -518,11 +518,11 @@ struct ShortCardView: View {
             .background(.ultraThinMaterial)
             .background(color.opacity(0.33))
             .cornerRadius(20)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(style: StrokeStyle(lineWidth: 1))
-                    .foregroundColor(color.opacity(0.25))
-            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 20)
+//                    .stroke(style: StrokeStyle(lineWidth: 1))
+//                    .foregroundColor(color.opacity(0.25))
+//            )
         }
     }
 }
@@ -598,15 +598,16 @@ struct TallCardView: View {
             .background(.ultraThinMaterial)
             .background(color.opacity(0.33))
             .cornerRadius(20)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(style: StrokeStyle(lineWidth: 1))
-                    .foregroundColor(color.opacity(0.25))
-            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 20)
+//                    .stroke(style: StrokeStyle(lineWidth: 1))
+//                    .foregroundColor(color.opacity(0.25))
+//            )
         }
     }
 }
 
 #Preview {
     CardView()
+        .modelContainer(HoopSession.preview)
 }

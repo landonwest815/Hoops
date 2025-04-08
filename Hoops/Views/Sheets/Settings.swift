@@ -94,9 +94,9 @@ struct Settings: View {
     }
     
     private func pullFromUserSettings() {
-        if let userSettings = userSettingsArray.first {
+        //if let userSettings = userSettingsArray.first {
             // do stuff
-        }
+        //}
     }
 }
 

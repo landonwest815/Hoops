@@ -10,10 +10,12 @@ import SwiftData
 
 @main
 struct HoopsApp: App {
+    let modelContainer = try! ModelContainer(for: HoopSession.self, UserSettings.self)
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [HoopSession.self, UserSettings.self])
+                .environment(\.modelContext, modelContainer.mainContext)
         }
     }
 }
