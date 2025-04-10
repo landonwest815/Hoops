@@ -14,6 +14,8 @@ struct SessionDetails: View {
     @Binding var session: HoopSession
     let dateFormatter = DateFormatter()
     
+    @State private var showConfirmDelete = false
+    
     var iconColor: Color {
         switch session.shotType {
         case .freeThrows:    return .blue
@@ -31,8 +33,6 @@ struct SessionDetails: View {
     }
     
     var body: some View {
-        
-        
         VStack {
             ZStack {
                 VStack(spacing: 10) {
@@ -41,50 +41,51 @@ struct SessionDetails: View {
                         
                         HStack {
                             Image(systemName: "basketball.fill")
+                                .font(.title3)
                             Text(session.shotType.rawValue)
+                                .font(.title2)
                         }
-                        .font(.title2)
+                        .foregroundStyle(.white)
                         .fontWeight(.semibold)
                         .fontDesign(.rounded)
-                        .foregroundStyle(.white)
-                        //.padding(5)
-                        //.background(.green.opacity(0.5))
-                        //.cornerRadius(10)
+                        
+                        
+                        Text(dateFormatter.string(from: session.date))
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.white.opacity(1), lineWidth: 1.5)
+                            )
+                        
                         
                         Spacer()
                         
-                        HStack {
-                            Image(systemName: "clock.fill")
-                            Text(dateFormatter.string(from: session.date))
-                        }
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.white)
-                        
-                        Spacer()
-                        
+                        // delete button
                         Button {
-                            context.delete(session)
-                            dismiss()
+                            // Delete the session from context and dismiss the view.
+                            showConfirmDelete = true
                         } label: {
                             Image(systemName: "trash.fill")
-                                .font(.title2)
+                                .font(.title3)
                                 .fontWeight(.semibold)
                                 .fontDesign(.rounded)
                                 .foregroundStyle(.white)
                         }
+                        
+                        
                     }
                     .padding(5)
                     
                     HStack(spacing: 0) {
-                        
-                        HoopSessionEditorView(session: session, color: iconColor)            .frame(maxWidth: .infinity, maxHeight: 150)
-                        
+                        HoopSessionEditorView(session: session, color: iconColor)
+                            .frame(maxWidth: .infinity, maxHeight: 150)
                     }
-                    
                 }
                 
+                // Make decorative background elements ignore hit testing.
                 Image(systemName: "figure.basketball")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -93,6 +94,7 @@ struct SessionDetails: View {
                     .offset(x: -150, y: 110)
                     .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
                     .rotationEffect(.degrees(10))
+                    .allowsHitTesting(false)  // Prevent background interception
                 
                 Image(systemName: "basketball.fill")
                     .resizable()
@@ -101,6 +103,7 @@ struct SessionDetails: View {
                     .frame(height: 300)
                     .offset(x: 60, y: 200)
                     .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
+                    .allowsHitTesting(false)
                 
                 ZStack {
                     Circle()
@@ -115,17 +118,20 @@ struct SessionDetails: View {
                 }
                 .rotationEffect(.degrees(-15))
                 .shadow(color: iconColor.opacity(0.66), radius: 5, x: 1.5)
-                
+                .allowsHitTesting(false)
             }
             .frame(maxWidth: .infinity, maxHeight: 250)
-
             .padding()
             .background(iconColor.opacity(0.5))
-            
         }
-        
+        .confirmationDialog("Are you sure you want to delete this session?", isPresented: $showConfirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) {
+                context.delete(session)
+                dismiss()
+            }
+            Button("Nevermind", role: .cancel) { }
+        }
     }
-    
 }
 
 struct HoopSessionEditorView: View {
@@ -144,7 +150,7 @@ struct HoopSessionEditorView: View {
                 
                 EditableNumberField(value: Binding(
                     get: { session.length / 60 },   // Convert seconds to minutes
-                    set: { session.length = ($0 * 60) + (session.length % 60) } // Update minutes while keeping seconds
+                    set: { session.length = ($0 * 60) + (session.length % 60) }
                 ), color: color)
                 
                 Spacer()
@@ -160,14 +166,15 @@ struct HoopSessionEditorView: View {
                     .foregroundStyle(color)
                 
                 EditableNumberField(value: Binding(
-                    get: { session.length % 60 },  // Get remaining seconds
-                    set: { session.length = (session.length / 60 * 60) + $0 } // Update seconds while keeping minutes
+                    get: { session.length % 60 },
+                    set: { session.length = (session.length / 60 * 60) + $0 }
                 ), color: color)
                 
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: 150)
             
+            // Makes Input
             VStack(spacing: 5) {
                 Text("Makes")
                     .font(.headline)
@@ -203,7 +210,6 @@ struct FullWidthStepper: View {
                     .padding()
                     .foregroundStyle(.gray)
             }
-            
             
             Divider()
                 .frame(width: 1, height: 30)
@@ -241,8 +247,8 @@ struct FullWidthStepper: View {
         }
         .frame(maxWidth: .infinity, maxHeight: 20)
         .padding()
-        .background(Color.gray.opacity(0.2))
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .background(Color.gray.opacity(0.2))
     }
 }
 

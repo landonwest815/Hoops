@@ -183,6 +183,7 @@ struct GraphTesting: View {
                 Text(selectedDate, format: Date.FormatStyle().month(.wide).day().year())
                     .id(selectedDate)
                     .transition(.opacity)
+                    .contentTransition(.numericText())
             }
             .font(.title3)
             .fontWeight(.semibold)
@@ -295,10 +296,64 @@ struct GraphTesting: View {
                 .cornerRadius(15)
                 .chartXAxis(.hidden)
                 .chartYAxis(.hidden)
+                .chartOverlay { proxy in
+                    GeometryReader { geometry in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        // Adjust the touch location relative to the chart’s plot area.
+                                        // Ensure that proxy.plotFrame is available.
+                                        guard let plotFrameAnchor = proxy.plotFrame else {
+                                            // Optionally, handle the case when it's nil.
+                                            return
+                                        }
+                                        
+                                        // Extract the plot frame rectangle using the anchor.
+                                        let plotFrame = geometry[plotFrameAnchor]
+                                        let relativeX = value.location.x - plotFrame.origin.x
+                                        
+                                        // Convert the x-position to a date value.
+                                        if let newDate: Date = proxy.value(atX: relativeX) {
+                                            // Snap the new date to the start of the day.
+                                            let dayStart = Calendar.current.startOfDay(for: newDate)
+                                            
+                                            // Determine the allowed boundaries.
+                                            if let firstEntryDate = computedData.first?.date {
+                                                let earliestAllowedDate = Calendar.current.startOfDay(for: firstEntryDate)
+                                                let latestAllowedDate = Calendar.current.startOfDay(for: Date())
+                                                
+                                                // Clamp the computed day to the allowed range.
+                                                let boundedDate: Date
+                                                if dayStart < earliestAllowedDate {
+                                                    boundedDate = earliestAllowedDate
+                                                } else if dayStart > latestAllowedDate {
+                                                    boundedDate = latestAllowedDate
+                                                } else {
+                                                    boundedDate = dayStart
+                                                }
+                                                
+                                                // Only update the date (and trigger haptic feedback) if it has changed.
+                                                if boundedDate != selectedDate {
+                                                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                                                    generator.impactOccurred()
+                                                    withAnimation {
+                                                        selectedDate = boundedDate
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            )
+                    }
+                }
             }
             
             // Overlay if there is no data on the selected day.
-            if computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) == nil {
+            if !computedData.isEmpty &&
+               computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) == nil {
                 VStack {
                     Text("No data for the selected day")
                         .multilineTextAlignment(.center)

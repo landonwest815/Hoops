@@ -14,13 +14,15 @@ enum SessionType: String, Codable, CaseIterable {
     case drill = "Drill"
 }
 
-enum ShotType: String, Codable, CaseIterable {
+enum ShotType: String, Codable, CaseIterable, Identifiable {
     case layups = "Layups"
     case freeThrows = "Free Throws"
     case midrange = "Midrange"
     case threePointers = "Threes"
     case deep = "Deep"
     case allShots = "All Shots"
+    
+    var id: Self { self }  // Use the enum case itself as the identifier
 
     var shots: [String] {
         switch self {

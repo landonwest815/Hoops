@@ -414,18 +414,19 @@ struct EditableNumberField: View {
                     }
                 }
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    // Use a very short delay to ensure the view appears before requesting focus.
+                    DispatchQueue.main.async {
                         isFocused = true
+                    }
+                }
+                .onChange(of: isFocused) { _, newFocus in
+                    if !newFocus {
+                        isEditing = false
                     }
                 }
                 .onSubmit {
                     isFocused = false
                     isEditing = false
-                }
-                .onChange(of: isFocused) { newFocus, _ in
-                    if !newFocus {
-                        isEditing = false
-                    }
                 }
             } else {
                 Button {
@@ -447,13 +448,9 @@ struct EditableNumberField: View {
                 }
             }
         }
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 18)
-//                .stroke(style: StrokeStyle(lineWidth: 1))
-//                .foregroundColor(color.opacity(0.25))
-//        )
     }
 }
+
 
 struct ShortCardView: View {
     var text: String

@@ -31,6 +31,10 @@ struct Sessions: View {
     // Session Details
     @State var selectedSession: HoopSession = HoopSession(date: .now, makes: 0, length: 0, shotType: .allShots)
     
+    @State private var previousTrophyLevels: [String: TrophyLevel] = [:]
+    @State private var showTrophyPopup: Bool = false
+    @State private var upgradedAccolade: Accolade?
+    
     @State var showFilters: Bool = false
     @State var shotType: ShotType = .allShots
     @State private var shotTypeVisibility: [ShotType: Bool] = [
@@ -52,7 +56,7 @@ struct Sessions: View {
             
             ZStack {
                 VStack(spacing: 0) {
-                    WeekView(selectedDate: $selectedDate)
+                    WeekPagerView(selectedDate: $selectedDate)
                         .padding(.top, 5)
                     
                     VStack(spacing: 20) {
@@ -84,6 +88,13 @@ struct Sessions: View {
                 }
                 
             }
+            .alert("Trophy Upgraded!", isPresented: $showTrophyPopup, actions: {
+                Button("Awesome", role: .cancel) {
+                    showTrophyPopup = false
+                }
+            }, message: {
+                Text("Congrats, you’ve upgraded your\n \(upgradedAccolade?.title ?? "trophy") trophy!")
+            })
         }
     }
     
@@ -259,13 +270,14 @@ struct Sessions: View {
             Profile(
                 averageMakesPerMinute: SessionLogic.calculateAllTimeAverage(for: sessions),
                 streak: $streak,
-                sessionsCount: sessions.count,
+                shotType: $shotType,
                 makesCount: SessionLogic.calculateTotalMakes(for: sessions),
                 daysHoopedCount: SessionLogic.calculateDaysHooped(for: sessions)
             )
             .presentationCornerRadius(32)
-            .presentationDetents([.fraction(0.8375)])
+            .presentationDetents([.fraction(0.96)])
             .presentationBackground(.ultraThickMaterial)
+            .presentationDragIndicator(.visible)
             
         case .sessionCreation:
             CardView()
@@ -314,12 +326,89 @@ struct Sessions: View {
         withAnimation {
             streak = SessionLogic.calculateStreak(from: sessions)
         }
+        
+        // Check for trophy upgrades after refreshing stats.
+        checkForTrophyUpgrades()
     }
     
     // Inserts a random session into the context.
     private func addRandomSession() {
         let randomSession = SessionLogic.generateRandomSession(for: selectedDate)
         context.insert(randomSession)
+    }
+    
+    // MARK: - Trophy Persistence & Upgrade Logic
+    // Helper to read persisted trophy levels from UserDefaults.
+    private func getPersistedTrophyLevels() -> [String: TrophyLevel] {
+        let key = "PreviousTrophyLevels"
+        if let saved = UserDefaults.standard.dictionary(forKey: key) as? [String: Int] {
+            return saved.reduce(into: [String: TrophyLevel]()) { result, pair in
+                result[pair.key] = TrophyLevel(rawValue: pair.value) ?? TrophyLevel.none
+            }
+        }
+        return [:]
+    }
+
+    // Helper to save trophy levels to UserDefaults.
+    private func setPersistedTrophyLevels(_ levels: [String: TrophyLevel]) {
+        let key = "PreviousTrophyLevels"
+        let converted = levels.mapValues { $0.rawValue }
+        UserDefaults.standard.set(converted, forKey: key)
+    }
+
+    // Compute accolades based on current sessions/stats.
+    private func computeAccolades() -> [Accolade] {
+        let sessionsAccolade = Accolade(
+            title: "Sessions",
+            value: sessions.count, // overall sessions count
+            thresholds: (bronze: 10, silver: 25, gold: 50),
+            icon: "basketball.fill"
+        )
+        let makesAccolade = Accolade(
+            title: "Makes",
+            value: SessionLogic.calculateTotalMakes(for: sessions),
+            thresholds: (bronze: 200, silver: 500, gold: 1000),
+            icon: "scope"
+        )
+        let daysAccolade = Accolade(
+            title: "Days Hooped",
+            value: SessionLogic.calculateDaysHooped(for: sessions),
+            thresholds: (bronze: 7, silver: 30, gold: 100),
+            icon: "calendar"
+        )
+        return [sessionsAccolade, makesAccolade, daysAccolade]
+    }
+
+    // Check if any accolade has upgraded and trigger the trophy popup if so.
+    private func checkForTrophyUpgrades() {
+        var storedLevels = getPersistedTrophyLevels()
+        let currentAccolades = computeAccolades()
+        
+        // If no trophy levels are stored, initialize them without triggering an alert.
+        if storedLevels.isEmpty {
+            for accolade in currentAccolades {
+                let newLevel = trophyLevel(for: accolade.value, thresholds: accolade.thresholds)
+                storedLevels[accolade.title] = newLevel
+            }
+            setPersistedTrophyLevels(storedLevels)
+            return
+        }
+        
+        for accolade in currentAccolades {
+            let newLevel = trophyLevel(for: accolade.value, thresholds: accolade.thresholds)
+            let previousLevel = storedLevels[accolade.title] ?? .none
+            
+            if newLevel > previousLevel {
+                upgradedAccolade = accolade
+                showTrophyPopup = true
+                storedLevels[accolade.title] = newLevel
+                // Only trigger one alert at a time.
+                break
+            } else {
+                storedLevels[accolade.title] = newLevel
+            }
+        }
+        setPersistedTrophyLevels(storedLevels)
     }
 }
 
@@ -490,6 +579,9 @@ struct SessionListView: View {
     @Binding var selectedDate: Date // Added binding to track date change
     let shotTypeVisibility: [ShotType: Bool]
     let onSessionSelected: () -> Void
+    
+    @State private var sessionToDelete: HoopSession? = nil
+    @State private var showConfirmDelete: Bool = false
 
     let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"]
 
@@ -554,15 +646,16 @@ struct SessionListView: View {
                                     .transition(.identity)
                                     .contextMenu {
                                         Button {
-                                            print("Edit Session")
+                                            // Set the selected session and launch the session details sheet.
+                                            selectedSession = session
+                                            onSessionSelected()
                                         } label: {
                                             Label("Edit Session", systemImage: "pencil")
                                         }
 
                                         Button(role: .destructive) {
-                                            withAnimation {
-                                                context.delete(session)
-                                            }
+                                            sessionToDelete = session
+                                            showConfirmDelete = true
                                         } label: {
                                             Label("Delete Session", systemImage: "trash")
                                         }
@@ -611,6 +704,19 @@ struct SessionListView: View {
             .id(selectedDate)
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .ignoresSafeArea()
+        }
+        .confirmationDialog("Are you sure you want to delete this session?", isPresented: $showConfirmDelete, titleVisibility: .visible) {
+            if let session = sessionToDelete {
+                Button("Delete", role: .destructive) {
+                    withAnimation {
+                        context.delete(session)
+                    }
+                    sessionToDelete = nil
+                }
+            }
+            Button("Nevermind", role: .cancel) {
+                sessionToDelete = nil
+            }
         }
     }
     
@@ -814,6 +920,7 @@ struct FilterMenuView: View {
         }
     }
 }
+
 
 #Preview {
         Sessions()

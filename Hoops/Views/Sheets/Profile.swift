@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // MARK: - Trophy Level Helpers
 
-enum TrophyLevel {
-    case none, bronze, silver, gold
+enum TrophyLevel: Int, Comparable {
+    case none = 0, bronze, silver, gold
+
+    static func < (lhs: TrophyLevel, rhs: TrophyLevel) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
 }
 
 /// Returns the trophy level based on the value and the thresholds provided.
@@ -41,12 +46,12 @@ struct Accolade: Identifiable {
 struct AccoladeView: View {
     let accolade: Accolade
     
-    // Compute the trophy level based on the provided thresholds
+    // Compute the trophy level based on the provided thresholds.
     var level: TrophyLevel {
         trophyLevel(for: accolade.value, thresholds: accolade.thresholds)
     }
     
-    // Choose a color based on the trophy level
+    // Choose a color based on the trophy level.
     var trophyColor: Color {
         switch level {
         case .bronze:
@@ -83,8 +88,7 @@ struct AccoladeView: View {
                     .frame(height: 100)
                     .foregroundStyle(trophyColor)
                 
-                // Overlay the specified icon for this accolade,
-                // which itself can have a subtle shadow or opacity effect.
+                // Overlay the specified icon for this accolade.
                 Image(systemName: accolade.icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -107,7 +111,6 @@ struct AccoladeView: View {
                             .foregroundStyle(.gray)
                             .font(.caption)
                     } else {
-                        // Optionally, show a message if the user has reached the highest threshold.
                         Text(" (Max)")
                             .foregroundStyle(.green)
                             .font(.caption)
@@ -135,22 +138,99 @@ struct AccoladeView: View {
     }
 }
 
+
+// MARK: - Shot Type View
+
+struct ShotTypeView: View {
+    let shotType: ShotType
+    let count: Int          // The number of sessions (occurrences) for this shot type.
+    let totalSessions: Int  // The total number of sessions in the database.
+    
+    // Calculate the percentage for this shot type.
+    var percentage: Int {
+        guard totalSessions > 0 else { return 0 }
+        return Int((Double(count) / Double(totalSessions)) * 100)
+    }
+    
+    var color: Color {
+        switch shotType {
+        case .freeThrows, .midrange: return .blue
+        case .layups:               return .red
+        case .threePointers:        return .green
+        case .deep:                 return .purple
+        case .allShots:             return .orange
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            VStack(spacing: 5) {
+                // Display the dynamic percentage.
+                HStack(spacing: 2) {
+                    Text("\(percentage)")
+                        .foregroundStyle(color)
+                        .font(.title)
+                    Text("%")
+                        .foregroundStyle(color)
+                        .font(.headline)
+                        .offset(y: 2.5)
+                }
+                
+                Text(shotType.rawValue)
+                    .foregroundStyle(.gray)
+                    .font(.caption2)
+            }
+            .fontWeight(.semibold)
+            .fontDesign(.rounded)
+        }
+        .padding(.horizontal, 15)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity)
+        .frame(height: 75)
+        .background(.ultraThinMaterial)
+        .cornerRadius(18)
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(style: StrokeStyle(lineWidth: 1))
+                .foregroundColor(.gray.opacity(0.25))
+        )
+    }
+}
+
+
 // MARK: - Main Profile View
 
 struct Profile: View {
     
-    // Existing metrics for the header stats
+    // Pull from the database.
+    @Environment(\.modelContext) var context
+    @Query var sessions: [HoopSession]
+    
+    // Existing metrics for the header stats.
     let averageMakesPerMinute: Double
     @Binding var streak: Int
+    @Binding var shotType: ShotType
     
-    // New dynamic accolade metrics.
-    // In a real app these could come from your app's state, a model, or a backend.
-    let sessionsCount: Int
+    // For other accolades that aren’t derived directly from sessions.
     let makesCount: Int
     let daysHoopedCount: Int
     
-    // Create a list of accolades with their intuitive thresholds.
-    // You can adjust the threshold values based on your app’s scoring.
+    // Compute sessions count directly from the queried sessions.
+    var sessionsCount: Int {
+        sessions.count
+    }
+    
+    // Compute the breakdown of shot types by iterating through sessions.
+    // Assumes each HoopSession has a property `shotType` of type ShotType.
+    var shotTypeCounts: [ShotType: Int] {
+        var counts: [ShotType: Int] = [:]
+        for session in sessions {
+            counts[session.shotType, default: 0] += 1
+        }
+        return counts
+    }
+    
+    // Create a list of accolades using the live session count.
     var accolades: [Accolade] {
         [
             Accolade(title: "Sessions",
@@ -170,8 +250,7 @@ struct Profile: View {
         ]
     }
     
-    // Set up grid columns for dynamic accolades layout.
-    // Adjust the number of columns as needed.
+    // Set up grid columns for dynamic layout.
     let gridColumns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -193,7 +272,7 @@ struct Profile: View {
                     Spacer()
                     
                     Button {
-                        // action for info button
+                        // Action for info button.
                     } label: {
                         Image(systemName: "info.circle")
                             .resizable()
@@ -203,6 +282,7 @@ struct Profile: View {
                     }
                 }
                 .padding(.horizontal, 5)
+                .padding(.horizontal)
                 
                 // MARK: Stats Section
                 VStack(spacing: 20) {
@@ -317,6 +397,7 @@ struct Profile: View {
                             )
                         }
                     }
+                    .padding(.horizontal)
                     
                     // MARK: Accolades Section
                     VStack(spacing: 10) {
@@ -331,20 +412,44 @@ struct Profile: View {
                         }
                         .padding(.horizontal)
                         
-                        // Use a grid to render accolades dynamically:
                         LazyVGrid(columns: gridColumns, spacing: 10) {
                             ForEach(accolades) { accolade in
                                 AccoladeView(accolade: accolade)
                             }
                         }
                     }
+                    .padding(.horizontal)
                     
+                    // MARK: Shot Types Section
+//                    VStack(spacing: 10) {
+//                        HStack {
+//                            Text("Shot Types")
+//                                .font(.headline)
+//                                .fontWeight(.semibold)
+//                                .fontDesign(.rounded)
+//                                .foregroundStyle(.gray)
+//                            
+//                            Spacer()
+//                        }
+//                        .padding(.horizontal)
+//                        
+//                        LazyVGrid(columns: gridColumns, spacing: 10) {
+//                            ForEach(ShotType.allCases, id: \.self) { shotType in
+//                                // For .allShots, display the overall session count.
+//                                // Otherwise, look up the count for that shot type from the computed dictionary.
+//                                let count = shotType == .allShots ? sessionsCount : (shotTypeCounts[shotType] ?? 0)
+//                                ShotTypeView(shotType: shotType,
+//                                             count: count,
+//                                             totalSessions: sessionsCount)
+//                            }
+//                        }
+//                    }
+//                    .padding(.horizontal)
                 }
                 
                 Spacer()
             }
         }
-        .padding(.horizontal)
         .padding(.top, 15)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -352,9 +457,11 @@ struct Profile: View {
 
 #Preview {
     @Previewable @State var streak = 4
+    @Previewable @State var shotType: ShotType = .allShots
+    // For preview purposes, you might need to supply dummy values for makesCount and daysHoopedCount.
     Profile(averageMakesPerMinute: 5.35,
             streak: $streak,
-            sessionsCount: 25,
+            shotType: $shotType,
             makesCount: 200,
             daysHoopedCount: 14)
 }

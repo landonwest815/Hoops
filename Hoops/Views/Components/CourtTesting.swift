@@ -311,7 +311,7 @@ struct CourtTesting: View {
             }
             .aspectRatio(1.15, contentMode: .fit)
         }
-        .padding(.horizontal, 5)
+        .scaleEffect(x: 1, y: -1)
     }
 
 }
