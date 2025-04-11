@@ -1,34 +1,50 @@
 import SwiftUI
 import SwiftData
 
-// Helper: compute the start of a week for a given date.
+// MARK: - Helper Functions
+
+/// Computes the start of the week for a given date based on the provided calendar.
+/// - Parameters:
+///   - date: The date from which to calculate the start of the week.
+///   - calendar: The calendar to use for calculations (default is `.current`).
+/// - Returns: The date representing the start of the week. If the calculation fails, returns the original date.
 func startOfWeek(for date: Date, calendar: Calendar = .current) -> Date {
+    // Uses yearForWeekOfYear and weekOfYear to calculate the first day of that week.
     calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)) ?? date
 }
 
-/// Displays a single week’s dates computed from a fixed base date, highlights the global selected date,
-/// and uses the presence of a session to adjust the basketball icon.
+// MARK: - WeeklyShotTrackerView
+
+/// Displays a single week’s dates computed from a fixed base date.
+/// Highlights the globally selected date, and adjusts the basketball icon color
+/// based on whether a session exists on that day.
 struct WeeklyShotTrackerView: View {
+    // MARK: Properties
+    
     /// Base date for the week (used to compute this week’s dates).
     let weekBaseDate: Date
-    /// Global selected date binding.
+    /// Binding to the global selected date.
     @Binding var selectedDate: Date
-
+    
+    /// The current calendar.
     private let calendar = Calendar.current
+    /// Abbreviated weekday symbols to display above the dates.
     private let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
     
-    // Reintroduce the query to load session data.
+    /// Query to load session data (ordered with the most recent first).
     @Query(sort: \HoopSession.date, order: .reverse) var sessions: [HoopSession]
     
-    /// Compute days for this week based on weekBaseDate.
+    /// Computes an array of dates for the current week using the week base date.
     private var daysOfWeek: [Date] {
         let weekStart = startOfWeek(for: weekBaseDate, calendar: calendar)
+        // Returns 7 consecutive dates starting with weekStart.
         return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
     }
-
+    
+    // MARK: Body
     var body: some View {
         VStack(spacing: 2.5) {
-            // Weekday labels.
+            // Weekday labels (e.g., S, M, T, etc.).
             HStack(spacing: 10) {
                 ForEach(weekdays.indices, id: \.self) { index in
                     Text(weekdays[index])
@@ -39,29 +55,32 @@ struct WeeklyShotTrackerView: View {
                 }
             }
             
-            // Date rectangles.
+            // Date rectangles for each day of the week.
             HStack(spacing: 10) {
                 ForEach(daysOfWeek, id: \.self) { day in
+                    // Compute key date properties.
                     let startOfDay = calendar.startOfDay(for: day)
                     let dayNumber = calendar.component(.day, from: day)
                     let isSelected = calendar.isDate(day, inSameDayAs: selectedDate)
+                    // Mark days that lie in the future.
                     let isFuture = startOfDay > calendar.startOfDay(for: Date())
                     
-                    // Check if a session exists for this day.
+                    // Determine if there is at least one session on this day.
                     let hasSession = sessions.contains { session in
                         calendar.isDate(session.date, inSameDayAs: day)
                     }
                     
                     VStack(spacing: 5) {
+                        // Basketball icon: colored orange if a session exists, otherwise a darker gray.
                         Image(systemName: "basketball.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            // For example, fill in with orange if there’s a session, or gray if not.
                             .foregroundStyle(hasSession ? .orange : Color(red: 0.3, green: 0.3, blue: 0.3))
                             .frame(width: 22.5, height: 22.5)
                             .padding(.top, 2.5)
                             .opacity(isFuture ? 0.33 : 1.0)
                         
+                        // Display the day number.
                         Text("\(dayNumber)")
                             .fontWeight(.semibold)
                             .fontDesign(.rounded)
@@ -72,8 +91,8 @@ struct WeeklyShotTrackerView: View {
                     .frame(maxWidth: .infinity)
                     .background(.ultraThinMaterial)
                     .cornerRadius(12)
+                    // Overlay a border if this day is the currently selected day.
                     .overlay(
-                        // Highlight the selected day.
                         isSelected ?
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.white.opacity(0.66), lineWidth: 2)
@@ -84,6 +103,7 @@ struct WeeklyShotTrackerView: View {
                             .stroke(style: StrokeStyle(lineWidth: 1))
                             .foregroundColor(.gray.opacity(0.33))
                     )
+                    // Tapping a non-future day updates the global selected date.
                     .onTapGesture {
                         withAnimation(.snappy) {
                             if !isFuture {
@@ -100,29 +120,35 @@ struct WeeklyShotTrackerView: View {
     }
 }
 
-
 // MARK: - WeekPagerView
 
 /// Displays week pages (one week per page) that can be swiped through,
-/// but disallows scrolling into future weeks (i.e. only past weeks plus the current week).
+/// but restricts navigation to past weeks (including the current week) only.
 struct WeekPagerView: View {
+    // MARK: Properties
+    
+    /// Binding to the global selected date.
     @Binding var selectedDate: Date
+    /// The current pager offset in weeks.
     @State private var weekOffset: Int = 0
     
     private let calendar = Calendar.current
-    /// The maximum number of weeks in the past that can be scrolled.
+    /// The maximum number of weeks in the past that can be navigated.
     private let maxPastWeeks: Int = 50
-    /// The current week’s start is computed from today.
+    /// The start date of the current week (based on today's date).
     private let currentWeekStart: Date = startOfWeek(for: Date(), calendar: Calendar.current)
     
-    /// Computes the week base date for a given offset relative to the current week.
+    /// Computes the base date for a week given an offset relative to the current week.
+    /// - Parameter offset: A negative integer representing past weeks (0 is current week).
+    /// - Returns: The base date for that week.
     private func computeWeek(for offset: Int) -> Date {
         calendar.date(byAdding: .weekOfYear, value: offset, to: currentWeekStart) ?? currentWeekStart
     }
     
+    // MARK: Body
     var body: some View {
         TabView(selection: $weekOffset) {
-            // Offsets from maxPastWeeks ago (negative numbers) through 0 (current week)
+            // Create pages for each week from maxPastWeeks ago up to the current week (0).
             ForEach((-maxPastWeeks...0), id: \.self) { offset in
                 let weekBaseDate = computeWeek(for: offset)
                 WeeklyShotTrackerView(weekBaseDate: weekBaseDate, selectedDate: $selectedDate)
@@ -131,34 +157,26 @@ struct WeekPagerView: View {
         }
         .frame(height: 85)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        // When the view appears or the global selectedDate changes,
-        // update the page (weekOffset) accordingly.
+        // Update the pager offset when the view appears or when selectedDate changes.
         .onAppear { updateOffsetForSelectedDate() }
         .onChange(of: selectedDate) { _, _ in updateOffsetForSelectedDate() }
-        // When the user swipes the pager, update the global selectedDate if needed.
+        // When the user swipes the pager, update the global selectedDate accordingly.
         .onChange(of: weekOffset) { _, newOffset in
             let newWeekBaseDate = computeWeek(for: newOffset)
             if !calendar.isDate(selectedDate, equalTo: newWeekBaseDate, toGranularity: .weekOfYear) {
-                // Option 1: Simply default the global selectedDate to the new week's start.
+                // Default the global selectedDate to the new week's start.
                 withAnimation {
                     selectedDate = newWeekBaseDate
                 }
-                // Option 2: Preserve the same weekday (if desired) by trying something like:
-                // let weekday = calendar.component(.weekday, from: selectedDate)
-                // if let newSelectedDate = calendar.date(bySetting: .weekday, value: weekday, of: newWeekBaseDate) {
-                //     selectedDate = newSelectedDate
-                // } else {
-                //     selectedDate = newWeekBaseDate
-                // }
             }
         }
     }
     
-    /// Updates the pager’s weekOffset based on the global selectedDate.
+    /// Updates the pager offset (weekOffset) to match the global selectedDate.
     private func updateOffsetForSelectedDate() {
         let selectedWeekStart = startOfWeek(for: selectedDate, calendar: calendar)
         let components = calendar.dateComponents([.weekOfYear], from: currentWeekStart, to: selectedWeekStart)
-        // Compute the offset (it will be 0 or negative, because future weeks are disallowed).
+        // The computed offset will be 0 or negative (future weeks are disallowed).
         let newOffset = components.weekOfYear ?? 0
         withAnimation {
             weekOffset = min(newOffset, 0)
@@ -166,7 +184,7 @@ struct WeekPagerView: View {
     }
 }
 
-
+// MARK: - Preview
 
 #Preview {
     @Previewable @State var selectedDate = Date()

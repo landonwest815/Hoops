@@ -10,6 +10,8 @@ import SwiftData
 
 // MARK: - Trophy Level Helpers
 
+/// An enumeration representing different trophy levels.
+/// Conforms to `Comparable` based on its raw value.
 enum TrophyLevel: Int, Comparable {
     case none = 0, bronze, silver, gold
 
@@ -18,7 +20,11 @@ enum TrophyLevel: Int, Comparable {
     }
 }
 
-/// Returns the trophy level based on the value and the thresholds provided.
+/// Determines the trophy level based on a given value and associated thresholds.
+/// - Parameters:
+///   - value: The numeric value (e.g., total sessions, makes, etc.).
+///   - thresholds: A tuple containing the bronze, silver, and gold thresholds.
+/// - Returns: A `TrophyLevel` based on the thresholds.
 func trophyLevel(for value: Int, thresholds: (bronze: Int, silver: Int, gold: Int)) -> TrophyLevel {
     if value >= thresholds.gold {
         return .gold
@@ -33,25 +39,41 @@ func trophyLevel(for value: Int, thresholds: (bronze: Int, silver: Int, gold: In
 
 // MARK: - Accolade Data Model
 
+/// Represents an accolade or achievement with thresholds and an associated icon.
 struct Accolade: Identifiable {
     let id = UUID()
     let title: String
     let value: Int
     let thresholds: (bronze: Int, silver: Int, gold: Int)
     let icon: String  // The system icon to overlay on the trophy
+    
+    /// Provides a color associated with the accolade based on its title.
+    var color: Color {
+        switch title {
+        case "Sessions":
+            return .orange
+        case "Makes":
+            return .red
+        case "Average":
+            return .blue
+        default:
+            return .gray
+        }
+    }
 }
 
 // MARK: - Accolade View
 
+/// A view that displays a trophy along with numeric progress for an accolade.
 struct AccoladeView: View {
     let accolade: Accolade
     
-    // Compute the trophy level based on the provided thresholds.
+    /// The computed trophy level based on the accolade's value and thresholds.
     var level: TrophyLevel {
         trophyLevel(for: accolade.value, thresholds: accolade.thresholds)
     }
     
-    // Choose a color based on the trophy level.
+    /// Chooses a color based on the trophy level.
     var trophyColor: Color {
         switch level {
         case .bronze:
@@ -65,8 +87,8 @@ struct AccoladeView: View {
         }
     }
     
-    // Computes the next achievable threshold based on the current value.
-    // Returns nil if the current value has already reached (or exceeded) the gold level threshold.
+    /// Computes the next threshold that has not yet been reached.
+    /// Returns `nil` if the gold threshold (or beyond) is reached.
     var nextThreshold: Int? {
         if accolade.value < accolade.thresholds.bronze {
             return accolade.thresholds.bronze
@@ -81,6 +103,7 @@ struct AccoladeView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // Trophy image with an overlay icon.
             ZStack {
                 Image(systemName: "trophy.fill")
                     .resizable()
@@ -88,7 +111,7 @@ struct AccoladeView: View {
                     .frame(height: 100)
                     .foregroundStyle(trophyColor)
                 
-                // Overlay the specified icon for this accolade.
+                // Overlay the specific icon for this accolade.
                 Image(systemName: accolade.icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -99,8 +122,8 @@ struct AccoladeView: View {
             .padding(.top, 5)
             .padding(.horizontal, 5)
             
+            // Display the numerical progress and title.
             VStack(spacing: 0) {
-                // Show current value along with the next achievable threshold, if applicable.
                 HStack(spacing: 2) {
                     Text("\(accolade.value)")
                         .foregroundStyle(.white)
@@ -138,20 +161,22 @@ struct AccoladeView: View {
     }
 }
 
-
 // MARK: - Shot Type View
 
+/// Displays information for a given shot type including the percentage of sessions.
+/// This view is used to show the distribution of different shot types.
 struct ShotTypeView: View {
     let shotType: ShotType
-    let count: Int          // The number of sessions (occurrences) for this shot type.
-    let totalSessions: Int  // The total number of sessions in the database.
+    let count: Int          // Number of sessions for this shot type.
+    let totalSessions: Int  // Total number of sessions overall.
     
-    // Calculate the percentage for this shot type.
+    /// Calculates the percentage of sessions that correspond to this shot type.
     var percentage: Int {
         guard totalSessions > 0 else { return 0 }
         return Int((Double(count) / Double(totalSessions)) * 100)
     }
     
+    /// Selects a color based on the shot type.
     var color: Color {
         switch shotType {
         case .freeThrows, .midrange: return .blue
@@ -165,7 +190,7 @@ struct ShotTypeView: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 5) {
-                // Display the dynamic percentage.
+                // Display the percentage.
                 HStack(spacing: 2) {
                     Text("\(percentage)")
                         .foregroundStyle(color)
@@ -176,6 +201,7 @@ struct ShotTypeView: View {
                         .offset(y: 2.5)
                 }
                 
+                // Display the shot type name.
                 Text(shotType.rawValue)
                     .foregroundStyle(.gray)
                     .font(.caption2)
@@ -197,31 +223,29 @@ struct ShotTypeView: View {
     }
 }
 
-
 // MARK: - Main Profile View
 
+/// The main profile view, displaying session metrics, accolades, and other statistics.
 struct Profile: View {
+    // MARK: Environment & Query
+    @Environment(\.modelContext) var context    // Data context for database queries.
+    @Query var sessions: [HoopSession]            // Fetch sessions from the database.
     
-    // Pull from the database.
-    @Environment(\.modelContext) var context
-    @Query var sessions: [HoopSession]
+    // MARK: Header Metrics
+    let averageMakesPerMinute: Double           // Average makes per minute.
+    @Binding var streak: Int                    // Current hooping streak.
+    @Binding var shotType: ShotType             // Selected shot type (for filtering, if needed).
     
-    // Existing metrics for the header stats.
-    let averageMakesPerMinute: Double
-    @Binding var streak: Int
-    @Binding var shotType: ShotType
-    
-    // For other accolades that aren’t derived directly from sessions.
+    // Metrics not directly derived from sessions.
     let makesCount: Int
     let daysHoopedCount: Int
     
-    // Compute sessions count directly from the queried sessions.
+    /// The total number of sessions.
     var sessionsCount: Int {
         sessions.count
     }
     
-    // Compute the breakdown of shot types by iterating through sessions.
-    // Assumes each HoopSession has a property `shotType` of type ShotType.
+    /// Calculates the counts for each shot type.
     var shotTypeCounts: [ShotType: Int] {
         var counts: [ShotType: Int] = [:]
         for session in sessions {
@@ -230,7 +254,7 @@ struct Profile: View {
         return counts
     }
     
-    // Create a list of accolades using the live session count.
+    /// Creates a list of accolades based on current session statistics.
     var accolades: [Accolade] {
         [
             Accolade(title: "Sessions",
@@ -250,7 +274,7 @@ struct Profile: View {
         ]
     }
     
-    // Set up grid columns for dynamic layout.
+    // MARK: Grid Configuration for Accolades and (Commented) Shot Types
     let gridColumns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -259,7 +283,6 @@ struct Profile: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            
             VStack(spacing: 20) {
                 // MARK: Header Section
                 HStack(spacing: 12) {
@@ -272,7 +295,7 @@ struct Profile: View {
                     Spacer()
                     
                     Button {
-                        // Action for info button.
+                        // Info button action placeholder.
                     } label: {
                         Image(systemName: "info.circle")
                             .resizable()
@@ -286,7 +309,6 @@ struct Profile: View {
                 
                 // MARK: Stats Section
                 VStack(spacing: 20) {
-                    
                     VStack(spacing: 10) {
                         HStack {
                             Text("Stats")
@@ -300,7 +322,7 @@ struct Profile: View {
                         .padding(.horizontal)
                         
                         HStack {
-                            // Average Makes per minute
+                            // Average Makes per Minute Display
                             VStack(alignment: .leading) {
                                 HStack {
                                     Image(systemName: "chart.line.uptrend.xyaxis")
@@ -346,7 +368,7 @@ struct Profile: View {
                                     .foregroundColor(.gray.opacity(0.25))
                             )
                             
-                            // Hoopin' streak display
+                            // Hoopin' Streak Display
                             VStack(alignment: .leading) {
                                 HStack {
                                     ZStack {
@@ -420,45 +442,47 @@ struct Profile: View {
                     }
                     .padding(.horizontal)
                     
-                    // MARK: Shot Types Section
-//                    VStack(spacing: 10) {
-//                        HStack {
-//                            Text("Shot Types")
-//                                .font(.headline)
-//                                .fontWeight(.semibold)
-//                                .fontDesign(.rounded)
-//                                .foregroundStyle(.gray)
-//                            
-//                            Spacer()
-//                        }
-//                        .padding(.horizontal)
-//                        
-//                        LazyVGrid(columns: gridColumns, spacing: 10) {
-//                            ForEach(ShotType.allCases, id: \.self) { shotType in
-//                                // For .allShots, display the overall session count.
-//                                // Otherwise, look up the count for that shot type from the computed dictionary.
-//                                let count = shotType == .allShots ? sessionsCount : (shotTypeCounts[shotType] ?? 0)
-//                                ShotTypeView(shotType: shotType,
-//                                             count: count,
-//                                             totalSessions: sessionsCount)
-//                            }
-//                        }
-//                    }
-//                    .padding(.horizontal)
+                    // MARK: Shot Types Section (Commented Out)
+                    /*
+                    VStack(spacing: 10) {
+                        HStack {
+                            Text("Shot Types")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.gray)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        
+                        LazyVGrid(columns: gridColumns, spacing: 10) {
+                            ForEach(ShotType.allCases, id: \.self) { shotType in
+                                // For .allShots, display overall session count. Otherwise, use the computed count.
+                                let count = shotType == .allShots ? sessionsCount : (shotTypeCounts[shotType] ?? 0)
+                                ShotTypeView(shotType: shotType,
+                                             count: count,
+                                             totalSessions: sessionsCount)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    */
                 }
                 
                 Spacer()
             }
         }
-        .padding(.top, 15)
+        .padding(.top, 25)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
+// MARK: - Preview
 #Preview {
     @Previewable @State var streak = 4
     @Previewable @State var shotType: ShotType = .allShots
-    // For preview purposes, you might need to supply dummy values for makesCount and daysHoopedCount.
+    // For preview purposes, supplying sample values for makesCount and daysHoopedCount.
     Profile(averageMakesPerMinute: 5.35,
             streak: $streak,
             shotType: $shotType,
