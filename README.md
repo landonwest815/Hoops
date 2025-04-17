@@ -60,7 +60,3 @@ Designed for simplicity, speed, and clarity, Hoops is perfect for players who wa
 
 - Add iCloud sync to preserve history across devices.
 - Support for drills and structured workout modes.
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
