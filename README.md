@@ -1,21 +1,67 @@
-<img src="https://github.com/landonwest815/Hoops/blob/main/Assets/HoopsAppIcon.png" width="100">
- 
-# Hoops App Project Documentation
+# 🏀 Hoops – Basketball Shot Tracking with Apple Watch
 
-## Collaborators
-- **Solo Development**:
-  - Landon West (landonwest815)
+## 📱 Overview
 
-## Project Overview
-Hoops is a very simplistic Watch App to track your basketball shooting. Getting some shops up? Open the app on your watch, select a shot type (ex. Three Pointers), and press start hoopin'. It's as easy as that. When you feel like your session is up, you can stop the timer and view your results. These results involve an average shots made per minute as well as your makes and session length used to calculate that average.
-This data gets sent to the iOS Companion App and becomes viewable on customizable charts to see how your averages progress over time.
+Hoops is a basketball training companion app for iPhone and Apple Watch. It helps players improve their performance by tracking shooting sessions, recording makes by court zone, and visualizing shot data over time — all from the convenience of their wrist.
 
-### Key Features
-- **Choosing Shot Type**: Scroll through the various options of shot types. The shot range is color coded for easier selection.
-- **Logging Made Shots**: Upon Session start, all you have to do is tap the watch screen to log a made shot. This button fills the bottom 3/4 of the screen for ease of tapping.
-- **Post-Session Stats**: Once your session has concluded, you will be shown your stats. This includes time, makes, and average per minute.
-- **Viewing Data in iOS App**: Hoops Data is immediately transferred to your iPhone, allowing you to view all your statistics. You can filter by days, shot types, session lengths, and so much more.
+Designed for simplicity, speed, and clarity, Hoops is perfect for players who want serious insights with minimal distraction during practice.  
 
-With its simple design, the Hoops Watch App not only makes it easy to track your sessions, but you are also given so many options for different areas in basketball. Seeing how you improve or decline over time is made easy with the iOS Companion App.
+## 🖼️ Screenshots
 
-Note: These features may or may not be implemented yet. Stay tuned.
+<p float="left">
+  <img src="./assets/home.png" height="400"/>
+  <img src="./assets/details.png" height="400"/>
+</p>
+
+## 🎯 Project Objectives
+
+- Create a seamless iOS + Apple Watch experience for tracking basketball shots.
+- Build a zone-based shooting system (e.g., layups, mid-range, free throws, 3PT).
+- Use real-time interactions between iPhone and Watch to streamline workouts.
+- Visualize shot history and performance breakdowns in a beautiful, intuitive UI.
+
+## 🛠️ Technologies Used
+
+- **Languages:** Swift
+- **Frameworks:** SwiftUI, WatchKit
+- **Persistence:** SwiftData & Codable storage (UserDefaults/Files)
+- **Animation & Charts:** Swift Charts (for shot accuracy and breakdowns)
+- **Project Type:** iOS + watchOS (paired app)
+- **IDE:** Xcode
+
+## 🧠 Key Learnings
+
+- **Cross-Device Communication:** Built seamless syncing between iPhone and Apple Watch using `WatchConnectivity`.
+- **Zone-Based Tracking:** Developed a custom data model for organizing shots by location.
+- **SwiftUI Design:** Focused on elegant, minimalist UI with emphasis on glanceable data.
+- **Progress Tracking:** Enabled historical views of user accuracy over multiple sessions.
+- **Workout Efficiency:** Prioritized fast in-session inputs so the app never slows down shooting rhythm.
+
+## 🚀 Getting Started
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/landonwest815/Hoops.git
+    ```
+
+2. **Open in Xcode:**
+    - Make sure to open the `.xcworkspace` if present.
+    - Ensure both iOS and watchOS targets are included when running.
+
+3. **Run on Devices:**
+    - Select your iPhone and paired Apple Watch targets.
+    - Build and run to install on both devices.
+
+4. **Start Shooting:**
+    - Open Hoops on your Watch to begin logging shots by court zone.
+    - Review session history, accuracy breakdowns, and improvement over time on your iPhone.
+
+## 📌 Future Enhancements
+
+- Add iCloud sync to preserve history across devices.
+- Support for drills and structured workout modes.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
