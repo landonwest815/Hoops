@@ -6,11 +6,10 @@ Hoops is a basketball training companion app for iPhone and Apple Watch. It help
 
 Designed for simplicity, speed, and clarity, Hoops is perfect for players who want serious insights with minimal distraction during practice.  
 
-## 🖼️ Screenshots
+## 🖼️ UI
 
 <p float="left">
-  <img src="./assets/home.png" height="400"/>
-  <img src="./assets/details.png" height="400"/>
+  <img src=".assets/Screenshot 2025-04-15 at 8.01.54 PM.png" height="400"/>
 </p>
 
 ## 🎯 Project Objectives
