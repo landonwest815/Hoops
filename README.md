@@ -9,7 +9,7 @@ Designed for simplicity, speed, and clarity, Hoops is perfect for players who wa
 ## 🖼️ UI
 
 <p float="left">
-  <img src=".assets/screenshot.png" height="400"/>
+  <img src="assets/screenshot.png" height="400"/>
 </p>
 
 ## 🎯 Project Objectives
