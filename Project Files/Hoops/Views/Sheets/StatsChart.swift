@@ -260,6 +260,13 @@ struct StatsChart: View {
                         .lineStyle(.init(lineWidth: 1, dash: [2.5]))
                         .foregroundStyle(.gray.opacity(0.25))
                     
+                    PointMark(
+                        x: .value("Date", $0.date),
+                        y: .value("Metric", $0.value)
+                    )
+                    .symbol(.circle)
+                    .foregroundStyle(lineColor)
+                    
                     // Mark the latest point in the computed data.
                     if let latestPoint = computedData.max(by: { $0.date < $1.date }) {
                         PointMark(
@@ -321,37 +328,27 @@ struct StatsChart: View {
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { value in
-                                        // Use the proxy to map the gesture's X position to a date.
-                                        guard let plotFrameAnchor = proxy.plotFrame else { return }
-                                        
-                                        let plotFrame = geometry[plotFrameAnchor]
-                                        let relativeX = value.location.x - plotFrame.origin.x
-                                        
-                                        if let newDate: Date = proxy.value(atX: relativeX) {
-                                            // Snap to the start of the day.
-                                            let dayStart = Calendar.current.startOfDay(for: newDate)
-                                            
-                                            // Clamp the selection to an allowed date range.
-                                            if let firstEntryDate = computedData.first?.date {
-                                                let earliestAllowedDate = Calendar.current.startOfDay(for: firstEntryDate)
-                                                let latestAllowedDate = Calendar.current.startOfDay(for: Date())
-                                                
-                                                let boundedDate: Date
-                                                if dayStart < earliestAllowedDate {
-                                                    boundedDate = earliestAllowedDate
-                                                } else if dayStart > latestAllowedDate {
-                                                    boundedDate = latestAllowedDate
-                                                } else {
-                                                    boundedDate = dayStart
-                                                }
-                                                
-                                                // Update the selected date only if it has changed.
-                                                if boundedDate != selectedDate {
-                                                    let generator = UIImpactFeedbackGenerator(style: .medium)
-                                                    generator.impactOccurred()
-                                                    withAnimation {
-                                                        selectedDate = boundedDate
-                                                    }
+                                        // make sure we have a plot frame and at least one data point
+                                        guard
+                                            let plotArea = proxy.plotFrame,
+                                            !computedData.isEmpty
+                                        else { return }
+
+                                        // convert gesture X into a Date
+                                        let frame = geometry[plotArea]
+                                        let locationX = value.location.x - frame.origin.x
+                                        guard let rawDate: Date = proxy.value(atX: locationX) else { return }
+
+                                        // find the computedData entry whose date is closest to the rawDate
+                                        if let nearest = computedData.min(
+                                            by: { abs($0.date.timeIntervalSince(rawDate)) < abs($1.date.timeIntervalSince(rawDate)) }
+                                        ) {
+                                            // only update if it's actually changed
+                                            if !Calendar.current.isDate(nearest.date, inSameDayAs: selectedDate) {
+                                                let generator = UIImpactFeedbackGenerator(style: .medium)
+                                                generator.impactOccurred()
+                                                withAnimation {
+                                                    selectedDate = nearest.date
                                                 }
                                             }
                                         }
@@ -359,6 +356,7 @@ struct StatsChart: View {
                             )
                     }
                 }
+
             }
             
             // If there is no data for the selected day, display a message.
