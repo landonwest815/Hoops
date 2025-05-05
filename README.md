@@ -9,7 +9,7 @@ Designed for simplicity, speed, and clarity, Hoops is perfect for players who wa
 ## 🖼️ UI
 
 <p float="left">
-  <img src=".assets/Screenshot 2025-04-15 at 8.01.54 PM.png" height="400"/>
+  <img src="assets/screenshot.png" height="400"/>
 </p>
 
 ## 🎯 Project Objectives
@@ -60,7 +60,3 @@ Designed for simplicity, speed, and clarity, Hoops is perfect for players who wa
 
 - Add iCloud sync to preserve history across devices.
 - Support for drills and structured workout modes.
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
