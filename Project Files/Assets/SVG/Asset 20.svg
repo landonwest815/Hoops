@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-3 {
+        fill: #f6921e;
+        font-family: SFProDisplay-Regular, 'SF Pro Display';
+        font-size: 1161.08px;
+      }
+
+      .cls-4 {
+        fill: #bf7117;
+      }
+
+      .cls-5 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="512" y1="0" x2="512" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#333"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <clipPath id="clippath">
+      <rect class="cls-1" width="1024" height="1024"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <rect class="cls-2" width="1024" height="1024"/>
+    <g>
+      <path class="cls-4" d="M1024,1024v-357.61c-105.81-129.02-266.75-211.39-447-211.39C260.33,455,3.26,709.2.04,1024h1023.96Z"/>
+      <g class="cls-5">
+        <text class="cls-3" transform="translate(-102 1440.66)"><tspan x="0" y="0">􁗊</tspan></text>
+        <text/>
+      </g>
+    </g>
+  </g>
+</svg>

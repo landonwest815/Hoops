@@ -11,10 +11,9 @@ struct DrillResults: View {
     @StateObject var watchConnector = WatchToiOSConnector()
     @Environment(\.dismiss) private var dismiss
     
-    var shotType: ShotType
-    
-    @State var sessionTimeInSec: Int
-    @State var makes: Int
+    let shotType: ShotType
+    let sessionTimeInSec: Int
+    let makes: Int
 
     var body: some View {
         
@@ -60,10 +59,6 @@ struct DrillResults: View {
             .navigationTitle("Session Stats")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .onDisappear() {
-            sessionTimeInSec = 0
-            makes = 0
-        }
         
     }
     
@@ -82,6 +77,7 @@ struct DrillResults: View {
     
     func sendSessionToiOS() {
         print(shotType.rawValue)
+        print(makes)
         let hoopSession = HoopSession(date: Date.now, makes: makes, length: sessionTimeInSec, shotType: shotType, sessionType: .drill)
         watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
     }

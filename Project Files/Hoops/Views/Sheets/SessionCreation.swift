@@ -22,12 +22,15 @@ struct SessionCreation: View {
     @Environment(\.modelContext) var context        // Data context for inserting sessions.
     @Environment(\.dismiss) var dismiss               // Dismisses the current view.
     
-    @State private var selectedTab: SessionTab = .sessionTypeSelection               // Controls the current tab in the TabView.
+    @State private var selectedTab: SessionTab = .sessionTypeSelection    // Controls the current tab in the TabView.
+    @State private var sessionType: SessionType = .freestyle
     @State private var shotType: ShotType = .allShots    // Currently selected shot type for the session.
     @State private var customTime = false              // Flag for custom time entry (not fully wired up).
     @State private var minutes = 5                     // Session duration minutes.
     @State private var seconds = 0                     // Session duration seconds.
     @State private var makes = 25                      // Number of made shots during the session.
+    @Binding var selectedDate: Date
+
     
     @FocusState private var isTextFieldFocused: Bool   // Used to focus editable fields.
     
@@ -90,21 +93,21 @@ struct SessionCreation: View {
                     text: "Freestyle",
                     icon: "figure.cooldown",
                     color: .red,
-                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection) }
+                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .freestyle) }
                 )
                 
                 TallCardView(
                     text: "Challenge",
                     icon: "figure.bowling",
                     color: .blue,
-                    onButtonPress: { selectSessionType(.freeThrows, targetTab: .focusSelection) }
+                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .challenge) }
                 )
                 
                 TallCardView(
                     text: "Drill",
                     icon: "figure.basketball",
                     color: .green,
-                    onButtonPress: { selectSessionType(.midrange, targetTab: .focusSelection) }
+                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .drill) }
                 )
             }
             Spacer()
@@ -124,19 +127,19 @@ struct SessionCreation: View {
                     text: "Layups",
                     color: .red,
                     shotType: .layups,
-                    onButtonPress: { selectSessionType(.layups, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.layups, targetTab: .detailEntry, sessionType: sessionType) }
                 )
                 ShortCardView(
                     text: "Free Throws",
                     color: .blue,
                     shotType: .freeThrows,
-                    onButtonPress: { selectSessionType(.freeThrows, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.freeThrows, targetTab: .detailEntry, sessionType: sessionType) }
                 )
                 ShortCardView(
                     text: "Midrange",
                     color: .blue,
                     shotType: .midrange,
-                    onButtonPress: { selectSessionType(.midrange, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.midrange, targetTab: .detailEntry, sessionType: sessionType) }
                 )
             }
             HStack(spacing: 10) {
@@ -144,19 +147,19 @@ struct SessionCreation: View {
                     text: "Threes",
                     color: .green,
                     shotType: .threePointers,
-                    onButtonPress: { selectSessionType(.threePointers, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.threePointers, targetTab: .detailEntry, sessionType: sessionType) }
                 )
                 ShortCardView(
                     text: "Deep",
                     color: .purple,
                     shotType: .deep,
-                    onButtonPress: { selectSessionType(.deep, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.deep, targetTab: .detailEntry, sessionType: sessionType) }
                 )
                 ShortCardView(
                     text: "All Shots",
                     color: .orange,
                     shotType: .allShots,
-                    onButtonPress: { selectSessionType(.allShots, targetTab: .detailEntry) }
+                    onButtonPress: { selectSessionType(.allShots, targetTab: .detailEntry, sessionType: sessionType) }
                 )
             }
             Spacer()
@@ -296,18 +299,58 @@ struct SessionCreation: View {
     // MARK: - Detail Entry Content & Decorations
     
     /// Contains numeric entry fields for session duration and made shots.
+//    private var detailEntryContent: some View {
+//        VStack(spacing: 15) {
+//            HStack(spacing: 15) {
+//                // Number fields for minutes, seconds, and makes.
+//                numberFieldView(title: "Min", value: $minutes)
+//                numberFieldView(title: "Sec", value: $seconds)
+//                numberFieldView(title: "Makes", value: $makes)
+//            }
+//        }
+//        .padding(.horizontal)
+//        .overlay(decorativeBackground)
+//    }
     private var detailEntryContent: some View {
         VStack(spacing: 15) {
-            HStack(spacing: 15) {
-                // Number fields for minutes, seconds, and makes.
-                numberFieldView(title: "Min", value: $minutes)
-                numberFieldView(title: "Sec", value: $seconds)
-                numberFieldView(title: "Makes", value: $makes)
+            switch sessionType {
+            case .freestyle:
+                // Freestyle: set minutes, seconds, and makes
+                HStack(spacing: 15) {
+                    numberFieldView(title: "Min", value: $minutes)
+                    numberFieldView(title: "Sec", value: $seconds)
+                    numberFieldView(title: "Makes", value: $makes)
+                }
+
+            case .challenge:
+                // Challenge: set time only, makes will be dynamically tracked later
+                HStack(spacing: 15) {
+                    numberFieldView(title: "Min", value: $minutes)
+                    numberFieldView(title: "Sec", value: $seconds)
+                    numberFieldView(title: "Amount", value: $makes)
+                }
+//                Text("Try to make as many \(shotType.rawValue) as you can in this time!")
+//                    .font(.subheadline)
+//                    .foregroundStyle(.white)
+//                    .multilineTextAlignment(.center)
+
+            case .drill:
+                // Drill: set a goal (number of makes), and time is measured externally
+                HStack(spacing: 15) {
+                    numberFieldView(title: "Min", value: $minutes)
+                    numberFieldView(title: "Sec", value: $seconds)
+                    numberFieldView(title: "Reps", value: $makes)
+                }
+//                Text("Time will be measured for how long it takes to make \(makes) \(shotType.rawValue).")
+//                    .font(.subheadline)
+//                    .foregroundStyle(.white)
+//                    .multilineTextAlignment(.center)
             }
         }
         .padding(.horizontal)
         .overlay(decorativeBackground)
     }
+
     
     /// Returns an editable number field with a title.
     private func numberFieldView(title: String, value: Binding<Int>) -> some View {
@@ -368,9 +411,10 @@ struct SessionCreation: View {
     /// - Parameters:
     ///   - type: The selected shot type.
     ///   - targetTab: The target tab to switch to.
-    private func selectSessionType(_ type: ShotType, targetTab: SessionTab) {
+    private func selectSessionType(_ type: ShotType, targetTab: SessionTab, sessionType: SessionType) {
         withAnimation {
-            shotType = type
+            self.shotType = type
+            self.sessionType = sessionType
             selectedTab = targetTab
         }
     }
@@ -390,10 +434,11 @@ struct SessionCreation: View {
     /// Constructs a new HoopSession from the current values, inserts it into the data context, and dismisses the view.
     private func insertSessionAndDismiss() {
         let session = HoopSession(
-            date: .now,
+            date: selectedDate,
             makes: makes,
             length: minutes * 60 + seconds,
-            shotType: shotType
+            shotType: shotType,
+            sessionType: sessionType
         )
         context.insert(session)
         dismiss()
@@ -643,6 +688,7 @@ struct TallCardView: View {
 }
 
 #Preview {
-    SessionCreation()
+    @Previewable @State var currentlySelectedDate: Date = Date()
+    SessionCreation(selectedDate: $currentlySelectedDate)
         .modelContainer(HoopSession.preview)
 }

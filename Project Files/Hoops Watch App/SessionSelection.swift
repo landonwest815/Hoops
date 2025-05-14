@@ -26,15 +26,15 @@ struct SessionSelection: View {
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
-                    .tint(.blue)
+                    .tint(.red)
                 
                 // MARK: Free Throws
-                NavigationLink(destination: Session(shotType: .freeThrows).navigationBarBackButtonHidden(true)) {
+                NavigationLink(destination: ChallengeShotSelection().navigationBarBackButtonHidden(true)) {
                         Text("Challenges")
                     }.simultaneousGesture(TapGesture().onEnded{
                         WKInterfaceDevice.current().play(.click)
                     })
-                    .tint(.red)
+                    .tint(.blue)
                 
                 // MARK: Three Pointers
                 NavigationLink(destination: DrillSelection().navigationBarBackButtonHidden(false)) {

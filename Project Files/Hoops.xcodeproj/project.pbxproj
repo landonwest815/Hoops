@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		916D6CB82D5E6C7300FF515D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916D6CAD2D5E6C7300FF515D /* ContentView.swift */; };
-		91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54C92B449DDC00F4D367 /* HoopsApp.swift */; };
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
 		91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */; };
 		91AD54D72B449DDD00F4D367 /* Hoops Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -55,10 +53,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		916D6CAD2D5E6C7300FF515D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		91A5A0A22DA8713F001A4FCE /* HoopsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HoopsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		91AD54C92B449DDC00F4D367 /* HoopsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoopsApp.swift; sourceTree = "<group>"; };
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hoops Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +83,7 @@
 		9101D9A72D4A8EAD00C5DBB2 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		9101D9A82D4A8ED500C5DBB2 /* Data */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9101D9A92D4A8EE100C5DBB2 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Data; sourceTree = "<group>"; };
 		9101D9AA2D4A8EED00C5DBB2 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
+		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
 		91A5A0A32DA8713F001A4FCE /* HoopsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HoopsTests; sourceTree = "<group>"; };
 		91F8BCD32D5E69D400816511 /* Drills */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Drills; sourceTree = "<group>"; };
@@ -145,12 +142,11 @@
 		91AD54C82B449DDC00F4D367 /* Hoops */ = {
 			isa = PBXGroup;
 			children = (
-				916D6CAD2D5E6C7300FF515D /* ContentView.swift */,
+				9158C9BF2DD3E66C00D60F4C /* App */,
 				9101D9AA2D4A8EED00C5DBB2 /* Utilities */,
 				9101D9A82D4A8ED500C5DBB2 /* Data */,
 				91A5A0942DA85FDE001A4FCE /* Logic */,
 				9101D9A72D4A8EAD00C5DBB2 /* Views */,
-				91AD54C92B449DDC00F4D367 /* HoopsApp.swift */,
 				91AD54CD2B449DDD00F4D367 /* Assets.xcassets */,
 				91AD54CF2B449DDD00F4D367 /* Preview Content */,
 			);
@@ -243,6 +239,7 @@
 				9101D9A72D4A8EAD00C5DBB2 /* Views */,
 				9101D9A82D4A8ED500C5DBB2 /* Data */,
 				9101D9AA2D4A8EED00C5DBB2 /* Utilities */,
+				9158C9BF2DD3E66C00D60F4C /* App */,
 				91A5A0942DA85FDE001A4FCE /* Logic */,
 			);
 			name = Hoops;
@@ -354,8 +351,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91AD54CA2B449DDC00F4D367 /* HoopsApp.swift in Sources */,
-				916D6CB82D5E6C7300FF515D /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,8 +605,10 @@
 		91AD54EB2B449DDE00F4D367 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon2 AppIcon1";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -643,8 +640,10 @@
 		91AD54EC2B449DDE00F4D367 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon2 AppIcon1";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

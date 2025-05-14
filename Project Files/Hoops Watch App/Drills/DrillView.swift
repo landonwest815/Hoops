@@ -79,7 +79,7 @@ struct DrillView: View {
                 
                 Spacer()
                 
-                LogMakeButton(currentStage: $currentStage, shotType: shotType, onComplete: { endSessionAndNavigate() })
+                LogMakeButton(makes: $makes, currentStage: $currentStage, shotType: shotType, onComplete: { endSessionAndNavigate() })
                 
             }
             .navigationDestination(isPresented: $sessionEnd) {
@@ -137,9 +137,11 @@ struct DrillView: View {
 
 struct LogMakeButton: View {
     
-    @State var makes: Int = 0
+    @Binding var makes: Int
     @Binding var currentStage: Int
     var shotType: ShotType
+    
+    @State var stageMakes: Int = 0
 
     var stages: Int { shotType.shots.count }
     
@@ -150,13 +152,13 @@ struct LogMakeButton: View {
         Button(action: {
             WKInterfaceDevice.current().play(.success)
             
-            if makes < 4 {
-                makes += 1
+            if stageMakes < 4 {
+                stageMakes += 1
             } else {
-                makes += 1
+                stageMakes += 1
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                     withAnimation {
-                        makes = 0
+                        stageMakes = 0
                         if currentStage < stages {
                             currentStage += 1
                         } else {
@@ -165,6 +167,8 @@ struct LogMakeButton: View {
                     }
                 }
             }
+            
+            makes += 1
             
         }) {
             VStack(spacing: 5) {

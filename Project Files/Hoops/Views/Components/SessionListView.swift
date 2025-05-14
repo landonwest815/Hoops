@@ -261,6 +261,14 @@ struct HeaderView: View {
     @Binding var shotTypeVisibility: [ShotType: Bool]
     @Binding var selectedDate: Date
     
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
+    
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = dateFormat
+        return formatter.string(from: selectedDate)
+    }
+    
     var body: some View {
         HStack {
             // A button displaying the current date.
@@ -272,7 +280,8 @@ struct HeaderView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 18)
-                    Text(selectedDate, format: Date.FormatStyle().month(.wide).day().year())
+                    
+                    Text(formattedDate)
                 }
                 .font(.title3)
                 .fontWeight(.semibold)

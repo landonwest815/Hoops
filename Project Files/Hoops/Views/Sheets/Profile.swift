@@ -356,7 +356,7 @@ struct Profile: View {
                                     .fontDesign(.rounded)
                                     .foregroundStyle(.gray)
                             }
-                            .padding(.horizontal, 25)
+                            .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
                             .frame(height: 75)
@@ -400,13 +400,13 @@ struct Profile: View {
                                     Spacer()
                                 }
                                 
-                                Text("Hoopin' Streak")
+                                Text("Weekly Hoopin' Streak")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .fontDesign(.rounded)
                                     .foregroundStyle(.gray)
                             }
-                            .padding(.horizontal, 25)
+                            .padding(.horizontal, 15)
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
                             .frame(height: 75)

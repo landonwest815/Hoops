@@ -8,155 +8,132 @@
 import SwiftUI
 import SwiftData
 
+
+enum AppSettingsKeys {
+    static let dateFormat = "M dd, yyyy"
+    static let startOfWeek = "Sunday"
+}
+
+
+
 struct Settings: View {
-    // SwiftData
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var context
     @Query var sessions: [HoopSession]
+    
     @State private var showDeleteSheet = false
+    @State private var currentIconName: String? = UIApplication.shared.alternateIconName
+    
+    @State private var showHistory: Bool = false
     
     var body: some View {
         ZStack {
-            // Main Settings Content.
-            VStack(spacing: 5) {
-                HStack(spacing: 12) {
-                    Text("My Settings")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.white)
+            NavigationStack {
+                VStack(spacing: 5) {
+                    HStack(spacing: 12) {
+                        Text("My Settings")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .fontDesign(.rounded)
+                            .foregroundStyle(.white)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 5)
+                    .padding(.top, 25)
+                    
+                    // App Icon Picker
+                    HStack(spacing: 25) {
+                        appIconButton(name: nil, image: "iconImage0")
+                        appIconButton(name: "AppIcon1", image: "iconImage1")
+                        appIconButton(name: "AppIcon2", image: "iconImage2")
+                    }
+                    .padding()
+                    .cornerRadius(10)
+    
+                    
+                    Divider()
+                    
+                    UniformButton(
+                        leftIconName: "calendar",
+                        leftText: "Date Format",
+                        leftColor: .white
+                    ) {
+                        DateFormatToggleButton()
+                    }
+                    .padding()
+                    .cornerRadius(10)
+                    
+                    UniformButton(
+                        leftIconName: "1.circle.fill",
+                        leftText: "Start of Week",
+                        leftColor: .white
+                    ) {
+                        StartOfWeekToggleButton()
+                    }
+                    .padding()
+                    .cornerRadius(10)
+                    
+                    Divider()
+                    
+                    UniformButton(
+                        leftIconName: "list.clipboard.fill",
+                        leftText: "History",
+                        leftColor: .white
+                    ) {
+                        Button {
+                            showHistory = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Show me")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        .frame(width: 100)
+                    }
+                    .padding()
+                    .cornerRadius(10)
+                    
+                    UniformButton(
+                        leftIconName: "archivebox.fill",
+                        leftText: "App Data",
+                        leftColor: .white
+                    ) {
+                        Button {
+                            withAnimation {
+                                showDeleteSheet = true
+                            }
+                        } label: {
+                            Text("Delete Everything")
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    .padding()
+                    .cornerRadius(10)
                     
                     Spacer()
                 }
-                .padding(.horizontal, 5)
-                .padding(.bottom, 15)
-                
-                // Button 1: App Icon
-                UniformButton(
-                    leftIconName: "square.fill",
-                    leftText: "App Icon",
-                    leftColor: .white
-                ) {
-                    Button {
-                        // Action for App Icon
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "arrow.forward")
-                                .foregroundStyle(.gray)
-                        }
-                    }
-                    .frame(width: 100)
+                .padding(.horizontal)
+                .navigationDestination(isPresented: $showHistory) {
+                    SessionHistoryView() // This should be the view showing all sessions
                 }
-                .padding()
-                .cornerRadius(10)
-                
-                // Button 2: Accent Color
-                UniformButton(
-                    leftIconName: "paintbrush.pointed.fill",
-                    leftText: "Accent Color",
-                    leftColor: .white
-                ) {
-                    Button {
-                        // Action for Accent Color
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "arrow.forward")
-                                .foregroundStyle(.gray)
-                        }
-                    }
-                    .frame(width: 100)
-                }
-                .padding()
-                .cornerRadius(10)
-                
-                Divider()
-                
-                // Button 3: Date Format
-                UniformButton(
-                    leftIconName: "calendar",
-                    leftText: "Date Format",
-                    leftColor: .white
-                ) {
-                    DateFormatToggleButton()
-                }
-                .padding()
-                .cornerRadius(10)
-                
-                // Button 4: Start of Week
-                UniformButton(
-                    leftIconName: "1.circle.fill",
-                    leftText: "Start of Week",
-                    leftColor: .white
-                ) {
-                    StartOfWeekToggleButton()
-                }
-                .padding()
-                .cornerRadius(10)
-                
-                Divider()
-                
-                // Button 5: History
-                UniformButton(
-                    leftIconName: "list.clipboard.fill",
-                    leftText: "History",
-                    leftColor: .white
-                ) {
-                    Button {
-                        // History action
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "arrow.forward")
-                                .foregroundStyle(.gray)
-                        }
-                    }
-                    .frame(width: 100)
-                }
-                .padding()
-                .cornerRadius(10)
-                
-                // Button 6: App Data with Delete Option
-                UniformButton(
-                    leftIconName: "archivebox.fill",
-                    leftText: "App Data",
-                    leftColor: .white
-                ) {
-                    Button {
-                        withAnimation {
-                            showDeleteSheet = true
-                        }
-                    } label: {
-                        Text("Delete Everything")
-                            .foregroundStyle(.red)
-                    }
-                }
-                .padding()
-                .cornerRadius(10)
-                
-                Spacer()
             }
-            .padding(.horizontal)
             
-            // Inside your Settings view's body (within the ZStack)
             if showDeleteSheet {
-                // A full-screen transparent layer that dismisses the sheet when tapped.
                 Color.black.opacity(0.001)
                     .ignoresSafeArea()
                     .onTapGesture {
-                        withAnimation {
-                            showDeleteSheet = false
-                        }
+                        withAnimation { showDeleteSheet = false }
                     }
-                    .zIndex(0) // Background layer for dismissal.
+                    .zIndex(0)
                 
-                // The bottom sheet itself.
                 VStack {
                     Spacer()
                     DeleteConfirmationSheet(prompt: "Are you sure you want to delete everything?") {
                         withAnimation {
-                            // Delete all sessions from the model.
                             for session in sessions {
                                 context.delete(session)
                             }
@@ -172,12 +149,56 @@ struct Settings: View {
                 .zIndex(1)
             }
         }
-        .padding(.top, 25)
+        //.padding(.top, 25)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    // MARK: - App Icon Helper
+    
+    private func appIconButton(name: String?, image: String) -> some View {
+        Button {
+            withAnimation {
+                switchAppIcon(to: name)
+            }
+        } label: {
+            Image(image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 75, height: 75)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .overlay(selectionOverlay(for: name))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(Color.gray.opacity(0.25), lineWidth: 1)
+                )
+        }
+    }
+    
+    private func switchAppIcon(to name: String?) {
+        guard UIApplication.shared.supportsAlternateIcons else { return }
+        UIApplication.shared.setAlternateIconName(name) { error in
+            if let error = error {
+                print("Failed to switch icon: \(error.localizedDescription)")
+            } else {
+                DispatchQueue.main.async {
+                    currentIconName = name
+                }
+            }
+        }
+    }
+    
+    private func selectionOverlay(for iconName: String?) -> some View {
+        RoundedRectangle(cornerRadius: 18)
+            .stroke(
+                Color.white.opacity(currentIconName == iconName ? 0.66 : 0),
+                lineWidth: currentIconName == iconName ? 2.5 : 0
+            )
+            .animation(.easeInOut(duration: 0.25), value: currentIconName)
     }
 }
 
-/// A custom confirmation sheet view that provides options to delete or cancel.
+// MARK: - Supporting Views
+
 struct DeleteConfirmationSheet: View {
     let prompt: String
     let onDelete: () -> Void
@@ -190,10 +211,7 @@ struct DeleteConfirmationSheet: View {
                 .multilineTextAlignment(.center)
             
             HStack {
-                // Cancel Button.
-                Button(action: {
-                    onCancel()
-                }) {
+                Button(action: onCancel) {
                     Text("Cancel")
                         .font(.title3)
                         .fontWeight(.semibold)
@@ -203,10 +221,7 @@ struct DeleteConfirmationSheet: View {
                         .background(.ultraThinMaterial)
                         .cornerRadius(12)
                 }
-                // Delete Button.
-                Button(action: {
-                    onDelete()
-                }) {
+                Button(action: onDelete) {
                     Text("Delete")
                         .font(.title3)
                         .fontWeight(.semibold)
@@ -226,34 +241,24 @@ struct DeleteConfirmationSheet: View {
     }
 }
 
-
-
-
-/// A customizable view that displays a uniform left section (icon + text) and flexible right content.
-/// Depending on the `isButton` flag, it will either be interactive (using a Button) or just a plain view.
 struct UniformButton<RightContent: View>: View {
     let leftIconName: String
     let leftText: String
     let leftColor: Color
     let rightContent: () -> RightContent
-    
-    // Consistent font styling for all instances.
+
     private let font: Font = .title3
     private let fontWeight: Font.Weight = .semibold
     private let fontDesign: Font.Design = .rounded
 
     var body: some View {
         HStack {
-            // Left side: uniform icon and text.
             HStack(spacing: 15) {
                 Image(systemName: leftIconName)
                 Text(leftText)
             }
             .foregroundStyle(leftColor)
-            
             Spacer()
-            
-            // Right side: customizable content.
             rightContent()
         }
         .font(font)
@@ -262,19 +267,20 @@ struct UniformButton<RightContent: View>: View {
     }
 }
 
-
 struct DateFormatToggleButton: View {
-    // A list of standard date format strings.
     private let formats = ["M dd, yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "MMM d, yyyy"]
-    // Index for the current format in the list.
-    @State private var currentIndex: Int = 0
+    
+    @AppStorage(AppSettingsKeys.dateFormat) private var selectedFormat: String = "M dd, yyyy"
     
     var body: some View {
-        Button {
-            // Cycle through the formats.
-            currentIndex = (currentIndex + 1) % formats.count
+        let currentIndex = formats.firstIndex(of: selectedFormat) ?? 0
+        let previewText = DateFormatter.formatted(date: Date(), with: selectedFormat)
+
+        return Button {
+            let nextIndex = (currentIndex + 1) % formats.count
+            selectedFormat = formats[nextIndex]
         } label: {
-            Text(formats[currentIndex])
+            Text(previewText)
                 .foregroundStyle(.gray)
                 .font(.title3)
                 .fontWeight(.semibold)
@@ -284,16 +290,29 @@ struct DateFormatToggleButton: View {
     }
 }
 
+// MARK: - DateFormatter Extension
+
+extension DateFormatter {
+    static func formatted(date: Date, with format: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: date)
+    }
+}
+
+
+
 struct StartOfWeekToggleButton: View {
-    // List of week starting day names.
     private let days = ["Monday", "Sunday"]
-    // Track the current index in the days array.
-    @State private var currentIndex: Int = 0
+    
+    @AppStorage(AppSettingsKeys.startOfWeek) private var selectedDay: String = "Monday"
     
     var body: some View {
+        let currentIndex = days.firstIndex(of: selectedDay) ?? 0
+
         Button {
-            // Cycle to the next day; when the end is reached, start over.
-            currentIndex = (currentIndex + 1) % days.count
+            let nextIndex = (currentIndex + 1) % days.count
+            selectedDay = days[nextIndex]
         } label: {
             Text(days[currentIndex])
                 .foregroundStyle(.gray)
@@ -307,6 +326,5 @@ struct StartOfWeekToggleButton: View {
 
 
 #Preview {
-    return Settings()
-        .modelContainer(HoopSession.preview)
+    Settings().modelContainer(HoopSession.preview)
 }

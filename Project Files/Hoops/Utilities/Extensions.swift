@@ -8,10 +8,22 @@
 import Foundation
 import SwiftUI
 
+
+
+extension View {
+    func sheetStyle() -> some View {
+        self
+            .presentationCornerRadius(32)
+            .presentationBackground(.ultraThickMaterial)
+            .presentationDragIndicator(.visible)
+    }
+}
+
+
 // MARK: - Date Extensions
 
 extension Date {
-    /// Returns the start of the day for the date using the current calendar.
+    /// Start of this day in the current calendar.
     var startOfDay: Date {
         Calendar.current.startOfDay(for: self)
     }
@@ -20,20 +32,20 @@ extension Date {
 // MARK: - Image Extensions
 
 extension Image {
-    /// Applies a consistent "icon" style to the image.
-    /// The image is made resizable, set to a 22x22 frame, and styled with a gray color and semibold weight.
+    /// 22×22 gray “icon” style.
     func iconStyle() -> some View {
-        self.resizable()
+        self
+            .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 22, height: 22)
             .foregroundStyle(.gray)
             .fontWeight(.semibold)
     }
     
-    /// Applies a consistent "button" style to the image.
-    /// The image is made resizable, set to a 17.5x17.5 frame, styled with an orange tint, padded, and given a rounded background.
+    /// 17.5×17.5 orange “button” icon with background.
     func buttonStyle() -> some View {
-        self.resizable()
+        self
+            .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 17.5, height: 17.5)
             .foregroundStyle(.orange)
