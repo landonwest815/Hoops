@@ -182,7 +182,7 @@ struct LogMakeButton: View {
                         .frame(width: 35)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.opacity(makes > 0 ? 0.75 : 0.25))
+                        .foregroundStyle(.green.opacity(stageMakes > 0 ? 0.75 : 0.25))
                         
                     Image(systemName: "basketball.fill")
                         .resizable()
@@ -190,7 +190,7 @@ struct LogMakeButton: View {
                         .frame(width: 35)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.opacity(makes > 1 ? 0.75 : 0.25))
+                        .foregroundStyle(.green.opacity(stageMakes > 1 ? 0.75 : 0.25))
                 }
                 
                 HStack(spacing: 10) {
@@ -200,7 +200,7 @@ struct LogMakeButton: View {
                         .frame(width: 35)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.opacity(makes > 2 ? 0.75 : 0.25))
+                        .foregroundStyle(.green.opacity(stageMakes > 2 ? 0.75 : 0.25))
                         
                     Image(systemName: "basketball.fill")
                         .resizable()
@@ -208,7 +208,7 @@ struct LogMakeButton: View {
                         .frame(width: 35)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.opacity(makes > 3 ? 0.75 : 0.25))
+                        .foregroundStyle(.green.opacity(stageMakes > 3 ? 0.75 : 0.25))
                     
                     Image(systemName: "basketball.fill")
                         .resizable()
@@ -216,7 +216,7 @@ struct LogMakeButton: View {
                         .frame(width: 35)
                         .font(.headline)
                         .fontWeight(.semibold)
-                        .foregroundStyle(.green.opacity(makes > 4 ? 0.75 : 0.25))
+                        .foregroundStyle(.green.opacity(stageMakes > 4 ? 0.75 : 0.25))
                 }
                 
                 Spacer()

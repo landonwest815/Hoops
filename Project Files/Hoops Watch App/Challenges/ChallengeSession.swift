@@ -1,129 +1,123 @@
 import SwiftUI
 import Combine
+import WatchKit
 
 struct ChallengeSession: View {
-    
     var shotType: ShotType
+    @Binding var path: NavigationPath
     var timeLimit: Int // in seconds
-    
-    @State private var remainingTime = 0
+
+    @State private var endTime: Date = .now
+    @State private var remainingTime: Int = 0
     @State private var timer: AnyCancellable?
-    @State var makes = 0
-    @State var sessionEnd = false
+    @State private var makes = 0
     @State private var showingEndEarlyConfirmation = false
-    
     @State private var sessionComplete = false
-    @State private var hapticTimer: Timer? = nil
+    @State private var hapticTimer: Timer?
+
+    @StateObject private var sessionManager = SessionManager()
 
     var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Spacer()
-                    
-                    Button {
-                        showingEndEarlyConfirmation = true
-                    } label: {
-                        Image(systemName: "x.circle")
-                            .resizable()
-                            .frame(width: 22, height: 22)
-                            .foregroundStyle(.red)
-                    }
-                    .clipShape(.circle)
-                    .frame(width: 22, height: 22)
-                    .tint(.red)
-                    .confirmationDialog(
-                        "End Session?", isPresented: $showingEndEarlyConfirmation) {
-                            Button("Finish Session", role: .destructive) {
-                                endSessionAndNavigate()
-                            }
-                            Button("Keep Hoopin'") { }
-                        }
-                    
-                    Spacer()
-                    
-                    Text(formatTime(seconds: remainingTime))
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                    
-                    Spacer()
-                    
-                    Text("\(makes)")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.gray)
-                    
-                    Spacer()
-                }
-                .padding(.top, 30)
-                .font(.system(size: 30))
-                
-                Spacer()
-                
-                Button(action: {
-                    makes += 1
-                    WKInterfaceDevice.current().play(.success)
-                }) {
-                    VStack(spacing: 10) {
-                        Image(systemName: "basketball.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 250, height: 250)
-                            .foregroundStyle(.green.opacity(0.35))
-                    }
-                    .offset(x: 0, y: 65)
-                }
-                .edgesIgnoringSafeArea(.all)
-                .tint(.green)
-                .buttonStyle(.bordered)
-                .buttonBorderShape(.roundedRectangle(radius: 40))
-            }
-            .sheet(isPresented: $sessionComplete) {
-                VStack(spacing: 16) {
-                    Text("Time’s up!")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                    
-                    Text("You made \(makes) shots.")
-                        .font(.title3)
-                    
-                    Button("View Results") {
-                        stopHapticAlarm()
-                        sessionEnd = true
-                        sessionComplete = false
-                    }
-                    .tint(.green)
-                    .font(.headline)
-                }
-                .padding()
-            }
-            .navigationDestination(isPresented: $sessionEnd) {
-                ChallengeResults(
-                    shotType: shotType,
-                    sessionTimeInSec: timeLimit,
-                    makes: makes
-                )
-                .navigationBarBackButtonHidden()
-            }
-            .onAppear {
-                if timer == nil {
-                    remainingTime = timeLimit
-                    startTimer()
-                }
-            }
-            .edgesIgnoringSafeArea(.all)
+        VStack {
+//            HStack {
+//                Spacer()
+//
+//                Button {
+//                    showingEndEarlyConfirmation = true
+//                } label: {
+//                    Image(systemName: "x.circle")
+//                        .resizable()
+//                        .frame(width: 22, height: 22)
+//                        .foregroundStyle(.red)
+//                }
+//                .clipShape(.circle)
+//                .frame(width: 22, height: 22)
+//                .tint(.red)
+//                .confirmationDialog("End Session?", isPresented: $showingEndEarlyConfirmation) {
+//                    Button("Finish Session", role: .destructive) {
+//                        endSessionAndNavigate()
+//                    }
+//                    Button("Keep Hoopin'") { }
+//                }
+//
+//                Spacer()
+//
+//                Text(TimeFormatter.format(seconds: remainingTime))
+//                    .font(.title2)
+//                    .fontWeight(.semibold)
+//                    .fontDesign(.rounded)
+//
+//                Spacer()
+//
+//                Text("\(makes)")
+//                    .font(.title2)
+//                    .fontWeight(.semibold)
+//                    .fontDesign(.rounded)
+//                    .foregroundStyle(.gray)
+//
+//                Spacer()
+//            }
+//            .padding(.top, 30)
+//
+//            Spacer()
+//
+//            Button(action: {
+//                makes += 1
+//                WKInterfaceDevice.current().play(.success)
+//            }) {
+//                Image(systemName: "basketball.fill")
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(width: UIConstants.ballIconSize, height: UIConstants.ballIconSize)
+//                    .foregroundStyle(.green.opacity(0.35))
+//                    .offset(x: 0, y: 65)
+//            }
+//            .edgesIgnoringSafeArea(.all)
+//            .tint(.green)
+//            .buttonStyle(.bordered)
+//            .buttonBorderShape(.roundedRectangle(radius: 40))
+//        }
+//        .navigationBarBackButtonHidden()
+//        .ignoresSafeArea(.container, edges: .top)
+//        .sheet(isPresented: $sessionComplete) {
+//            VStack(spacing: 16) {
+//                Text("Time’s up!")
+//                    .font(.title2)
+//                    .fontWeight(.bold)
+//
+//                Text("You made \(makes) shots.")
+//                    .font(.title3)
+//
+//                Button("View Results") {
+//                    stopHapticAlarm()
+//                    path.append(AppRoute.challengeResults(shotType, timeLimit, makes))
+//                    sessionComplete = false
+//                }
+//                .tint(.green)
+//                .font(.headline)
+//            }
+//            .interactiveDismissDisabled(true) // <-- this removes the "X"
+//            .navigationBarBackButtonHidden(true)
+//            .padding()
+        }
+        .onAppear {
+            remainingTime = timeLimit
+            endTime = Date().addingTimeInterval(TimeInterval(timeLimit))
+            startAccurateTimer()
         }
     }
-    
-    func startTimer() {
+
+    // MARK: - Timer Logic
+
+    func startAccurateTimer() {
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
-                if remainingTime > 0 {
-                    remainingTime -= 1
+                let timeLeft = Int(ceil(endTime.timeIntervalSinceNow))
+                if timeLeft > 0 {
+                    remainingTime = timeLeft
                 } else {
+                    remainingTime = 0
                     endSessionAndNavigate()
                 }
             }
@@ -136,24 +130,54 @@ struct ChallengeSession: View {
 
     func endSessionAndNavigate() {
         stopTimer()
-        sessionComplete = true
         startHapticAlarm()
+        sessionComplete = true
+        sessionManager.end()
     }
-    
+
+    // MARK: - Haptic Alarm
+
     func startHapticAlarm() {
         hapticTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            WKInterfaceDevice.current().play(.notification) // or .retry / .failure
+            WKInterfaceDevice.current().play(.notification)
         }
     }
-    
+
     func stopHapticAlarm() {
         hapticTimer?.invalidate()
         hapticTimer = nil
     }
+}
 
-    func formatTime(seconds: Int) -> String {
-        let minutes = seconds / 60
-        let seconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+
+class SessionManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDelegate {
+    private var session: WKExtendedRuntimeSession?
+    var onSessionExpired: (() -> Void)?
+
+    func begin(duration: TimeInterval) {
+        session = WKExtendedRuntimeSession()
+        session?.delegate = self
+        session?.start()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.triggerExpiration()
+        }
     }
+
+    func end() {
+        session?.invalidate()
+        session = nil
+    }
+
+    private func triggerExpiration() {
+        WKInterfaceDevice.current().play(.notification)
+        onSessionExpired?()
+    }
+
+    func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+    func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+    func extendedRuntimeSessionDidInvalidate(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+    func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession,
+                                 didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
+                                 error: Error?) {}
 }

@@ -83,6 +83,8 @@
 		9101D9A72D4A8EAD00C5DBB2 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		9101D9A82D4A8ED500C5DBB2 /* Data */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9101D9A92D4A8EE100C5DBB2 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Data; sourceTree = "<group>"; };
 		9101D9AA2D4A8EED00C5DBB2 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
+		911086EB2DD532EB00FA2049 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
+		911086F12DD5414F00FA2049 /* Generic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generic; sourceTree = "<group>"; };
 		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
 		91A5A0A32DA8713F001A4FCE /* HoopsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HoopsTests; sourceTree = "<group>"; };
@@ -164,6 +166,8 @@
 		91AD54DA2B449DDD00F4D367 /* Hoops Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				911086F12DD5414F00FA2049 /* Generic */,
+				911086EB2DD532EB00FA2049 /* Utilities */,
 				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
 				91DC6BA42D5C088900C9B409 /* SessionSelection.swift */,
 				91F8BCD42D5E69D900816511 /* Freestyle */,
@@ -260,6 +264,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				911086EB2DD532EB00FA2049 /* Utilities */,
+				911086F12DD5414F00FA2049 /* Generic */,
 				91F8BCD32D5E69D400816511 /* Drills */,
 				91F8BCD42D5E69D900816511 /* Freestyle */,
 				91F8BCD52D5E69DF00816511 /* Challenges */,

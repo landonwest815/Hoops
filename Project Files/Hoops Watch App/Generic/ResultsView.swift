@@ -1,25 +1,34 @@
+//
+//  ResultsView.swift
+//  Hoops
+//
+//  Created by Landon West on 5/14/25.
+//
+
 import SwiftUI
 
-struct ChallengeResults: View {
+struct ResultsView: View {
     @Binding var path: NavigationPath
-    @StateObject var watchConnector = WatchToiOSConnector()
+    @StateObject private var watchConnector = WatchToiOSConnector()
 
+    let sessionType: SessionType
     let shotType: ShotType
     let sessionTimeInSec: Int
     let makes: Int
 
     var body: some View {
         HStack(spacing: 20) {
+            // ←——————————————————————— Time & Makes column
             VStack(spacing: 20) {
                 VStack {
                     Text("Length")
                         .font(.subheadline)
                         .foregroundStyle(.gray)
-                    Text(TimeFormatter.format(seconds: sessionTimeInSec))
+                    Text(formatTime(sessionTimeInSec))
                         .font(.title2)
                         .fontWeight(.semibold)
                 }
-
+                
                 VStack {
                     Text("Makes")
                         .font(.subheadline)
@@ -30,43 +39,49 @@ struct ChallengeResults: View {
                 }
             }
 
+            // ←——————————————————————— Avg/min & Done column
             VStack(spacing: 20) {
                 VStack {
                     Text("Avg/min")
                         .font(.subheadline)
                         .foregroundStyle(.gray)
-                    Text(averageMakesPerMinute())
+                    Text(String(format: "%.1f", averageMakesPerMinute))
                         .font(.title2)
                         .fontWeight(.semibold)
                 }
 
                 Button("Done") {
-                    sendSessionToiOS()
-                    path.removeLast(path.count)
+                    sendSessionToiPhone()
+                    path = NavigationPath()
                 }
-                .hapticNavLinkStyle()
                 .tint(.green)
-                .font(.headline)
             }
         }
-        .navigationTitle("Challenge Stats")
+        .navigationTitle("\(sessionType.rawValue) Stats")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden()
+        .padding()
     }
 
-    func averageMakesPerMinute() -> String {
-        guard sessionTimeInSec > 0 else { return "0.0" }
-        let avg = Double(makes) / (Double(sessionTimeInSec) / 60.0)
-        return String(format: "%.1f", avg)
+    // MARK: – Helpers
+
+    private func formatTime(_ seconds: Int) -> String {
+        String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 
-    func sendSessionToiOS() {
-        let hoopSession = HoopSession(
+    private var averageMakesPerMinute: Double {
+        guard sessionTimeInSec > 0 else { return 0 }
+        return Double(makes) / (Double(sessionTimeInSec) / 60.0)
+    }
+
+    private func sendSessionToiPhone() {
+        let session = HoopSession(
             date: Date(),
             makes: makes,
             length: sessionTimeInSec,
             shotType: shotType,
-            sessionType: .challenge
+            sessionType: sessionType
         )
-        watchConnector.sendSessionToiPhone(hoopSession: hoopSession)
+        watchConnector.sendSessionToiPhone(hoopSession: session)
     }
 }

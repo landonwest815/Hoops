@@ -7,13 +7,14 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 // MARK: - SessionType
 
 enum SessionType: String, Codable, CaseIterable {
-    case freestyle = "Freestyle"
-    case challenge = "Challenge"
-    case drill     = "Drill"
+    case freestyle  = "Freestyle"
+    case challenge  = "Challenge"
+    case drill      = "Drill"
 }
 
 
@@ -26,6 +27,28 @@ enum ShotType: String, Codable, CaseIterable, Identifiable {
     case threePointers = "Threes"
     case deep         = "Deep"
     case allShots     = "All Shots"
+    
+    var displayName: String {
+            switch self {
+                case .layups:         return "Layups"
+                case .freeThrows:     return "Free Throws"
+                case .midrange:       return "Midrange"
+                case .threePointers:  return "Threes"
+                case .deep:           return "Deep"
+                case .allShots:       return "All Shots"
+            }
+        }
+
+        var color: Color {
+            switch self {
+                case .layups:         return .red
+                case .freeThrows:     return .blue
+                case .midrange:       return .orange
+                case .threePointers:  return .green
+                case .deep:           return .purple
+                case .allShots:       return .orange
+            }
+        }
     
     var id: Self { self }
     

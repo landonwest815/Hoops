@@ -1,22 +1,43 @@
 import SwiftUI
 
 struct ChallengeShotSelection: View {
+    @Binding var path: NavigationPath
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                ForEach(ShotType.allCases, id: \.self) { type in
-                    NavigationLink(destination: ChallengeDurationSelection(shotType: type)) {
-                        Text(type.rawValue.capitalized)
-                    }
-                    .simultaneousGesture(TapGesture().onEnded {
-                        WKInterfaceDevice.current().play(.click)
-                    })
-                    .tint(color(for: type))
-                }
-            }
-            .navigationTitle("Choose Shot Type")
+        ScrollView {
+//            NavigationLink(value: AppRoute.challengeDurationSelection(.layups)) {
+//                Text("Layups")
+//            }
+//            .hapticNavLinkStyle()
+//            .tint(.red)
+//
+//            NavigationLink(value: AppRoute.challengeDurationSelection(.freeThrows)) {
+//                Text("Free Throws")
+//            }
+//            .hapticNavLinkStyle()
+//            .tint(.blue)
+//
+//            NavigationLink(value: AppRoute.challengeDurationSelection(.midrange)) {
+//                Text("Midrange")
+//            }
+//            .hapticNavLinkStyle()
+//            .tint(.orange)
+//
+//            NavigationLink(value: AppRoute.challengeDurationSelection(.threePointers)) {
+//                Text("Threes")
+//            }
+//            .hapticNavLinkStyle()
+//            .tint(.green)
+//
+//            NavigationLink(value: AppRoute.challengeDurationSelection(.deep)) {
+//                Text("Deep")
+//            }
+//            .hapticNavLinkStyle()
+//            .tint(.purple)
         }
+        .navigationTitle("Shot Type")
     }
+
     
     func color(for type: ShotType) -> Color {
         switch type {
