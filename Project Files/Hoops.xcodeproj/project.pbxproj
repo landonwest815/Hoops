@@ -10,14 +10,10 @@
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
 		91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */; };
 		91AD54D72B449DDD00F4D367 /* Hoops Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		91AD54DC2B449DDD00F4D367 /* HoopsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */; };
 		91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54DD2B449DDD00F4D367 /* ContentView.swift */; };
 		91AD54E02B449DDE00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54DF2B449DDE00F4D367 /* Assets.xcassets */; };
 		91AD54E32B449DDE00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54E22B449DDE00F4D367 /* Preview Assets.xcassets */; };
-		91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54EF2B449E3600F4D367 /* SessionSettings.swift */; };
 		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
-		91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */; };
-		91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DC6BA42D5C088900C9B409 /* SessionSelection.swift */; };
 		91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
@@ -58,14 +54,10 @@
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hoops Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoopsApp.swift; sourceTree = "<group>"; };
 		91AD54DD2B449DDD00F4D367 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		91AD54DF2B449DDE00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91AD54E22B449DDE00F4D367 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		91AD54EF2B449E3600F4D367 /* SessionSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSettings.swift; sourceTree = "<group>"; };
 		91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
-		91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = watchToiOSConnector.swift; sourceTree = "<group>"; };
-		91DC6BA42D5C088900C9B409 /* SessionSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSelection.swift; sourceTree = "<group>"; };
 		91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -77,6 +69,13 @@
 			);
 			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
 		};
+		911086FD2DD6471300FA2049 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Hoops Watch App/App/Hoops-Watch-App-Info.plist",
+			);
+			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,12 +84,11 @@
 		9101D9AA2D4A8EED00C5DBB2 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086EB2DD532EB00FA2049 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086F12DD5414F00FA2049 /* Generic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generic; sourceTree = "<group>"; };
+		911086FC2DD6470F00FA2049 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (911086FD2DD6471300FA2049 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		911086FF2DD6473200FA2049 /* Old Code */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Old Code"; sourceTree = "<group>"; };
 		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
 		91A5A0A32DA8713F001A4FCE /* HoopsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HoopsTests; sourceTree = "<group>"; };
-		91F8BCD32D5E69D400816511 /* Drills */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Drills; sourceTree = "<group>"; };
-		91F8BCD42D5E69D900816511 /* Freestyle */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Freestyle; sourceTree = "<group>"; };
-		91F8BCD52D5E69DF00816511 /* Challenges */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Challenges; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,18 +164,13 @@
 		91AD54DA2B449DDD00F4D367 /* Hoops Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				911086FC2DD6470F00FA2049 /* App */,
 				911086F12DD5414F00FA2049 /* Generic */,
 				911086EB2DD532EB00FA2049 /* Utilities */,
 				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
-				91DC6BA42D5C088900C9B409 /* SessionSelection.swift */,
-				91F8BCD42D5E69D900816511 /* Freestyle */,
-				91F8BCD52D5E69DF00816511 /* Challenges */,
-				91F8BCD32D5E69D400816511 /* Drills */,
 				91AD54E12B449DDE00F4D367 /* Preview Content */,
-				91AD54DB2B449DDD00F4D367 /* HoopsApp.swift */,
 				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
-				91AD54EF2B449E3600F4D367 /* SessionSettings.swift */,
-				91C36FD52B45EF6E0074E7B1 /* watchToiOSConnector.swift */,
+				911086FF2DD6473200FA2049 /* Old Code */,
 			);
 			path = "Hoops Watch App";
 			sourceTree = "<group>";
@@ -266,9 +259,8 @@
 			fileSystemSynchronizedGroups = (
 				911086EB2DD532EB00FA2049 /* Utilities */,
 				911086F12DD5414F00FA2049 /* Generic */,
-				91F8BCD32D5E69D400816511 /* Drills */,
-				91F8BCD42D5E69D900816511 /* Freestyle */,
-				91F8BCD52D5E69DF00816511 /* Challenges */,
+				911086FC2DD6470F00FA2049 /* App */,
+				911086FF2DD6473200FA2049 /* Old Code */,
 			);
 			name = "Hoops Watch App";
 			productName = "Hoops Watch App";
@@ -364,11 +356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91AD54F02B449E3600F4D367 /* SessionSettings.swift in Sources */,
 				91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */,
-				91AD54DC2B449DDD00F4D367 /* HoopsApp.swift in Sources */,
-				91DC6BA52D5C088900C9B409 /* SessionSelection.swift in Sources */,
-				91C36FD62B45EF6E0074E7B1 /* watchToiOSConnector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,13 +538,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Hoops Watch App/Hoops Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Hoops Watch App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Hoops-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to read your past workout data.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to record your basketball workout session.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.landonwest.Hoops;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -581,13 +573,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Hoops Watch App/Hoops Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Hoops Watch App/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Hoops-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to read your past workout data.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to record your basketball workout session.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.landonwest.Hoops;
 				LD_RUNPATH_SEARCH_PATHS = (

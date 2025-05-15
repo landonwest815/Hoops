@@ -44,5 +44,5 @@ class SessionTimer: ObservableObject {
 }
 
 struct UIConstants {
-    static let ballIconSize: CGFloat = 80
+    static let ballIconSize: CGFloat = 250
 }

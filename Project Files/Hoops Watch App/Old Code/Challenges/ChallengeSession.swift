@@ -76,7 +76,7 @@ struct ChallengeSession: View {
 //            .tint(.green)
 //            .buttonStyle(.bordered)
 //            .buttonBorderShape(.roundedRectangle(radius: 40))
-//        }
+        }
 //        .navigationBarBackButtonHidden()
 //        .ignoresSafeArea(.container, edges: .top)
 //        .sheet(isPresented: $sessionComplete) {
@@ -90,7 +90,6 @@ struct ChallengeSession: View {
 //
 //                Button("View Results") {
 //                    stopHapticAlarm()
-//                    path.append(AppRoute.challengeResults(shotType, timeLimit, makes))
 //                    sessionComplete = false
 //                }
 //                .tint(.green)
@@ -99,12 +98,12 @@ struct ChallengeSession: View {
 //            .interactiveDismissDisabled(true) // <-- this removes the "X"
 //            .navigationBarBackButtonHidden(true)
 //            .padding()
-        }
-        .onAppear {
-            remainingTime = timeLimit
-            endTime = Date().addingTimeInterval(TimeInterval(timeLimit))
-            startAccurateTimer()
-        }
+//        }
+//        .onAppear {
+//            remainingTime = timeLimit
+//            endTime = Date().addingTimeInterval(TimeInterval(timeLimit))
+//            startAccurateTimer()
+//        }
     }
 
     // MARK: - Timer Logic
@@ -118,66 +117,66 @@ struct ChallengeSession: View {
                     remainingTime = timeLeft
                 } else {
                     remainingTime = 0
-                    endSessionAndNavigate()
+                   // endSessionAndNavigate()
                 }
             }
     }
 
-    func stopTimer() {
-        timer?.cancel()
-        timer = nil
-    }
-
-    func endSessionAndNavigate() {
-        stopTimer()
-        startHapticAlarm()
-        sessionComplete = true
-        sessionManager.end()
-    }
-
-    // MARK: - Haptic Alarm
-
-    func startHapticAlarm() {
-        hapticTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            WKInterfaceDevice.current().play(.notification)
-        }
-    }
-
-    func stopHapticAlarm() {
-        hapticTimer?.invalidate()
-        hapticTimer = nil
-    }
+//    func stopTimer() {
+//        timer?.cancel()
+//        timer = nil
+//    }
+//
+//    func endSessionAndNavigate() {
+//        stopTimer()
+//        startHapticAlarm()
+//        sessionComplete = true
+//        sessionManager.end()
+//    }
+//
+//    // MARK: - Haptic Alarm
+//
+//    func startHapticAlarm() {
+//        hapticTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+//            WKInterfaceDevice.current().play(.notification)
+//        }
+//    }
+//
+//    func stopHapticAlarm() {
+//        hapticTimer?.invalidate()
+//        hapticTimer = nil
+//    }
 }
 
 
-class SessionManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDelegate {
-    private var session: WKExtendedRuntimeSession?
-    var onSessionExpired: (() -> Void)?
-
-    func begin(duration: TimeInterval) {
-        session = WKExtendedRuntimeSession()
-        session?.delegate = self
-        session?.start()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-            self.triggerExpiration()
-        }
-    }
-
-    func end() {
-        session?.invalidate()
-        session = nil
-    }
-
-    private func triggerExpiration() {
-        WKInterfaceDevice.current().play(.notification)
-        onSessionExpired?()
-    }
-
-    func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
-    func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
-    func extendedRuntimeSessionDidInvalidate(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
-    func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession,
-                                 didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
-                                 error: Error?) {}
-}
+//class SessionManager: NSObject, ObservableObject, WKExtendedRuntimeSessionDelegate {
+//    private var session: WKExtendedRuntimeSession?
+//    var onSessionExpired: (() -> Void)?
+//
+//    func begin(duration: TimeInterval) {
+//        session = WKExtendedRuntimeSession()
+//        session?.delegate = self
+//        session?.start()
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+//            self.triggerExpiration()
+//        }
+//    }
+//
+//    func end() {
+//        session?.invalidate()
+//        session = nil
+//    }
+//
+//    private func triggerExpiration() {
+//        WKInterfaceDevice.current().play(.notification)
+//        onSessionExpired?()
+//    }
+//
+//    func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+//    func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+//    func extendedRuntimeSessionDidInvalidate(_ extendedRuntimeSession: WKExtendedRuntimeSession) {}
+//    func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession,
+//                                 didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
+//                                 error: Error?) {}
+//}
