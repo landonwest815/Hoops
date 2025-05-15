@@ -91,3 +91,29 @@ class WatchToiOSConnector: NSObject, WCSessionDelegate, ObservableObject {
         }
     }
 }
+
+
+// MARK: –– WCSessionDelegate stubs to silence console spam
+extension WatchToiOSConnector {
+    // called when you transferApplicationContext(...)
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        DispatchQueue.main.async {
+            self.handleIncomingData(applicationContext)
+        }
+    }
+
+    // called when reachability changes
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        // no-op
+    }
+
+    // if you ever use sendMessage(_:replyHandler:)
+    func session(_ session: WCSession,
+                 didReceiveMessage message: [String : Any],
+                 replyHandler: @escaping ([String : Any]) -> Void) {
+        DispatchQueue.main.async {
+            self.handleIncomingData(message)
+        }
+        replyHandler([:])  // acknowledge receipt
+    }
+}

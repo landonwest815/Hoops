@@ -29,7 +29,7 @@ struct AccoladeLogic {
     static func getPersistedTrophyLevels() -> [String: TrophyLevel] {
         if let saved = UserDefaults.standard.dictionary(forKey: storageKey) as? [String: Int] {
             return saved.reduce(into: [String: TrophyLevel]()) { result, pair in
-                result[pair.key] = TrophyLevel(rawValue: pair.value) ?? .none
+                result[pair.key] = TrophyLevel(rawValue: pair.value) ?? TrophyLevel.none
             }
         }
         return [:]

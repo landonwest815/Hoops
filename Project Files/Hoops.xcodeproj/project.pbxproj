@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		916C3D422DD662910086588D /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
 		91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */; };
 		91AD54D72B449DDD00F4D367 /* Hoops Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		91AD54DE2B449DDD00F4D367 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91AD54DD2B449DDD00F4D367 /* ContentView.swift */; };
 		91AD54E02B449DDE00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54DF2B449DDE00F4D367 /* Assets.xcassets */; };
 		91AD54E32B449DDE00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54E22B449DDE00F4D367 /* Preview Assets.xcassets */; };
-		91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91E8ADE32B9BB0A8004D1124 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +49,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		911086FA2DD6419F00FA2049 /* Hoops-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Hoops-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
+		911086FB2DD641AF00FA2049 /* Hoops Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Hoops Watch App.entitlements"; sourceTree = "<group>"; };
 		91A5A0A22DA8713F001A4FCE /* HoopsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HoopsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -69,13 +71,6 @@
 			);
 			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
 		};
-		911086FD2DD6471300FA2049 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Hoops Watch App/App/Hoops-Watch-App-Info.plist",
-			);
-			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,7 +79,7 @@
 		9101D9AA2D4A8EED00C5DBB2 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086EB2DD532EB00FA2049 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086F12DD5414F00FA2049 /* Generic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generic; sourceTree = "<group>"; };
-		911086FC2DD6470F00FA2049 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (911086FD2DD6471300FA2049 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		911086FC2DD6470F00FA2049 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		911086FF2DD6473200FA2049 /* Old Code */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Old Code"; sourceTree = "<group>"; };
 		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
@@ -111,7 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91C36FD42B45EEBE0074E7B1 /* WatchConnectivity.framework in Frameworks */,
+				916C3D422DD662910086588D /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +121,7 @@
 				91A5A0A32DA8713F001A4FCE /* HoopsTests */,
 				91AD54C72B449DDC00F4D367 /* Products */,
 				91C36FD22B45EEBE0074E7B1 /* Frameworks */,
+				911086FA2DD6419F00FA2049 /* Hoops-Watch-App-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -171,6 +167,7 @@
 				91AD54E12B449DDE00F4D367 /* Preview Content */,
 				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
 				911086FF2DD6473200FA2049 /* Old Code */,
+				911086FB2DD641AF00FA2049 /* Hoops Watch App.entitlements */,
 			);
 			path = "Hoops Watch App";
 			sourceTree = "<group>";

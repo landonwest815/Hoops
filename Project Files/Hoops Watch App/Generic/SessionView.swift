@@ -8,6 +8,7 @@ struct SessionView: View {
     let duration: Int?         // only non‑nil for challenge
     @Binding var path: NavigationPath
 
+    // Common state for “regular” & challenge sessions
     @State private var endDate: Date = .now
     @State private var timeCount: Int = 0
     @State private var timerCancellable: AnyCancellable?
@@ -15,15 +16,118 @@ struct SessionView: View {
     @State private var showingEndEarlyConfirmation = false
     @State private var sessionComplete = false
     @State private var hapticTimer: Timer?
-
     @StateObject private var sessionManager = SessionManager()
 
+    // Drill‐specific state
+    @State private var startTime = Date()
+    @State private var elapsedTime = 0
+    @State private var drillTimer: AnyCancellable?
+    @State private var currentStage = 1
+    @State private var stageMakes = 0
+    @State private var drillSessionEnd = false
+    @State private var showingDrillEndEarlyConfirmation = false
+    
     var body: some View {
+       Group {
+           if mode == .drill {
+               drillBody
+           } else {
+               standardBody
+           }
+       }
+   }
+
+    // MARK: — Drill UI (exactly your old code)
+    private var drillBody: some View {
         VStack {
-            // Top bar: cancel button, timer, makes count
+            HStack {
+                Button {
+                    showingDrillEndEarlyConfirmation = true
+                } label: {
+                    Image(systemName: "x.circle")
+                        .resizable()
+                        .frame(width: 22, height: 22)
+                        .foregroundStyle(.red)
+                }
+                .clipShape(.circle)
+                .frame(width: 22, height: 22)
+                .tint(.red)
+                .confirmationDialog(
+                    "Abandon Drill?", isPresented: $showingDrillEndEarlyConfirmation
+                ) {
+                    Button("Quit", role: .destructive) {
+                        endDrillSession()
+                    }
+                    Button("Keep Hoopin'") {}
+                }
+
+                Spacer()
+
+                Text(formatTime(seconds: elapsedTime))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+
+                Spacer()
+
+                Button {
+                    // info action if you want one
+                } label: {
+                    Image(systemName: "info.circle")
+                        .resizable()
+                        .frame(width: 22, height: 22)
+                        .foregroundStyle(.gray)
+                }
+                .clipShape(.circle)
+                .frame(width: 22, height: 22)
+                .tint(.gray)
+            }
+            .padding(.top, 30)
+            .padding(.horizontal, 20)
+            .font(.system(size: 30))
+            .fontWeight(.semibold)
+
+            Spacer()
+
+            LogMakeButton(
+              makes: $makes,
+              currentStage: $currentStage,
+              shotType: shotType
+            ) {
+              // when all stages complete:
+              stopDrillTimer()
+              DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+                // push your Results screen onto the path:
+                path.append(
+                  AppRoute.results(
+                    mode: .drill,
+                    shot: shotType,
+                    duration: nil,
+                    makes: makes,
+                    time: elapsedTime
+                  )
+                )
+              }
+            }
+
+          }
+        .navigationBarBackButtonHidden()
+        .ignoresSafeArea(.container, edges: .top)
+        .onAppear {
+            if drillTimer == nil {
+                startDrillTimer()
+            }
+        }
+        .onDisappear {
+            stopDrillTimer()
+        }
+    }
+
+    // MARK: — Standard / Challenge UI (unchanged)
+    private var standardBody: some View {
+        VStack {
             HStack {
                 Spacer()
-                
                 Button {
                     showingEndEarlyConfirmation = true
                 } label: {
@@ -35,22 +139,17 @@ struct SessionView: View {
                 .clipShape(.circle)
                 .frame(width: 22, height: 22)
                 .tint(.red)
-                
                 Spacer()
-                
                 Text(TimeFormatter.format(seconds: timeCount))
                     .font(.title2)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
-
                 Spacer()
-                
                 Text("\(makes)")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .fontDesign(.rounded)
                     .foregroundStyle(.gray)
-                
                 Spacer()
             }
             .padding(.top, 30)
@@ -58,85 +157,107 @@ struct SessionView: View {
                 "Finish session?",
                 isPresented: $showingEndEarlyConfirmation,
                 titleVisibility: .visible
-              ) {
+            ) {
                 Button("Keep Hoopin’", role: .cancel) { }
                 Button("Finish", role: .destructive) {
-                  manualFinish()
+                    manualFinish()
                 }
             }
 
             Spacer()
 
-            // Main tap target
-            Button(action: {
+            Button {
                 makes += 1
                 WKInterfaceDevice.current().play(.success)
-            }) {
-                VStack(spacing: 10) {
-                    Image(systemName: "basketball.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 250, height: 250)
-                        .foregroundStyle(.green.opacity(0.35))
-                }
-                .offset(x: 0, y: 65)
+            } label: {
+                Image(systemName: "basketball.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 250, height: 250)
+                    .foregroundStyle(.green.opacity(0.35))
+                    .offset(x: 0, y: 65)
             }
             .edgesIgnoringSafeArea(.all)
             .tint(.green)
             .buttonStyle(.bordered)
             .buttonBorderShape(.roundedRectangle(radius: 40))
-
         }
         .navigationBarBackButtonHidden()
         .ignoresSafeArea(.container, edges: .top)
         .sheet(isPresented: $sessionComplete) {
-                    VStack(spacing: 16) {
-                        Text("Time’s up!")
-                            .font(.title2).fontWeight(.bold)
-                        Text("You made \(makes) shots.")
-                            .font(.title3)
-                        Button("View Results") {
-                            stopHapticAlarm()
-                            path.append(
-                                AppRoute.results(
-                                    mode: mode,
-                                    shot: shotType,
-                                    duration: duration,
-                                    makes: makes,
-                                    time: timeCount
-                                )
-                            )
-                            sessionComplete = false
-                        }
-                        .tint(.green).font(.headline)
-                    }
-                    .interactiveDismissDisabled(true)
-                    .navigationBarBackButtonHidden(true)
-                    .padding()
+            VStack(spacing: 16) {
+                Text("Time’s up!")
+                    .font(.title2).fontWeight(.bold)
+                Text("You made \(makes) shots.")
+                    .font(.title3)
+                Button("View Results") {
+                    stopHapticAlarm()
+                    path.append(
+                        AppRoute.results(
+                            mode: mode,
+                            shot: shotType,
+                            duration: duration,
+                            makes: makes,
+                            time: timeCount
+                        )
+                    )
+                    sessionComplete = false
                 }
-                .onAppear {
-                    // only auto‑expire in challenge mode
-                    if mode == .challenge, let limit = duration {
-                        sessionManager.onSessionExpired = { finishSession() }
-                        timeCount = limit
-                        endDate   = Date().addingTimeInterval(TimeInterval(limit))
-                        sessionManager.beginWorkout(duration: TimeInterval(limit))
-                        startAccurateTimer()
-                    } else {
-                        sessionManager.onSessionExpired = nil
-                        timeCount = 0
-                        sessionManager.beginWorkout(duration: nil)
-                        startCountUpTimer()
-                    }
-                }
-                .onDisappear {
-                    stopAllTimers()
-                }
+                .tint(.green).font(.headline)
+            }
+            .interactiveDismissDisabled(true)
+            .navigationBarBackButtonHidden(true)
+            .padding()
+        }
+        .onAppear {
+            if mode == .challenge, let limit = duration {
+                sessionManager.onSessionExpired = { finishSession() }
+                timeCount = limit
+                endDate = Date().addingTimeInterval(TimeInterval(limit))
+                sessionManager.beginWorkout(duration: TimeInterval(limit))
+                startAccurateTimer()
+            } else {
+                sessionManager.onSessionExpired = nil
+                timeCount = 0
+                sessionManager.beginWorkout(duration: nil)
+                startCountUpTimer()
+            }
+        }
+        .onDisappear {
+            stopAllTimers()
+        }
+    }
+    
+    // MARK: — Drill Timer Helpers
+    private func startDrillTimer() {
+        startTime = Date()
+        elapsedTime = 0
+        makes = 0
+        currentStage = 1
+        stageMakes = 0
+        drillTimer = Timer
+            .publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                elapsedTime = Int(Date().timeIntervalSince(startTime))
+            }
+    }
+    private func stopDrillTimer() {
+        drillTimer?.cancel()
+        drillTimer = nil
+    }
+    private func endDrillSession() {
+        stopDrillTimer()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+            drillSessionEnd = true
+        }
+    }
+    private func formatTime(seconds: Int) -> String {
+        let m = seconds / 60, s = seconds % 60
+        return String(format: "%02d:%02d", m, s)
     }
 
-    // MARK: - Timer Setup
-
-    /// Countdown that always recalculates from `endDate`, so it jumps forward correctly after dim/sleep
+    // MARK: — Standard Timer Helpers & Haptics
     private func startAccurateTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
@@ -150,27 +271,19 @@ struct SessionView: View {
                 }
             }
     }
-
     private func startCountUpTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in timeCount += 1 }
     }
-
-    // MARK: - Session End
-
-    /// Triggered by the countdown hitting zero
     private func finishSession() {
         stopAllTimers()
         startHapticAlarm()
         sessionComplete = true
     }
-
     private func manualFinish() {
-        // disable auto sheet/haptics
         sessionManager.onSessionExpired = nil
         stopAllTimers()
-        // go straight to results
         path.append(
             AppRoute.results(
                 mode: mode,
@@ -181,27 +294,18 @@ struct SessionView: View {
             )
         )
     }
-
-    // MARK: - Cleanup
-
     private func stopAllTimers() {
         timerCancellable?.cancel()
         timerCancellable = nil
-
         hapticTimer?.invalidate()
         hapticTimer = nil
-
         sessionManager.endWorkout()
     }
-
-    // MARK: - Haptic Alarm
-
     private func startHapticAlarm() {
         hapticTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             WKInterfaceDevice.current().play(.notification)
         }
     }
-
     private func stopHapticAlarm() {
         hapticTimer?.invalidate()
         hapticTimer = nil

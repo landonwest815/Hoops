@@ -11,12 +11,20 @@ import SwiftData
 struct ContentView: View {
     @StateObject private var watchConnector = WatchConnector()
     @Environment(\.modelContext) private var context
+    @State private var showOnboarding = true
     
     var body: some View {
         Sessions()
             .onAppear {
                 watchConnector.modelContext = context
             }
+            .sheet(isPresented: $showOnboarding) {
+                 OnboardingView(isPresented: $showOnboarding)
+                    .presentationDetents([.fraction(0.65)])
+                    .sheetStyle()
+                    .interactiveDismissDisabled()
+                    .presentationDragIndicator(.hidden)
+             }
     }
 }
 
