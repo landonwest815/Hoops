@@ -40,6 +40,9 @@ struct Sessions: View {
     @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
     @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeek: String = "Monday"
 
+    @Binding var showOnboarding: Bool
+    
+    
     private var selectedDaySessions: [HoopSession] {
         sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
     }
@@ -215,14 +218,16 @@ struct Sessions: View {
             SessionCreation(selectedDate: $selectedDate)
                 .sheetStyle()
                 .presentationDetents([.fraction(AppConstants.SheetHeights.creationFraction)])
+                .presentationDragIndicator(.hidden)
 
         case .sessionDetails:
             SessionDetails(session: $selectedSession)
                 .sheetStyle()
                 .presentationDetents([.fraction(AppConstants.SheetHeights.detailsFraction)])
+                .presentationDragIndicator(.hidden)
             
         case .settings:
-            Settings()
+            Settings(showOnboarding: $showOnboarding)
                 .sheetStyle()
                 .presentationDetents([.fraction(AppConstants.SheetHeights.settingsFraction)])
 
@@ -278,5 +283,6 @@ struct Sessions: View {
 }
 
 #Preview {
-    Sessions().modelContainer(HoopSession.preview)
+    @Previewable @State var showOnboarding = false
+    Sessions(showOnboarding: $showOnboarding).modelContainer(HoopSession.preview)
 }

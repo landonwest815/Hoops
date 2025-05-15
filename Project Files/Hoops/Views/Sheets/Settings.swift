@@ -26,6 +26,8 @@ struct Settings: View {
     
     @State private var showHistory: Bool = false
     
+    @Binding var showOnboarding: Bool
+    
     var body: some View {
         ZStack {
             NavigationStack {
@@ -82,6 +84,29 @@ struct Settings: View {
                     ) {
                         Button {
                             showHistory = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Show me")
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        .frame(width: 100)
+                    }
+                    .padding()
+                    .cornerRadius(10)
+                    
+                    UniformButton(
+                        leftIconName: "questionmark.circle.fill",
+                        leftText: "Onboarding",
+                        leftColor: .white
+                    ) {
+                        Button {
+                            dismiss()
+                            showOnboarding = true
                         } label: {
                             HStack {
                                 Spacer()
@@ -255,6 +280,9 @@ struct UniformButton<RightContent: View>: View {
         HStack {
             HStack(spacing: 15) {
                 Image(systemName: leftIconName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 20, height: 22.5)
                 Text(leftText)
             }
             .foregroundStyle(leftColor)
@@ -326,5 +354,6 @@ struct StartOfWeekToggleButton: View {
 
 
 #Preview {
-    Settings().modelContainer(HoopSession.preview)
+    @Previewable @State var showOnboarding = false
+    Settings(showOnboarding: $showOnboarding).modelContainer(HoopSession.preview)
 }
