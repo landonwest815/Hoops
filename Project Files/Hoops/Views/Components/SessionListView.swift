@@ -177,6 +177,7 @@ struct SessionListView: View {
                     // Add extra spacing at the bottom to allow scrolling past the last content.
                     Spacer(minLength: 200)
                 }
+                .padding(.horizontal)
                 // Hide scroll indicators and animate changes to the sessions array.
                 .scrollIndicators(.hidden)
                 .animation(.smooth, value: sessions)

@@ -140,7 +140,6 @@ struct Sessions: View {
                     sortMode: sortMode,
                     onSessionSelected: { activeSheet = .sessionDetails }
                 )
-                .padding(.horizontal)
                 .background(.black.opacity(0.25))
                 .cornerRadius(32)
                 .ignoresSafeArea(.all, edges: .bottom)
