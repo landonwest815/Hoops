@@ -390,7 +390,7 @@ struct Profile: View {
                                             .foregroundStyle(.orange)
                                     }
                                     
-                                    Text("\(streak) Days")
+                                    Text("\(streak) Week\(streak == 1 ? "" : "s")")
                                         .font(.title3)
                                         .fontDesign(.rounded)
                                         .fontWeight(.semibold)
@@ -400,7 +400,7 @@ struct Profile: View {
                                     Spacer()
                                 }
                                 
-                                Text("Weekly Hoopin' Streak")
+                                Text("Hoopin' Streak")
                                     .font(.caption)
                                     .fontWeight(.semibold)
                                     .fontDesign(.rounded)

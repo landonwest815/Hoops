@@ -10,9 +10,14 @@ enum ActiveSheet {
     case stats, profile, sessionCreation, sessionDetails, settings, none
 }
 
+enum SortMode {
+    case byTime
+    case byShotType
+}
+
 struct Sessions: View {
     @Environment(\.modelContext) var context
-    @Query(sort: \HoopSession.date, order: .reverse, animation: .bouncy) var sessions: [HoopSession]
+    @Query(animation: .bouncy) var sessions: [HoopSession]
 
     @State private var activeSheet: ActiveSheet = .none
     @State private var selectedMetric: GraphType = .none
@@ -36,9 +41,11 @@ struct Sessions: View {
         .layups: false, .freeThrows: false, .midrange: false,
         .threePointers: false, .deep: false, .allShots: false
     ]
+    
+    @State private var sortMode: SortMode = .byTime
 
     @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
-    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeek: String = "Monday"
+    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeek: String = "Sunday"
 
     @Binding var showOnboarding: Bool
     
@@ -116,16 +123,21 @@ struct Sessions: View {
 
     private var contentView: some View {
         VStack {
-            HeaderView(shotTypeVisibility: $shotTypeVisibility, selectedDate: $selectedDate)
-                .padding(.bottom, 5)
+            HeaderView(
+                shotTypeVisibility: $shotTypeVisibility,
+                selectedDate: $selectedDate,
+                sortMode: $sortMode
+            )
+            .padding(.bottom, 5)
 
             ZStack(alignment: .bottomTrailing) {
                 SessionListView(
-                    sessions: selectedDaySessions,
+                    sessions: sessions,
                     context: context,
                     selectedSession: $selectedSession,
                     selectedDate: $selectedDate,
                     shotTypeVisibility: shotTypeVisibility,
+                    sortMode: sortMode,
                     onSessionSelected: { activeSheet = .sessionDetails }
                 )
                 .padding(.horizontal)

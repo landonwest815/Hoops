@@ -38,6 +38,8 @@ struct StatsChart: View {
     // MARK: State Properties
     @State private var currentActiveSession: HoopSession?  // Not currently used but can store a session for highlighting.
     @State private var computedData: [(date: Date, value: Double)] = []  // Data computed for chart display.
+    
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
 
     // MARK: Computed Properties
     
@@ -194,7 +196,7 @@ struct StatsChart: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 18)
                 // Displays the selected date in a human-readable format.
-                Text(selectedDate, format: Date.FormatStyle().month(.wide).day().year())
+                Text(formattedDate)
                     .id(selectedDate)
                     .transition(.opacity)
                     .contentTransition(.numericText())
@@ -209,6 +211,12 @@ struct StatsChart: View {
         .padding(.horizontal)
         .padding(.top, 5)
         .animation(.easeInOut(duration: 0.5), value: selectedDate)
+    }
+    
+    private var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = dateFormat
+        return formatter.string(from: selectedDate)
     }
     
     /// Displays the chart view containing line, area, rule marks, and point markers.

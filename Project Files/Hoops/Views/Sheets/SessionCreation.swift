@@ -96,19 +96,60 @@ struct SessionCreation: View {
                     onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .freestyle) }
                 )
                 
-                TallCardView(
-                    text: "Challenge",
-                    icon: "figure.bowling",
-                    color: .blue,
-                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .challenge) }
-                )
+                ZStack {
+                    TallCardView(
+                        text: "Challenge",
+                        icon: "",
+                        color: .blue,
+                        onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .challenge) }
+                    )
+                    .disabled(true)
+                    .opacity(0.33)
+
+                    VStack(spacing: 10) {
+                        
+                        Image(systemName: "applewatch")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50)
+                            .foregroundStyle(.white.opacity(0.75))
+                        
+                        
+                        Text("Watch Only")
+                            .font(.footnote)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white.opacity(0.75))
+                    }
+                }
                 
-                TallCardView(
-                    text: "Drill",
-                    icon: "figure.basketball",
-                    color: .green,
-                    onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .drill) }
-                )
+                ZStack {
+                    TallCardView(
+                        text: "Drill",
+                        icon: "",
+                        color: .green,
+                        onButtonPress: { selectSessionType(.layups, targetTab: .focusSelection, sessionType: .drill) }
+                    )
+                    .disabled(true)
+                    .opacity(0.33)
+                    
+                    VStack(spacing: 10) {
+                        
+                        Image(systemName: "applewatch")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50)
+                            .foregroundStyle(.white.opacity(0.75))
+                        
+                        
+                        Text("Watch Only")
+                            .font(.footnote)
+                            .fontDesign(.rounded)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white.opacity(0.75))
+                    }
+                }
+
             }
             Spacer()
         }
@@ -433,8 +474,16 @@ struct SessionCreation: View {
     
     /// Constructs a new HoopSession from the current values, inserts it into the data context, and dismisses the view.
     private func insertSessionAndDismiss() {
+        let now = Date()
+        let mergedDateTime = Calendar.current.date(
+            bySettingHour: Calendar.current.component(.hour, from: now),
+            minute: Calendar.current.component(.minute, from: now),
+            second: Calendar.current.component(.second, from: now),
+            of: selectedDate
+        ) ?? selectedDate
+
         let session = HoopSession(
-            date: selectedDate,
+            date: mergedDateTime,
             makes: makes,
             length: minutes * 60 + seconds,
             shotType: shotType,

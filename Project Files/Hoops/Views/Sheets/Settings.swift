@@ -132,7 +132,7 @@ struct Settings: View {
                                 showDeleteSheet = true
                             }
                         } label: {
-                            Text("Delete Everything")
+                            Text("Erase Data")
                                 .foregroundStyle(.red)
                         }
                     }
@@ -140,6 +140,28 @@ struct Settings: View {
                     .cornerRadius(10)
                     
                     Spacer()
+
+                    VStack(spacing: 10) {
+                        
+                        Text("Made with ❤️ by Landon West")
+
+                        HStack {
+                            
+                            
+                            Text("© 2025")
+                                                        
+                            Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
+                            
+                        }
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.gray)
+                    .fontDesign(.rounded)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal)
+                    .padding(.bottom, 12)
+
+                    
                 }
                 .padding(.horizontal)
                 .navigationDestination(isPresented: $showHistory) {
@@ -296,7 +318,16 @@ struct UniformButton<RightContent: View>: View {
 }
 
 struct DateFormatToggleButton: View {
-    private let formats = ["M dd, yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "MMM d, yyyy"]
+    private let formats = [
+        "MM/dd/yyyy",     // e.g., 07/15/2025
+        "MMM d, yyyy",    // e.g., Jul 15, 2025
+
+        "MMM d",          // e.g., Jul 15
+        "M/dd",           // e.g., 7/15
+        "EEEE, MMM d",    // e.g., Tuesday, Jul 15
+        "d MMM",          // e.g., 15 Jul
+        "EEEE d"          // e.g., Tuesday 15
+    ]
     
     @AppStorage(AppSettingsKeys.dateFormat) private var selectedFormat: String = "M dd, yyyy"
     
@@ -333,7 +364,7 @@ extension DateFormatter {
 struct StartOfWeekToggleButton: View {
     private let days = ["Monday", "Sunday"]
     
-    @AppStorage(AppSettingsKeys.startOfWeek) private var selectedDay: String = "Monday"
+    @AppStorage(AppSettingsKeys.startOfWeek) private var selectedDay: String = "Sunday"
     
     var body: some View {
         let currentIndex = days.firstIndex(of: selectedDay) ?? 0

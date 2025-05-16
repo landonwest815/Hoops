@@ -23,6 +23,9 @@ struct SessionListView: View {
     @Binding var selectedDate: Date
     /// Controls which shot types are visible based on user-selected filters.
     let shotTypeVisibility: [ShotType: Bool]
+    
+    let sortMode: SortMode
+
     /// Callback invoked when a session is selected.
     let onSessionSelected: () -> Void
     
@@ -34,6 +37,10 @@ struct SessionListView: View {
     /// A fixed list of session type names to ensure consistent grouping and ordering.
     let sessionTypes: [String] = ["Freestyle", "Challenge", "Drill"]
     
+    private var filteredSessionsForDay: [HoopSession] {
+        sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
+    }
+
     
     // MARK: - Computed Properties
     
@@ -41,24 +48,39 @@ struct SessionListView: View {
     /// If no shot type filters are active, all sessions are shown; otherwise, only sessions whose shot type is visible.
     /// The grouping uses the rawValue of the sessionType to form groups.
     var groupedSessions: [String: [HoopSession]] {
-        // Determine whether none of the shot type filters are active.
+        
+        let base = filteredSessionsForDay
         let allTogglesOff = shotTypeVisibility.values.allSatisfy { !$0 }
-        
-        // If none are active, display all sessions; otherwise, filter sessions based on shotTypeVisibility.
-        let filteredSessions = allTogglesOff ? sessions : sessions.filter { session in
-            shotTypeVisibility[session.shotType] == true
+        let filteredSessions = allTogglesOff ? base : base.filter {
+            shotTypeVisibility[$0.shotType] == true
         }
-        
-        // Group sessions by their session type's raw value.
+
+        // Group sessions by session type.
         var grouped = Dictionary(grouping: filteredSessions, by: { $0.sessionType.rawValue })
-        
-        // Ensure that each expected session type exists in the dictionary, even if empty.
+
+        // Ensure every expected session type is in the dictionary.
         for type in sessionTypes {
             if grouped[type] == nil {
                 grouped[type] = []
             }
         }
-        
+
+        // Sort each group by date according to sort preference.
+        for type in grouped.keys {
+            switch sortMode {
+            case .byTime:
+                grouped[type]?.sort { $0.date > $1.date }  // always newest first
+
+            case .byShotType:
+                let order: [ShotType] = [.layups, .freeThrows, .midrange, .threePointers, .deep, .allShots]
+                grouped[type]?.sort {
+                    guard let i1 = order.firstIndex(of: $0.shotType),
+                          let i2 = order.firstIndex(of: $1.shotType) else { return false }
+                    return i1 < i2
+                }
+            }
+        }
+
         return grouped
     }
     
@@ -260,6 +282,7 @@ struct FloatingActionButton: View {
 struct HeaderView: View {
     @Binding var shotTypeVisibility: [ShotType: Bool]
     @Binding var selectedDate: Date
+    @Binding var sortMode: SortMode
     
     @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
     
@@ -272,44 +295,58 @@ struct HeaderView: View {
     var body: some View {
         HStack {
             // A button displaying the current date.
-            Button(action: {
-                // Action placeholder (e.g., show profile details)
-            }) {
-                HStack {
-                    Image(systemName: "calendar")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 18)
-                    
-                    Text(formattedDate)
-                }
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                // The following modifiers ensure smooth numeric transitions.
-                .contentTransition(.numericText())
-                .foregroundStyle(.orange)
-                .fontWeight(.semibold)
-                .frame(height: 20)
-                .padding(.leading, 5)
+            HStack {
+                Image(systemName: "calendar")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 18)
+                
+                Text(formattedDate)
             }
+            .font(.title3)
+            .fontWeight(.semibold)
+            .foregroundStyle(.white)
+            // The following modifiers ensure smooth numeric transitions.
+            .contentTransition(.numericText())
+            .foregroundStyle(.orange)
+            .fontWeight(.semibold)
+            .frame(height: 20)
+            .padding(.leading, 5)
+            
             Spacer()
             
             // Filter menu for shot type visibility.
             FilterMenuView(shotTypeVisibility: $shotTypeVisibility)
             
             // A button (with sort/filter icon) for additional actions.
-            Button(action: {
-                // Additional action for sorting or filtering can be added here.
-            }) {
-                Image(systemName: "arrow.up.arrow.down")
+            Menu {
+                Button {
+                    withAnimation {
+                        sortMode = .byTime
+                    }
+                } label: {
+                    Label("Sort by Time", systemImage: sortMode == .byTime ? "checkmark" : "")
+                }
+                
+                Button {
+                    withAnimation {
+                        sortMode = .byShotType
+                    }
+                } label: {
+                    Label("Group by Shot Type", systemImage: sortMode == .byShotType ? "checkmark" : "")
+                }
+            } label: {
+                Image(systemName: sortMode == .byTime ? "timer" : "rectangle.3.group")
                     .buttonStyle()
                     .overlay(
                         RoundedRectangle(cornerRadius: 25)
                             .stroke(style: StrokeStyle(lineWidth: 1))
                             .foregroundColor(.gray.opacity(0.25))
                     )
+                    .transition(.scale.combined(with: .opacity))
+                    .id(sortMode == .byTime ? "time" : "grouped")
             }
+
         }
         .padding(.horizontal)
     }
@@ -400,10 +437,21 @@ struct FilterMenuView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 17.5, height: 17.5)
                 .foregroundStyle(shotTypeVisibility.values.contains(true) ? .black.opacity(0.875) : .orange)
-                .fontWeight(.semibold)
+                .fontWeight(.bold)
                 .padding(6)
-                .background(.ultraThinMaterial)
-                .background(shotTypeVisibility.values.contains(true) ? .orange : .clear)
+                .background(
+                    ZStack {
+                        if shotTypeVisibility.values.contains(true) {
+                            Color.orange
+                        } else {
+                            Color.clear
+                        }
+
+                        if !shotTypeVisibility.values.contains(true) {
+                            Color.clear.background(.ultraThinMaterial)
+                        }
+                    }
+                )
                 .cornerRadius(20)
                 .overlay(
                     RoundedRectangle(cornerRadius: 25)
@@ -431,7 +479,7 @@ struct FilterMenuView: View {
             .threePointers: false,
             .deep: false,
             .allShots: true
-        ],
+        ], sortMode: .byTime,
         onSessionSelected: { }
     )
     .modelContainer(HoopSession.preview)

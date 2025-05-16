@@ -25,7 +25,7 @@ struct WeeklyShotTrackerView: View {
     private let calendar = Calendar.current
     private let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
     
-    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeekPref: String = "Monday"
+    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeekPref: String = "Sunday"
     
     private var rotatedWeekdays: [String] {
         let original = ["S", "M", "T", "W", "T", "F", "S"]
@@ -116,7 +116,7 @@ struct WeekPagerView: View {
     private let calendar = Calendar.current
     private let maxPastWeeks: Int = 50
     
-    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeekPref: String = "Monday"
+    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeekPref: String = "Sunday"
     
     private var currentWeekStart: Date {
         startOfWeek(for: Date(), using: startOfWeekPref)
