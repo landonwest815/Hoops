@@ -1,8 +1,3 @@
-// Sessions.swift
-// Hoops
-//
-// Created by Landon West on 1/3/24.
-
 import SwiftUI
 import SwiftData
 
@@ -11,13 +6,12 @@ enum ActiveSheet {
 }
 
 enum SortMode {
-    case byTime
-    case byShotType
+    case byTime, byShotType
 }
 
 struct Sessions: View {
-    @Environment(\.modelContext) var context
-    @Query(animation: .bouncy) var sessions: [HoopSession]
+    @Environment(\.modelContext) private var context
+    @Query(animation: .bouncy) private var sessions: [HoopSession]
 
     @State private var activeSheet: ActiveSheet = .none
     @State private var selectedMetric: GraphType = .none
@@ -29,37 +23,28 @@ struct Sessions: View {
     @State private var averageMakesPerMinute = 0.0
     @State private var streak = 0
 
-    @State var selectedSession: HoopSession = HoopSession(date: .now, makes: 0, length: 0, shotType: .allShots)
-
+    @State private var selectedSession = HoopSession(date: .now, makes: 0, length: 0, shotType: .allShots)
     @State private var previousTrophyLevels: [String: TrophyLevel] = [:]
-    @State private var showTrophyPopup: Bool = false
+    @State private var showTrophyPopup = false
     @State private var upgradedAccolade: Accolade?
 
-    @State var showFilters: Bool = false
-    @State var shotType: ShotType = .allShots
     @State private var shotTypeVisibility: [ShotType: Bool] = [
         .layups: false, .freeThrows: false, .midrange: false,
         .threePointers: false, .deep: false, .allShots: false
     ]
-    
     @State private var sortMode: SortMode = .byTime
 
-    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
-    @AppStorage(AppSettingsKeys.startOfWeek) private var startOfWeek: String = "Sunday"
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat = "M dd, yyyy"
+    @AppStorage(AppSettingsKeys.startOfWeek)  private var startOfWeek = "Sunday"
 
     @Binding var showOnboarding: Bool
-    
-    
+
     private var selectedDaySessions: [HoopSession] {
         sessions.filter { $0.date.startOfDay == selectedDate.startOfDay }
     }
 
     private var isTodayVisible: Bool {
-        Calendar.current.isDate(selectedDate, equalTo: Date(), toGranularity: .weekOfYear)
-    }
-
-    private func jumpToToday() {
-        withAnimation { selectedDate = .now }
+        Calendar.current.isDate(selectedDate, equalTo: .now, toGranularity: .weekOfYear)
     }
 
     var body: some View {
@@ -76,9 +61,11 @@ struct Sessions: View {
                 }
                 .background(.ultraThinMaterial)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar { toolbarContent }
                 .sheet(
-                    isPresented: Binding(get: { activeSheet != .none }, set: { if !$0 { activeSheet = .none } }),
+                    isPresented: Binding(
+                        get: { activeSheet != .none },
+                        set: { if !$0 { activeSheet = .none } }
+                    ),
                     onDismiss: {
                         withAnimation {
                             selectedMetric = .none
@@ -92,11 +79,84 @@ struct Sessions: View {
                 .onChange(of: sessions) { _, _ in refreshStats() }
                 .onChange(of: selectedDate) { _, _ in refreshStats() }
 
-                if showTrophyPopup, let trophyAccolade = upgradedAccolade {
-                    TrophyPopupView(accolade: trophyAccolade) {
+                if showTrophyPopup, let accolade = upgradedAccolade {
+                    TrophyPopupView(accolade: accolade) {
                         withAnimation { showTrophyPopup = false }
                     }
                     .zIndex(10)
+                }
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button {
+                        openSheet(.settings)
+                    } label: {
+                        Image(systemName: "gear")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(.gray)
+                            .padding(5)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(18)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(style: .init(lineWidth: 1))
+                                    .foregroundColor(.gray.opacity(0.25))
+                            )
+                    }
+                    .disabled(showTrophyPopup)
+                    .opacity(showTrophyPopup ? 0.33 : 1.0)
+                }
+
+                ToolbarItemGroup(placement: .principal) {
+                    Button {
+                        openSheet(.profile)
+                    } label: {
+                        Text("hoops.")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .frame(height: 20)
+                    }
+                    .disabled(showTrophyPopup)
+                    .opacity(showTrophyPopup ? 0.33 : 1.0)
+                }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        if !isTodayVisible {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                selectedDate = .now
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 5) {
+                            if isTodayVisible {
+                                StreakBadgeView(streak: streak)
+                            } else {
+                                Text("Today")
+                                    .font(.system(size: 14))
+                                    .fontWeight(.semibold)
+                                    .fontDesign(.rounded)
+                                    .foregroundStyle(.white)
+                                Image(systemName: "arrow.forward")
+                                    .font(.system(size: 9))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .frame(width: 75, height: 30)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(18)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18)
+                                .stroke(style: .init(lineWidth: 1))
+                                .foregroundColor(.gray.opacity(0.25))
+                        )
+                    }
+                    .disabled(showTrophyPopup || isTodayVisible)
+                    .opacity(showTrophyPopup ? 0.33 : 1.0)
                 }
             }
         }
@@ -104,17 +164,32 @@ struct Sessions: View {
 
     private var metricsView: some View {
         HStack(spacing: 10) {
-            MetricButton(icon: "basketball.fill", title: "Sessions", value: "\(sessionCount)", color: .orange, isSelected: selectedMetric == .sessions, variant: .compact) {
-                toggleMetric(.sessions)
-            }
+            MetricButton(
+                icon: "basketball.fill",
+                title: "Sessions",
+                value: "\(sessionCount)",
+                color: .orange,
+                isSelected: selectedMetric == .sessions,
+                variant: .compact
+            ) { toggleMetric(.sessions) }
 
-            MetricButton(icon: "scope", title: "Total Makes", value: "\(totalMakes)", color: .red, isSelected: selectedMetric == .makes, variant: .compact) {
-                toggleMetric(.makes)
-            }
+            MetricButton(
+                icon: "scope",
+                title: "Total Makes",
+                value: "\(totalMakes)",
+                color: .red,
+                isSelected: selectedMetric == .makes,
+                variant: .compact
+            ) { toggleMetric(.makes) }
 
-            MetricButton(icon: "chart.line.uptrend.xyaxis", title: "Average Makes", value: String(format: "%.2f", averageMakesPerMinute), color: .blue, isSelected: selectedMetric == .average, variant: .expanded) {
-                toggleMetric(.average)
-            }
+            MetricButton(
+                icon: "chart.line.uptrend.xyaxis",
+                title: "Average Makes",
+                value: String(format: "%.2f", averageMakesPerMinute),
+                color: .blue,
+                isSelected: selectedMetric == .average,
+                variant: .expanded
+            ) { toggleMetric(.average) }
         }
         .frame(height: 50)
         .padding(.horizontal, 15)
@@ -151,92 +226,24 @@ struct Sessions: View {
         }
     }
 
-    private var toolbarContent: some ToolbarContent {
-        Group {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button(action: {
-                    openSheet(.settings)
-                }) {
-                    Image(systemName: "gear")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 20)
-                        .foregroundStyle(.gray)
-                        .fontWeight(.semibold)
-                        .frame(width: 20, height: 20)
-                        .padding(5)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(18)
-                        .overlay(RoundedRectangle(cornerRadius: 18).stroke(style: StrokeStyle(lineWidth: 1)).foregroundColor(.gray.opacity(0.25)))
-                }
-                .disabled(showTrophyPopup)
-                .opacity(showTrophyPopup ? 0.33 : 1.0)
-            }
-
-            ToolbarItemGroup(placement: .principal) {
-                Button(action: {
-                    openSheet(.profile)
-                }) {
-                    Text("hoops.")
-                      .font(.title2)
-                      .fontWeight(.semibold)
-                      .foregroundStyle(.white)
-                      .frame(height: 20)
-                }
-                .disabled(showTrophyPopup)
-                .opacity(showTrophyPopup ? 0.33 : 1.0)
-            }
-
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-              Button {
-                if !isTodayVisible {
-                  withAnimation(.easeInOut(duration: 0.25)) {
-                    jumpToToday()
-                  }
-                }
-              } label: {
-                HStack(spacing: 5) {
-                  if isTodayVisible {
-                    StreakBadgeView(streak: streak) 
-                  } else {
-                    Text("Today")
-                      .font(.system(size: 14))
-                      .fontWeight(.semibold)
-                      .fontDesign(.rounded)
-                      .foregroundStyle(.white)
-                    Image(systemName: "arrow.forward")
-                      .font(.system(size: 9))
-                      .fontWeight(.bold)
-                      .foregroundStyle(.white)
-                  }
-                }
-                .frame(width: 75, height: 30)
-                .background(.ultraThinMaterial)
-                .cornerRadius(18)
-                .overlay(RoundedRectangle(cornerRadius: 18)
-                          .stroke(style: .init(lineWidth: 1))
-                          .foregroundColor(.gray.opacity(0.25)))
-              }
-              .disabled(showTrophyPopup || isTodayVisible)
-              .opacity(showTrophyPopup ? 0.33 : 1.0)
-            }
-        }
-    }
-
     @ViewBuilder
     private var sheetContent: some View {
         switch activeSheet {
         case .stats:
-            StatsChart(shotType: $shotType, selectedMetric: $selectedMetric, selectedDate: $selectedDate)
-                .sheetStyle()
-                .presentationDetents([.fraction(AppConstants.SheetHeights.statsFraction)])
-                .presentationBackgroundInteraction(.enabled)
+            StatsChart(
+                shotType: $selectedShotType,
+                selectedMetric: $selectedMetric,
+                selectedDate: $selectedDate
+            )
+            .sheetStyle()
+            .presentationDetents([.fraction(AppConstants.SheetHeights.statsFraction)])
+            .presentationBackgroundInteraction(.enabled)
 
         case .profile:
             Profile(
                 averageMakesPerMinute: SessionsLogic.calculateAllTimeAverage(for: sessions),
                 streak: $streak,
-                shotType: $shotType,
+                shotType: $selectedShotType,
                 makesCount: SessionsLogic.calculateTotalMakes(for: sessions),
                 daysHoopedCount: SessionsLogic.calculateDaysHooped(for: sessions)
             )
@@ -254,7 +261,7 @@ struct Sessions: View {
                 .sheetStyle()
                 .presentationDetents([.fraction(AppConstants.SheetHeights.detailsFraction)])
                 .presentationDragIndicator(.hidden)
-            
+
         case .settings:
             Settings(showOnboarding: $showOnboarding)
                 .sheetStyle()
@@ -268,13 +275,11 @@ struct Sessions: View {
     private func toggleMetric(_ metric: GraphType) {
         withAnimation {
             if selectedMetric == metric {
-                // same button tapped twice → close
                 selectedMetric = .none
-                activeSheet    = .none
+                activeSheet = .none
             } else {
-                // new metric → select + open
                 selectedMetric = metric
-                activeSheet    = .stats
+                activeSheet = .stats
             }
         }
     }
@@ -285,40 +290,31 @@ struct Sessions: View {
             sessionCount = stats.count
             totalMakes = stats.totalMakes
             averageMakesPerMinute = stats.average
-        }
-        withAnimation {
             streak = SessionsLogic.calculateWeeklyStreak(from: sessions)
         }
         checkForTrophyUpgrades()
     }
 
     private func checkForTrophyUpgrades() {
-        var storedLevels = AccoladeLogic.getPersistedTrophyLevels()
-
-        if storedLevels.isEmpty {
+        var levels = AccoladeLogic.loadTrophyLevels()
+        if levels.isEmpty {
             let current = AccoladeLogic.computeAccolades(for: sessions)
-            for accolade in current {
-                storedLevels[accolade.title] = trophyLevel(for: accolade.value, thresholds: accolade.thresholds)
+            current.forEach {
+                levels[$0.title] = trophyLevel(for: $0.value, thresholds: $0.thresholds)
             }
-            AccoladeLogic.setPersistedTrophyLevels(storedLevels)
+            AccoladeLogic.saveTrophyLevels(levels)
             return
         }
-
-        if let upgrade = AccoladeLogic.checkForTrophyUpgrade(from: sessions, storedLevels: &storedLevels) {
+        if let upgrade = AccoladeLogic.checkForTrophyUpgrade(sessions: sessions, currentLevels: &levels) {
             upgradedAccolade = upgrade
             withAnimation { showTrophyPopup = true }
         }
-
-        AccoladeLogic.setPersistedTrophyLevels(storedLevels)
+        AccoladeLogic.saveTrophyLevels(levels)
     }
-    
-    
-    /// Smoothly dismiss any open sheet, then present the new one.
+
     private func openSheet(_ sheet: ActiveSheet) {
-        // if something’s already up, dismiss it first
         if activeSheet != .none && activeSheet != sheet {
             activeSheet = .none
-            // wait for the sheet to animate down
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 withAnimation { activeSheet = sheet }
             }
@@ -330,5 +326,6 @@ struct Sessions: View {
 
 #Preview {
     @Previewable @State var showOnboarding = false
-    Sessions(showOnboarding: $showOnboarding).modelContainer(HoopSession.preview)
+    Sessions(showOnboarding: $showOnboarding)
+        .modelContainer(HoopSession.preview)
 }

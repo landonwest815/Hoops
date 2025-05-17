@@ -5,8 +5,6 @@
 //  Created by Landon West on 5/14/25.
 //
 
-
-// SelectionList.swift
 import SwiftUI
 
 struct SelectionList<Item: Hashable>: View {
@@ -29,4 +27,18 @@ struct SelectionList<Item: Hashable>: View {
         }
         .navigationTitle(title)
     }
+}
+
+#Preview {
+    @Previewable @State var path = NavigationPath()
+    SelectionList(
+        title: "Shot Type",
+        items: ShotType.allCases,
+        label: { $0.displayName },
+        tint: { $0.color },
+        destination: { shot in
+            .session(mode: .freestyle, shot: shot, duration: nil)
+        },
+        path: $path
+    )
 }

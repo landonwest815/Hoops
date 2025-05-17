@@ -81,10 +81,10 @@
 		911086EB2DD532EB00FA2049 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086F12DD5414F00FA2049 /* Generic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generic; sourceTree = "<group>"; };
 		911086FC2DD6470F00FA2049 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
-		911086FF2DD6473200FA2049 /* Old Code */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Old Code"; sourceTree = "<group>"; };
 		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
 		91A5A0A32DA8713F001A4FCE /* HoopsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HoopsTests; sourceTree = "<group>"; };
+		91DA3CEB2DD9316B000E3D05 /* Onboarding */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Onboarding; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,13 +162,13 @@
 		91AD54DA2B449DDD00F4D367 /* Hoops Watch App */ = {
 			isa = PBXGroup;
 			children = (
+				91DA3CEB2DD9316B000E3D05 /* Onboarding */,
 				911086FC2DD6470F00FA2049 /* App */,
 				911086F12DD5414F00FA2049 /* Generic */,
 				911086EB2DD532EB00FA2049 /* Utilities */,
 				91AD54DD2B449DDD00F4D367 /* ContentView.swift */,
 				91AD54E12B449DDE00F4D367 /* Preview Content */,
 				91AD54DF2B449DDE00F4D367 /* Assets.xcassets */,
-				911086FF2DD6473200FA2049 /* Old Code */,
 				911086FB2DD641AF00FA2049 /* Hoops Watch App.entitlements */,
 			);
 			path = "Hoops Watch App";
@@ -259,7 +259,7 @@
 				911086EB2DD532EB00FA2049 /* Utilities */,
 				911086F12DD5414F00FA2049 /* Generic */,
 				911086FC2DD6470F00FA2049 /* App */,
-				911086FF2DD6473200FA2049 /* Old Code */,
+				91DA3CEB2DD9316B000E3D05 /* Onboarding */,
 			);
 			name = "Hoops Watch App";
 			productName = "Hoops Watch App";

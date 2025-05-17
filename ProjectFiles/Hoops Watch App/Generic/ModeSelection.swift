@@ -17,8 +17,11 @@ struct ModeSelection: View {
             VStack {
                 ForEach([SessionMode.freestyle, .challenge, .drill], id: \.self) { mode in
                     NavigationLink(value: AppRoute.shotSelection(mode: mode)) {
-                        Text(mode == .challenge ? "Challenges"
-                             : (mode == .freestyle ? "Freestyle" : "Drills"))
+                        Text(
+                            mode == .challenge
+                                ? "Challenges"
+                                : (mode == .freestyle ? "Freestyle" : "Drills")
+                        )
                     }
                     .hapticNavLinkStyle()
                     .tint(mode.color)
@@ -28,4 +31,9 @@ struct ModeSelection: View {
         }
         .navigationTitle("Session Type")
     }
+}
+
+#Preview {
+    @Previewable @State var path = NavigationPath()
+    ModeSelection(path: $path)
 }

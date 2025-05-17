@@ -13,37 +13,29 @@ enum SessionTab: Int {
     case detailEntry = 1
 }
 
-// MARK: - Main CardView
-// This view presents a multi-step tabbed interface for creating a new HoopSession.
-// Users select a session type, a more detailed focus, and then enter specific session details.
 struct SessionCreation: View {
     
-    // MARK: - Environment and State
-    @Environment(\.modelContext) var context        // Data context for inserting sessions.
-    @Environment(\.dismiss) var dismiss               // Dismisses the current view.
+    @Environment(\.modelContext) var context
+    @Environment(\.dismiss) var dismiss
     
-    @State private var selectedTab: SessionTab = .sessionTypeSelection    // Controls the current tab in the TabView.
+    @State private var selectedTab: SessionTab = .sessionTypeSelection
     @State private var sessionType: SessionType = .freestyle
-    @State private var shotType: ShotType = .allShots    // Currently selected shot type for the session.
-    @State private var customTime = false              // Flag for custom time entry (not fully wired up).
-    @State private var minutes = 5                     // Session duration minutes.
-    @State private var seconds = 0                     // Session duration seconds.
-    @State private var makes = 25                      // Number of made shots during the session.
+    @State private var shotType: ShotType = .allShots
+    @State private var customTime = false
+    @State private var minutes = 5
+    @State private var seconds = 0
+    @State private var makes = 25
     @Binding var selectedDate: Date
 
     
-    @FocusState private var isTextFieldFocused: Bool   // Used to focus editable fields.
+    @FocusState private var isTextFieldFocused: Bool
     
-    // Formatter for any potential usage
     private let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return formatter
     }()
     
-    // MARK: - Computed Properties
-    
-    /// Determines the icon color based on the current shot type.
     private var iconColor: Color {
         switch shotType {
         case .freeThrows:    return .blue
@@ -55,39 +47,27 @@ struct SessionCreation: View {
         }
     }
     
-    // MARK: - Main Body
     var body: some View {
         TabView(selection: $selectedTab) {
-            // First tab: Session type selection.
             sessionTypeSelection
                 .tag(SessionTab.sessionTypeSelection)
-            
-            // Second tab: Focus selection (more granular shot types).
             focusSelection
                 .tag(SessionTab.focusSelection)
-
-            // Third tab: Entry of specific session details.
             detailEntry
                 .tag(SessionTab.detailEntry)
         }
-        // Change background color based on the selected tab.
         .background(selectedTab == .detailEntry ? iconColor.opacity(0.5) : Color.clear)
         .onAppear {
-            // Disable scroll in the underlying UIScrollView for a page-like experience.
             UIScrollView.appearance().isScrollEnabled = false
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .ignoresSafeArea(.all)
     }
-    
-    // MARK: - Tab Views
-    
-    /// First tab view: Allows the user to choose the type of session.
+        
     private var sessionTypeSelection: some View {
         VStack(spacing: 10) {
             headerForSessionTypeSelection
             
-            // Use TallCardView buttons for session type selection.
             HStack(spacing: 10) {
                 TallCardView(
                     text: "Freestyle",
@@ -141,7 +121,6 @@ struct SessionCreation: View {
                             .frame(width: 50)
                             .foregroundStyle(.white.opacity(0.75))
                         
-                        
                         Text("Watch Only")
                             .font(.footnote)
                             .fontDesign(.rounded)
@@ -157,12 +136,10 @@ struct SessionCreation: View {
         .padding(.horizontal)
     }
     
-    /// Second tab view: Provides more detailed focus options (shot type filtering).
     private var focusSelection: some View {
         VStack(spacing: 10) {
             headerForFocusSelection
             
-            // Two rows of ShortCardView buttons for specific shot types.
             HStack(spacing: 10) {
                 ShortCardView(
                     text: "Layups",
@@ -183,6 +160,7 @@ struct SessionCreation: View {
                     onButtonPress: { selectSessionType(.midrange, targetTab: .detailEntry, sessionType: sessionType) }
                 )
             }
+            
             HStack(spacing: 10) {
                 ShortCardView(
                     text: "Threes",
@@ -203,13 +181,13 @@ struct SessionCreation: View {
                     onButtonPress: { selectSessionType(.allShots, targetTab: .detailEntry, sessionType: sessionType) }
                 )
             }
+            
             Spacer()
         }
         .padding(.top, 12.5)
         .padding(.horizontal)
     }
     
-    /// Third tab view: Allows the user to enter session details like duration and makes.
     private var detailEntry: some View {
         VStack(spacing: 10) {
             detailEntryHeader
@@ -220,12 +198,8 @@ struct SessionCreation: View {
         .padding(.horizontal)
     }
     
-    // MARK: - Header Views
-    
-    /// Header for the session type selection tab.
     private var headerForSessionTypeSelection: some View {
         HStack {
-            // Invisible back button for symmetry.
             Image(systemName: "arrow.backward")
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
@@ -257,10 +231,8 @@ struct SessionCreation: View {
         .padding(.vertical, 5)
     }
     
-    /// Header for the focus selection tab.
     private var headerForFocusSelection: some View {
         HStack {
-            // Back button to return to the previous tab.
             Button {
                 withAnimation { selectedTab = .sessionTypeSelection }
             } label: {
@@ -296,10 +268,8 @@ struct SessionCreation: View {
         .padding(.vertical, 5)
     }
     
-    /// Header for the detail entry tab.
     private var detailEntryHeader: some View {
         HStack {
-            // Back button to return from detail entry.
             Button {
                 withAnimation { handleDetailBackAction() }
             } label: {
@@ -313,7 +283,6 @@ struct SessionCreation: View {
             
             Spacer()
             
-            // Display the current shot type name.
             Text(shotType.rawValue)
                 .fontWeight(.semibold)
                 .fontDesign(.rounded)
@@ -322,7 +291,6 @@ struct SessionCreation: View {
             
             Spacer()
             
-            // Confirmation button to insert the new session.
             Button {
                 withAnimation { insertSessionAndDismiss() }
             } label: {
@@ -336,27 +304,11 @@ struct SessionCreation: View {
         }
         .padding(.vertical, 5)
     }
-    
-    // MARK: - Detail Entry Content & Decorations
-    
-    /// Contains numeric entry fields for session duration and made shots.
-//    private var detailEntryContent: some View {
-//        VStack(spacing: 15) {
-//            HStack(spacing: 15) {
-//                // Number fields for minutes, seconds, and makes.
-//                numberFieldView(title: "Min", value: $minutes)
-//                numberFieldView(title: "Sec", value: $seconds)
-//                numberFieldView(title: "Makes", value: $makes)
-//            }
-//        }
-//        .padding(.horizontal)
-//        .overlay(decorativeBackground)
-//    }
+
     private var detailEntryContent: some View {
         VStack(spacing: 15) {
             switch sessionType {
             case .freestyle:
-                // Freestyle: set minutes, seconds, and makes
                 HStack(spacing: 15) {
                     numberFieldView(title: "Min", value: $minutes)
                     numberFieldView(title: "Sec", value: $seconds)
@@ -364,28 +316,18 @@ struct SessionCreation: View {
                 }
 
             case .challenge:
-                // Challenge: set time only, makes will be dynamically tracked later
                 HStack(spacing: 15) {
                     numberFieldView(title: "Min", value: $minutes)
                     numberFieldView(title: "Sec", value: $seconds)
                     numberFieldView(title: "Amount", value: $makes)
                 }
-//                Text("Try to make as many \(shotType.rawValue) as you can in this time!")
-//                    .font(.subheadline)
-//                    .foregroundStyle(.white)
-//                    .multilineTextAlignment(.center)
-
+                
             case .drill:
-                // Drill: set a goal (number of makes), and time is measured externally
                 HStack(spacing: 15) {
                     numberFieldView(title: "Min", value: $minutes)
                     numberFieldView(title: "Sec", value: $seconds)
                     numberFieldView(title: "Reps", value: $makes)
                 }
-//                Text("Time will be measured for how long it takes to make \(makes) \(shotType.rawValue).")
-//                    .font(.subheadline)
-//                    .foregroundStyle(.white)
-//                    .multilineTextAlignment(.center)
             }
         }
         .padding(.horizontal)
@@ -393,7 +335,6 @@ struct SessionCreation: View {
     }
 
     
-    /// Returns an editable number field with a title.
     private func numberFieldView(title: String, value: Binding<Int>) -> some View {
         VStack(spacing: 5) {
             Text(title)
@@ -402,7 +343,6 @@ struct SessionCreation: View {
                 .fontDesign(.rounded)
                 .foregroundStyle(iconColor)
             
-            // Custom number field that allows editing.
             EditableNumberField(value: value, color: iconColor)
             
             Spacer()
@@ -410,7 +350,6 @@ struct SessionCreation: View {
         .frame(maxWidth: .infinity, maxHeight: 150)
     }
     
-    /// Provides decorative background elements (images, shapes, and shadows) for the detail entry.
     private var decorativeBackground: some View {
         ZStack {
             Image(systemName: "figure.basketball")
@@ -446,12 +385,6 @@ struct SessionCreation: View {
         }
     }
     
-    // MARK: - Action Handlers
-    
-    /// Updates both the selected shot type and switches the tab.
-    /// - Parameters:
-    ///   - type: The selected shot type.
-    ///   - targetTab: The target tab to switch to.
     private func selectSessionType(_ type: ShotType, targetTab: SessionTab, sessionType: SessionType) {
         withAnimation {
             self.shotType = type
@@ -460,8 +393,6 @@ struct SessionCreation: View {
         }
     }
     
-    /// Handles the back action in the detail entry tab.
-    /// If customTime is set, it resets it; otherwise it goes back one tab.
     private func handleDetailBackAction() {
         withAnimation {
             if customTime {
@@ -472,7 +403,6 @@ struct SessionCreation: View {
         }
     }
     
-    /// Constructs a new HoopSession from the current values, inserts it into the data context, and dismisses the view.
     private func insertSessionAndDismiss() {
         let now = Date()
         let mergedDateTime = Calendar.current.date(
@@ -494,8 +424,6 @@ struct SessionCreation: View {
     }
 }
 
-// MARK: - Supporting Editable Number Field
-/// A custom view that displays a number which can be tapped to switch into a text field for editing.
 struct EditableNumberField: View {
     @Binding var value: Int
     @FocusState private var isFocused: Bool
@@ -540,7 +468,6 @@ struct EditableNumberField: View {
                     }
                 }
                 .onAppear {
-                    // A short delay ensures the text field properly receives focus.
                     DispatchQueue.main.async {
                         isFocused = true
                     }
@@ -555,7 +482,6 @@ struct EditableNumberField: View {
                     isEditing = false
                 }
             } else {
-                // Non-editable button version displaying the value.
                 Button {
                     isEditing = true
                 } label: {
@@ -578,23 +504,18 @@ struct EditableNumberField: View {
     }
 }
 
-// MARK: - ShortCardView
-/// A compact card view used in the focus selection tab.
-/// It displays an image background along with a text label and a points value.
-/// Note: `getShotPoints(for:)` is assumed to be defined elsewhere.
 struct ShortCardView: View {
     var text: String
     var icon: String? = nil
     var color: Color
     var shotType: ShotType?
-    var onButtonPress: () -> Void  // Callback function for when the button is pressed.
+    var onButtonPress: () -> Void
     
     var body: some View {
         Button {
             withAnimation { onButtonPress() }
         } label: {
             ZStack {
-                // Background design using basketball related images and shapes.
                 Image(systemName: "figure.basketball")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -612,7 +533,6 @@ struct ShortCardView: View {
                     .offset(x: 17.5, y: 52.5)
                     .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Additional circular decorative shapes.
                 ZStack {
                     Circle()
                         .stroke(color.opacity(0.2), lineWidth: 2)
@@ -626,7 +546,6 @@ struct ShortCardView: View {
                 .rotationEffect(.degrees(-10))
                 .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Display shot points; uses an external function `getShotPoints(for:)`.
                 Text("\(getShotPoints(for: shotType ?? .allShots)) pts")
                     .font(.headline)
                     .fontDesign(.rounded)
@@ -636,7 +555,6 @@ struct ShortCardView: View {
                     .foregroundStyle(color.opacity(0.2))
                     .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Text label for the shot type.
                 Text(text)
                     .font(.headline)
                     .fontDesign(.rounded)
@@ -653,23 +571,18 @@ struct ShortCardView: View {
     }
 }
 
-// MARK: - TallCardView
-/// A larger card view used in the session type selection tab.
-/// It displays an icon, descriptive text, and shot points.
-/// Note: `getShotPoints(for:)` is assumed to be defined elsewhere.
 struct TallCardView: View {
     var text: String
     var icon: String
     var color: Color
     var shotType: ShotType? = nil
-    var onButtonPress: () -> Void  // Callback function for when the button is pressed.
+    var onButtonPress: () -> Void
     
     var body: some View {
         Button {
             withAnimation { onButtonPress() }
         } label: {
             ZStack {
-                // Background design with basketball themed images.
                 Image(systemName: "figure.basketball")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -687,7 +600,6 @@ struct TallCardView: View {
                     .offset(x: 17.5, y: 75)
                     .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Additional circular decorative shapes.
                 ZStack {
                     Circle()
                         .stroke(color.opacity(0.2), lineWidth: 2)
@@ -701,7 +613,6 @@ struct TallCardView: View {
                 .rotationEffect(.degrees(-10))
                 .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Display shot points; uses an external function `getShotPoints(for:)`.
                 Text("\(getShotPoints(for: shotType ?? .allShots)) pts")
                     .font(.headline)
                     .fontDesign(.rounded)
@@ -711,7 +622,6 @@ struct TallCardView: View {
                     .foregroundStyle(color.opacity(0.2))
                     .shadow(color: color.opacity(0.66), radius: 5, x: 1.5)
                 
-                // Icon and descriptive text stacked vertically.
                 VStack(spacing: 0) {
                     Image(systemName: icon)
                         .resizable()

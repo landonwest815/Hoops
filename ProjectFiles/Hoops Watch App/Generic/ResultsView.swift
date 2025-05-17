@@ -18,7 +18,6 @@ struct ResultsView: View {
 
     var body: some View {
         HStack(spacing: 20) {
-            // ←——————————————————————— Time & Makes column
             VStack(spacing: 20) {
                 VStack {
                     Text("Length")
@@ -28,7 +27,6 @@ struct ResultsView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                 }
-                
                 VStack {
                     Text("Makes")
                         .font(.subheadline)
@@ -38,8 +36,6 @@ struct ResultsView: View {
                         .fontWeight(.semibold)
                 }
             }
-
-            // ←——————————————————————— Avg/min & Done column
             VStack(spacing: 20) {
                 VStack {
                     Text("Avg/min")
@@ -49,7 +45,6 @@ struct ResultsView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                 }
-
                 Button("Done") {
                     sendSessionToiPhone()
                     path = NavigationPath()
@@ -62,8 +57,6 @@ struct ResultsView: View {
         .navigationBarBackButtonHidden()
         .padding()
     }
-
-    // MARK: – Helpers
 
     private func formatTime(_ seconds: Int) -> String {
         String(format: "%02d:%02d", seconds / 60, seconds % 60)
@@ -83,5 +76,19 @@ struct ResultsView: View {
             sessionType: sessionType
         )
         watchConnector.sendSessionToiPhone(hoopSession: session)
+    }
+}
+
+struct ResultsView_Previews: PreviewProvider {
+    @State static var path = NavigationPath()
+
+    static var previews: some View {
+        ResultsView(
+            path: $path,
+            sessionType: .drill,
+            shotType: .layups,
+            sessionTimeInSec: 300,
+            makes: 42
+        )
     }
 }

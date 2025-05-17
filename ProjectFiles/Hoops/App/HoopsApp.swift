@@ -11,7 +11,6 @@ import SwiftData
 @main
 struct HoopsApp: App {
     let modelContainer = try! ModelContainer(for: HoopSession.self)
-
     @StateObject private var watchConnector = WatchConnector()
 
     var body: some Scene {
@@ -20,8 +19,6 @@ struct HoopsApp: App {
                 .environment(\.modelContext, modelContainer.mainContext)
                 .environmentObject(watchConnector)
                 .onAppear {
-                    // now that watchConnector is instantiated and attached,
-                    // it’s safe to set its modelContext
                     watchConnector.modelContext = modelContainer.mainContext
                 }
         }

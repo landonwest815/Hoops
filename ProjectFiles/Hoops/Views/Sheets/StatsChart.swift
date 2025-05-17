@@ -9,9 +9,6 @@ import SwiftUI
 import Charts
 import SwiftData
 
-// MARK: - Supporting Enums
-
-/// Represents the available time ranges for graphing data.
 enum TimeRange: String, CaseIterable, Identifiable {
     case week = "Week"
     case month = "Month"
@@ -20,30 +17,20 @@ enum TimeRange: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
-// MARK: - StatsChart View
-
-/// A chart view that displays a metric (e.g. makes, average, sessions) over time from HoopSession data.
-/// The graph updates based on filtered sessions, shot type, time range, and selected date.
 struct StatsChart: View {
-    // MARK: Environment and Query Properties
-    @Environment(\.modelContext) var context    // Data context for persistence.
-    @Query(sort: \HoopSession.date) var sessions: [HoopSession]  // Query sessions sorted by date.
+    @Environment(\.modelContext) var context
+    @Query(sort: \HoopSession.date) var sessions: [HoopSession]
     
-    // MARK: Bindings
-    @Binding var shotType: ShotType             // Selected shot type for filtering sessions.
-    @Binding var selectedMetric: GraphType      // Metric to be displayed on the chart.
-    @Binding var selectedDate: Date             // Selected date used for annotations on the chart.
-    @State var selectedTimeRange: TimeRange = .allTime  // The current time range filter.
+    @Binding var shotType: ShotType
+    @Binding var selectedMetric: GraphType
+    @Binding var selectedDate: Date
+    @State var selectedTimeRange: TimeRange = .allTime
 
-    // MARK: State Properties
-    @State private var currentActiveSession: HoopSession?  // Not currently used but can store a session for highlighting.
-    @State private var computedData: [(date: Date, value: Double)] = []  // Data computed for chart display.
+    @State private var currentActiveSession: HoopSession?
+    @State private var computedData: [(date: Date, value: Double)] = []
     
     @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
 
-    // MARK: Computed Properties
-    
-    /// Returns the line color for the chart based on the currently selected shot type.
     var lineColor: Color {
         switch shotType {
         case .freeThrows, .midrange: return .blue
@@ -54,18 +41,14 @@ struct StatsChart: View {
         }
     }
     
-    /// Filters sessions based on the selected shot type. If "All Shots" is selected, returns all sessions.
     var filteredSessions: [HoopSession] {
         shotType == .allShots ? sessions : sessions.filter { $0.shotType == shotType }
     }
     
-    /// Represents the overall trend direction for the computed data.
     private enum Trend {
         case up, same, down
     }
     
-    /// Computes the trend by comparing the latest data value with the overall average.
-    /// A threshold of 15% is used to determine if the trend is up or down.
     private var trend: Trend {
         guard !computedData.isEmpty, let lastValue = computedData.last?.value else {
             return .same
@@ -87,7 +70,6 @@ struct StatsChart: View {
         }
     }
     
-    /// Returns an appropriate SF Symbol name based on the computed trend.
     private var trendIcon: String {
         switch trend {
         case .up:   return "arrow.up.right"
@@ -96,7 +78,6 @@ struct StatsChart: View {
         }
     }
     
-    /// Returns the color associated with the current trend.
     private var trendColor: Color {
         switch trend {
         case .up:   return .green
@@ -105,49 +86,40 @@ struct StatsChart: View {
         }
     }
     
-    /// Extracts the Y-axis values from the computed data.
     private var chartYValues: [Double] {
         computedData.map { $0.value }
     }
     
-    /// Computes the raw average value of the chart data.
     private var rawAverage: Double {
         guard !chartYValues.isEmpty else { return 0 }
         return chartYValues.reduce(0, +) / Double(chartYValues.count)
     }
     
-    /// Provides the average value rounded to one decimal place.
     private var averageValue: Double {
         Double(round(10 * rawAverage) / 10)
     }
     
-    /// Position used for displaying the average rule mark on the chart.
     private var ruleMarkPosition: Double {
         averageValue
     }
     
-    /// Returns the minimum Y value from the chart data.
     private var minYValue: Double {
         chartYValues.min() ?? 0
     }
     
-    /// Returns the maximum Y value from the chart data.
     private var maxYValue: Double {
         chartYValues.max() ?? 1
     }
     
-    /// Computes an extended maximum domain value for the Y-axis by adding padding.
     private var domainEnd: Double {
         let padding = averageValue
         return maxYValue + padding
     }
     
-    /// Returns the best metric value recorded in the computed data.
     private var bestValue: Double {
         chartYValues.max() ?? 0
     }
     
-    /// Returns the worst (lowest positive) metric value from the computed data.
     private var worstValue: Double {
         chartYValues.filter { $0 > 0 }.min() ?? 0
     }
@@ -157,7 +129,6 @@ struct StatsChart: View {
         VStack(spacing: 15) {
             headerView
             
-            // Picker row for shot types and time range.
             HStack(spacing: 10) {
                 ShotTypePicker(shotType: $shotType)
                 TimeRangeSegmentedPicker(selectedTimeRange: $selectedTimeRange, shotType: $shotType)
@@ -169,17 +140,13 @@ struct StatsChart: View {
         }
         .padding(.horizontal)
         .padding(.top)
-        // Update computed data when the view appears or when any dependency changes.
         .onAppear(perform: updateComputedData)
         .onChange(of: sessions) { _, _ in updateComputedData() }
         .onChange(of: shotType) { _, _ in updateComputedData() }
         .onChange(of: selectedMetric) { _, _ in updateComputedData() }
         .onChange(of: selectedTimeRange) { _, _ in updateComputedData() }
     }
-    
-    // MARK: Subviews
-    
-    /// Displays a header showing the selected metric and date.
+        
     private var headerView: some View {
         HStack(spacing: 20) {
             Text(selectedMetric.rawValue)
@@ -193,7 +160,6 @@ struct StatsChart: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 16)
-                // Displays the selected date in a human-readable format.
                 Text(formattedDate)
                     .id(selectedDate)
                     .transition(.opacity)
@@ -217,10 +183,8 @@ struct StatsChart: View {
         return formatter.string(from: selectedDate)
     }
     
-    /// Displays the chart view containing line, area, rule marks, and point markers.
     private var chartView: some View {
         ZStack {
-            // Show a message if there are no sessions after filtering.
             if filteredSessions.isEmpty {
                 Text("No data available.\nGo shoot some hoops!")
                     .multilineTextAlignment(.center)
@@ -230,14 +194,12 @@ struct StatsChart: View {
                     .fontDesign(.rounded)
             }
             
-            // Only display the chart if computedData has at least one data point.
             if let firstDate = computedData.first?.date,
                let lastDate = computedData.last?.date {
                 let totalDuration = lastDate.timeIntervalSince(firstDate)
                 let extraPadding = totalDuration * 0.1
                 
                 Chart(computedData, id: \.date) {
-                    // Draw the primary line for the metric.
                     LineMark(
                         x: .value("Date", $0.date),
                         y: .value("Metric", $0.value)
@@ -246,7 +208,6 @@ struct StatsChart: View {
                     .lineStyle(.init(lineWidth: 3))
                     .interpolationMethod(.catmullRom)
                     
-                    // Draw the filled area below the line.
                     AreaMark(
                         x: .value("Date", $0.date),
                         y: .value("Metric", $0.value)
@@ -261,7 +222,6 @@ struct StatsChart: View {
                     .lineStyle(.init(lineWidth: 3))
                     .interpolationMethod(.catmullRom)
                     
-                    // Draw a rule mark at the average value.
                     RuleMark(y: .value("Average", ruleMarkPosition))
                         .lineStyle(.init(lineWidth: 1, dash: [2.5]))
                         .foregroundStyle(.gray.opacity(0.25))
@@ -273,7 +233,6 @@ struct StatsChart: View {
                     .symbol(.circle)
                     .foregroundStyle(lineColor)
                     
-                    // Mark the latest point in the computed data.
                     if let latestPoint = computedData.max(by: { $0.date < $1.date }) {
                         PointMark(
                             x: .value("Date", latestPoint.date),
@@ -282,7 +241,6 @@ struct StatsChart: View {
                         .foregroundStyle(lineColor)
                         .symbol(.circle)
                         
-                        // If the selected date falls on the latest point, highlight it.
                         if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }),
                            Calendar.current.isDate(selectedPoint.date, inSameDayAs: latestPoint.date) {
                             PointMark(
@@ -294,7 +252,6 @@ struct StatsChart: View {
                         }
                     }
                     
-                    // Display an annotation at the point corresponding to the selected day.
                     if let selectedPoint = computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
                         let isFirstEntry = computedData.count > 1 && computedData.first?.date == selectedPoint.date
                         PointMark(
@@ -325,7 +282,6 @@ struct StatsChart: View {
                 .cornerRadius(15)
                 .chartXAxis(.hidden)
                 .chartYAxis(.hidden)
-                // Overlay to capture drag gestures for date selection.
                 .chartOverlay { proxy in
                     GeometryReader { geometry in
                         Rectangle()
@@ -334,22 +290,18 @@ struct StatsChart: View {
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { value in
-                                        // make sure we have a plot frame and at least one data point
                                         guard
                                             let plotArea = proxy.plotFrame,
                                             !computedData.isEmpty
                                         else { return }
 
-                                        // convert gesture X into a Date
                                         let frame = geometry[plotArea]
                                         let locationX = value.location.x - frame.origin.x
                                         guard let rawDate: Date = proxy.value(atX: locationX) else { return }
 
-                                        // find the computedData entry whose date is closest to the rawDate
                                         if let nearest = computedData.min(
                                             by: { abs($0.date.timeIntervalSince(rawDate)) < abs($1.date.timeIntervalSince(rawDate)) }
                                         ) {
-                                            // only update if it's actually changed
                                             if !Calendar.current.isDate(nearest.date, inSameDayAs: selectedDate) {
                                                 let generator = UIImpactFeedbackGenerator(style: .medium)
                                                 generator.impactOccurred()
@@ -365,7 +317,6 @@ struct StatsChart: View {
 
             }
             
-            // If there is no data for the selected day, display a message.
             if !computedData.isEmpty &&
                computedData.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) == nil {
                 VStack {
@@ -404,7 +355,6 @@ struct StatsChart: View {
         }
     }
     
-    /// Displays benchmark metrics such as average, today's metric, trend, best, and worst values.
     private var benchmarksView: some View {
         VStack(spacing: 10) {
             HStack(alignment: .top, spacing: 10) {
@@ -450,10 +400,6 @@ struct StatsChart: View {
         }
     }
     
-    // MARK: - Helper Methods
-    
-    /// Updates the computed chart data by grouping filtered sessions by day,
-    /// and then computing a metric value for each group based on the selected metric.
     private func updateComputedData() {
         withAnimation(.easeInOut(duration: 0.5)) {
             let now = Date()
@@ -468,15 +414,12 @@ struct StatsChart: View {
                 }
             }()
             
-            // Filter sessions based on the selected time range.
             let timeFilteredSessions = filteredSessions.filter { $0.date >= startDate }
             
-            // Group sessions by the start of the day.
             let grouped = Dictionary(grouping: timeFilteredSessions) { session in
                 Calendar.current.startOfDay(for: session.date)
             }
             
-            // Map each group to a tuple containing the date and the computed metric value.
             computedData = grouped.map { (date, sessions) in
                 let totalMakes = sessions.reduce(0) { $0 + $1.makes }
                 let sessionCount = Double(sessions.count)
@@ -500,13 +443,9 @@ struct StatsChart: View {
     }
 }
 
-// MARK: - ShotTypePicker View
-
-/// A menu-based picker that allows the user to select a shot type.
 struct ShotTypePicker: View {
     @Binding var shotType: ShotType
     
-    /// Chooses a line color based on the selected shot type.
     var lineColor: Color {
         switch shotType {
         case .freeThrows, .midrange: return .blue
@@ -567,12 +506,10 @@ struct ShotTypePicker: View {
     }
 }
 
-/// A segmented picker allowing the user to select a time range for viewing data.
 struct TimeRangeSegmentedPicker: View {
     @Binding var selectedTimeRange: TimeRange
     @Binding var shotType: ShotType
     
-    /// Chooses a line color based on the shot type.
     var lineColor: Color {
         switch shotType {
         case .freeThrows, .midrange: return .blue
@@ -612,18 +549,13 @@ struct TimeRangeSegmentedPicker: View {
 }
 
 
-
-
 struct InfoCard: View {
     let title: String
     let iconName: String
     let iconColor: Color
     private let textValue: String?
     private let symbolValue: String?
-
-    // MARK: - Inits
-
-    /// Displays a text value to the right of the icon
+    
     init(title: String,
          iconName: String,
          iconColor: Color = .white,
@@ -636,7 +568,6 @@ struct InfoCard: View {
         self.symbolValue = nil
     }
 
-    /// Displays a secondary SF Symbol to the right of the icon
     init(title: String,
          iconName: String,
          iconColor: Color = .white,
@@ -652,7 +583,6 @@ struct InfoCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2.5) {
             HStack {
-                // Leading icon
                 Image(systemName: iconName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -660,7 +590,6 @@ struct InfoCard: View {
                     .foregroundColor(iconColor)
                     .fontWeight(.semibold)
 
-                // Either text or symbol
                 if let text = textValue {
                     Text(text)
                         .font(.title3)
@@ -681,7 +610,6 @@ struct InfoCard: View {
                 Spacer()
             }
 
-            // Title underneath
             Text(title)
                 .font(.caption)
                 .fontDesign(.rounded)
@@ -701,10 +629,6 @@ struct InfoCard: View {
     }
 }
 
-
-
-
-// MARK: - Preview
 #Preview {
     @Previewable @State var shotType: ShotType = .allShots
     @Previewable @State var selectedMetric: GraphType = .average

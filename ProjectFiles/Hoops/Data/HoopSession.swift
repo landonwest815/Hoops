@@ -5,91 +5,72 @@
 //  Created by Landon West on 3/8/24.
 //
 
-import Foundation
-import SwiftData
 import SwiftUI
-
-// MARK: - SessionType
+import SwiftData
 
 enum SessionType: String, Codable, CaseIterable {
-    case freestyle  = "Freestyle"
-    case challenge  = "Challenge"
-    case drill      = "Drill"
+    case freestyle   = "Freestyle"
+    case challenge   = "Challenge"
+    case drill       = "Drill"
 }
 
-
-// MARK: - ShotType
-
 enum ShotType: String, Codable, CaseIterable, Identifiable {
-    case layups       = "Layups"
-    case freeThrows   = "Free Throws"
-    case midrange     = "Midrange"
+    case layups        = "Layups"
+    case freeThrows    = "Free Throws"
+    case midrange      = "Midrange"
     case threePointers = "Threes"
-    case deep         = "Deep"
-    case allShots     = "All Shots"
-    
-    var displayName: String {
-            switch self {
-                case .layups:         return "Layups"
-                case .freeThrows:     return "Free Throws"
-                case .midrange:       return "Midrange"
-                case .threePointers:  return "Threes"
-                case .deep:           return "Deep"
-                case .allShots:       return "All Shots"
-            }
-        }
+    case deep          = "Deep"
+    case allShots      = "All Shots"
 
-        var color: Color {
-            switch self {
-                case .layups:         return .red
-                case .freeThrows:     return .blue
-                case .midrange:       return .blue
-                case .threePointers:  return .green
-                case .deep:           return .purple
-                case .allShots:       return .orange
-            }
-        }
-    
     var id: Self { self }
-    
+    var displayName: String { rawValue }
+
+    var color: Color {
+        switch self {
+        case .layups:         return .red
+        case .freeThrows:     return .blue
+        case .midrange:       return .blue
+        case .threePointers:  return .green
+        case .deep:           return .purple
+        case .allShots:       return .orange
+        }
+    }
+
     var shots: [String] {
         switch self {
         case .layups:
-            return ["Left-Handed Layup", "Right-Handed Layup", "Floater", "Reverse Layup", "Finger Roll"]
+            ["Left-Handed Layup", "Right-Handed Layup", "Floater", "Reverse Layup", "Finger Roll"]
         case .midrange:
-            return ["Left Baseline", "Right Baseline", "Left Elbow", "Right Elbow", "Free Throw Line"]
+            ["Left Baseline", "Right Baseline", "Left Elbow", "Right Elbow", "Free Throw Line"]
         case .threePointers:
-            return ["Left Corner Three", "Right Corner Three", "Left Wing Three", "Right Wing Three", "Top of the Key Three"]
+            ["Left Corner Three", "Right Corner Three", "Left Wing Three", "Right Wing Three", "Top of the Key Three"]
         case .deep:
-            return ["Left Deep Three", "Center Deep Three", "Right Deep Three"]
+            ["Left Deep Three", "Center Deep Three", "Right Deep Three"]
         case .freeThrows:
-            return Array(repeating: "Free Throw", count: 5)
+            Array(repeating: "Free Throw", count: 5)
         case .allShots:
-            return ShotType.allCases
+            ShotType.allCases
                 .filter { $0 != .allShots }
                 .flatMap { $0.shots }
         }
     }
-    
+
     init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let raw = try container.decode(String.self)
+        let raw = try decoder.singleValueContainer().decode(String.self)
         switch raw {
-        case "FTs": self = .freeThrows
+        case "FTs":
+            self = .freeThrows
         default:
-            guard let val = ShotType(rawValue: raw) else {
+            guard let value = ShotType(rawValue: raw) else {
                 throw DecodingError.dataCorruptedError(
-                    in: container,
+                    in: try decoder.singleValueContainer(),
                     debugDescription: "Unknown ShotType: \(raw)"
                 )
             }
-            self = val
+            self = value
         }
     }
 }
-
-
-// MARK: - GraphType
 
 enum GraphType: String, Codable, CaseIterable {
     case sessions = "Sessions"
@@ -98,18 +79,15 @@ enum GraphType: String, Codable, CaseIterable {
     case none     = "N/A"
 }
 
-
-// MARK: - HoopSession Model
-
 @Model
 class HoopSession: Identifiable {
     var id = UUID()
     var date: Date
     var makes: Int
-    var length: Int              // seconds
+    var length: Int
     var shotType: ShotType
     var sessionType: SessionType
-    
+
     init(
         date: Date,
         makes: Int,
@@ -125,9 +103,6 @@ class HoopSession: Identifiable {
     }
 }
 
-
-// MARK: - Preview Data
-
 extension HoopSession {
     @MainActor
     static var preview: ModelContainer {
@@ -135,24 +110,20 @@ extension HoopSession {
             for: HoopSession.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        
         let types: [ShotType] = [.layups, .freeThrows, .midrange, .threePointers, .deep, .allShots]
         let cal = Calendar.current
         let today = Date()
-        
-        // Generates 10 days of sample sessions
+
         for dayOffset in 0..<10 {
             let sessionDate = cal.date(byAdding: .day, value: -dayOffset, to: today)!
             let sessionCount = Int.random(in: 1...3)
-            
+
             for _ in 0..<sessionCount {
                 let shot = types.randomElement()!
-                let factor = Double(30 - dayOffset) / 30.0
-                let baseMakes = Int(5 + 25 * factor)
-                let makes = max(5, baseMakes + Int.random(in: -3...3))
-                let baseLen = Int(60 + 120 * factor)
-                let length = max(60, baseLen + Int.random(in: -15...15))
-                
+                let factor = Double(30 - dayOffset) / 30
+                let makes = max(5, Int(5 + 25 * factor) + Int.random(in: -3...3))
+                let length = max(60, Int(60 + 120 * factor) + Int.random(in: -15...15))
+
                 container.mainContext.insert(
                     HoopSession(
                         date: sessionDate,
@@ -163,7 +134,7 @@ extension HoopSession {
                 )
             }
         }
-        
+
         return container
     }
 }
