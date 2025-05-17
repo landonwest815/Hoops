@@ -1,16 +1,18 @@
 import SwiftUI
 import Combine
 import WatchKit
+import HealthKit
 
 struct SessionView: View {
+    // MARK: –– Inputs
     let mode: SessionMode
     let shotType: ShotType
-    let duration: Int?         // only non‑nil for challenge
+    let duration: Int?          // non-nil for challenge only
     @Binding var path: NavigationPath
 
-    // Common state for “regular” & challenge sessions
+    // MARK: –– Common State
     @State private var endDate: Date = .now
-    @State private var timeCount: Int = 0
+    @State private var timeCount = 0
     @State private var timerCancellable: AnyCancellable?
     @State private var makes = 0
     @State private var showingEndEarlyConfirmation = false
@@ -18,150 +20,112 @@ struct SessionView: View {
     @State private var hapticTimer: Timer?
     @StateObject private var sessionManager = SessionManager()
 
-    // Drill‐specific state
+    // MARK: –– Drill-Only State
     @State private var startTime = Date()
     @State private var elapsedTime = 0
     @State private var drillTimer: AnyCancellable?
     @State private var currentStage = 1
     @State private var stageMakes = 0
-    @State private var drillSessionEnd = false
     @State private var showingDrillEndEarlyConfirmation = false
-    
-    var body: some View {
-       Group {
-           if mode == .drill {
-               drillBody
-           } else {
-               standardBody
-           }
-       }
-   }
 
-    // MARK: — Drill UI (exactly your old code)
+    // MARK: –– View Body
+    var body: some View {
+        Group {
+            if mode == .drill {
+                drillBody
+            } else {
+                standardBody
+            }
+        }
+    }
+}
+
+// MARK: –– Subviews
+extension SessionView {
     private var drillBody: some View {
         VStack {
-            HStack {
-                Button {
-                    showingDrillEndEarlyConfirmation = true
-                } label: {
-                    Image(systemName: "x.circle")
-                        .resizable()
-                        .frame(width: 22, height: 22)
-                        .foregroundStyle(.red)
-                }
-                .clipShape(.circle)
-                .frame(width: 22, height: 22)
-                .tint(.red)
-                .confirmationDialog(
-                    "Abandon Drill?", isPresented: $showingDrillEndEarlyConfirmation
-                ) {
-                    Button("Quit", role: .destructive) {
-                        endDrillSession()
-                    }
-                    Button("Keep Hoopin'") {}
-                }
-
-                Spacer()
-
-                Text(formatTime(seconds: elapsedTime))
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
-
-                Spacer()
-
-                Button {
-                    // info action if you want one
-                } label: {
-                    Image(systemName: "info.circle")
-                        .resizable()
-                        .frame(width: 22, height: 22)
-                        .foregroundStyle(.gray)
-                }
-                .clipShape(.circle)
-                .frame(width: 22, height: 22)
-                .tint(.gray)
-            }
-            .padding(.top, 30)
-            .padding(.horizontal, 20)
-            .font(.system(size: 30))
-            .fontWeight(.semibold)
-
+            topBar(
+                cancelAction: { showingDrillEndEarlyConfirmation = true },
+                title: formatTime(seconds: elapsedTime),
+                infoAction: {}
+            )
             Spacer()
-
             LogMakeButton(
-              makes: $makes,
-              currentStage: $currentStage,
-              shotType: shotType
+                makes: $makes,
+                currentStage: $currentStage,
+                shotType: shotType
             ) {
-              // when all stages complete:
-              stopDrillTimer()
-              DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
-                // push your Results screen onto the path:
-                path.append(
-                  AppRoute.results(
-                    mode: .drill,
-                    shot: shotType,
-                    duration: nil,
-                    makes: makes,
-                    time: elapsedTime
-                  )
-                )
-              }
+                stopDrillTimer()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
+                    path.append(
+                        AppRoute.results(
+                            mode: .drill,
+                            shot: shotType,
+                            duration: nil,
+                            makes: makes,
+                            time: elapsedTime
+                        )
+                    )
+                }
             }
-
-          }
+        }
         .navigationBarBackButtonHidden()
         .ignoresSafeArea(.container, edges: .top)
         .onAppear {
-            if drillTimer == nil {
-                startDrillTimer()
-            }
+            if drillTimer == nil { startDrillTimer() }
+            sessionManager.beginWorkout(duration: nil)
         }
         .onDisappear {
             stopDrillTimer()
+            sessionManager.endWorkout()
+        }
+        .alert("Abandon Drill?", isPresented: $showingDrillEndEarlyConfirmation) {
+            Button("Quit", role: .destructive) {
+                sessionManager.discardOnEnd = true
+                stopDrillTimer()
+                sessionManager.onWorkoutDiscarded = { path = NavigationPath() }
+                sessionManager.endWorkout()
+            }
+            Button("Keep Hoopin’", role: .cancel) { }
         }
     }
 
-    // MARK: — Standard / Challenge UI (unchanged)
     private var standardBody: some View {
         VStack {
             HStack {
-                Spacer()
-                Button {
-                    showingEndEarlyConfirmation = true
-                } label: {
+                Button(action: { showingEndEarlyConfirmation = true }) {
                     Image(systemName: "x.circle")
                         .resizable()
-                        .frame(width: 22, height: 22)
-                        .foregroundStyle(.red)
+                        .frame(width: 24, height: 24)
+                        .fontWeight(.semibold)
                 }
-                .clipShape(.circle)
-                .frame(width: 22, height: 22)
+                .buttonStyle(.borderless)
+                .clipShape(Circle())
                 .tint(.red)
                 Spacer()
                 Text(TimeFormatter.format(seconds: timeCount))
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
+                    .font(.title2).fontWeight(.semibold).fontDesign(.rounded)
                 Spacer()
                 Text("\(makes)")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .fontDesign(.rounded)
+                    .font(.title2).fontWeight(.semibold).fontDesign(.rounded)
                     .foregroundStyle(.gray)
-                Spacer()
             }
+            .padding(.horizontal)
             .padding(.top, 30)
-            .confirmationDialog(
-                "Finish session?",
-                isPresented: $showingEndEarlyConfirmation,
-                titleVisibility: .visible
+            .alert(
+                mode == .challenge ? "Abandon Challenge?" : "Finish Session?",
+                isPresented: $showingEndEarlyConfirmation
             ) {
-                Button("Keep Hoopin’", role: .cancel) { }
-                Button("Finish", role: .destructive) {
-                    manualFinish()
+                if mode == .challenge {
+                    Button("Quit", role: .destructive) {
+                        sessionManager.discardOnEnd = true
+                        stopAllTimers()
+                        sessionManager.onWorkoutDiscarded = { path = NavigationPath() }
+                    }
+                } else {
+                    Button("Finish Session", role: .destructive) { manualFinish() }
                 }
+                Button("Keep Hoopin’", role: .cancel) { }
             }
 
             Spacer()
@@ -175,7 +139,7 @@ struct SessionView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 250, height: 250)
                     .foregroundStyle(.green.opacity(0.35))
-                    .offset(x: 0, y: 65)
+                    .offset(y: 65)
             }
             .edgesIgnoringSafeArea(.all)
             .tint(.green)
@@ -184,12 +148,9 @@ struct SessionView: View {
         }
         .navigationBarBackButtonHidden()
         .ignoresSafeArea(.container, edges: .top)
-        .sheet(isPresented: $sessionComplete) {
+        .fullScreenCover(isPresented: $sessionComplete) {
             VStack(spacing: 16) {
-                Text("Time’s up!")
-                    .font(.title2).fontWeight(.bold)
-                Text("You made \(makes) shots.")
-                    .font(.title3)
+                Text("Time’s up!").font(.title2).bold()
                 Button("View Results") {
                     stopHapticAlarm()
                     path.append(
@@ -203,10 +164,10 @@ struct SessionView: View {
                     )
                     sessionComplete = false
                 }
-                .tint(.green).font(.headline)
+                .tint(.green)
+                .font(.headline)
             }
             .interactiveDismissDisabled(true)
-            .navigationBarBackButtonHidden(true)
             .padding()
         }
         .onAppear {
@@ -227,38 +188,70 @@ struct SessionView: View {
             stopAllTimers()
         }
     }
-    
-    // MARK: — Drill Timer Helpers
-    private func startDrillTimer() {
+
+    private func topBar(cancelAction: @escaping () -> Void,
+                        title: String,
+                        infoAction: @escaping () -> Void) -> some View
+    {
+        HStack(spacing: 2.5) {
+            Button(action: cancelAction) {
+                Image(systemName: "x.circle")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .fontWeight(.semibold)
+            }
+            .buttonStyle(.borderless)
+            .clipShape(Circle())
+            .tint(.red)
+
+            Spacer()
+
+            Text(title)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .fontDesign(.rounded)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .layoutPriority(1)
+
+            Spacer()
+
+            Button(action: infoAction) {
+                Image(systemName: "info.circle")
+                    .resizable()
+                    .frame(width: 22, height: 22)
+            }
+            .buttonStyle(.borderless)
+            .clipShape(Circle())
+            .tint(.gray)
+        }
+        .frame(height: 30)
+        .padding(.top, 30)
+        .padding(.horizontal)
+    }
+}
+
+// MARK: –– Timer Helpers
+private extension SessionView {
+    func startDrillTimer() {
         startTime = Date()
         elapsedTime = 0
         makes = 0
         currentStage = 1
         stageMakes = 0
-        drillTimer = Timer
-            .publish(every: 1, on: .main, in: .common)
+        drillTimer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
                 elapsedTime = Int(Date().timeIntervalSince(startTime))
             }
     }
-    private func stopDrillTimer() {
+
+    func stopDrillTimer() {
         drillTimer?.cancel()
         drillTimer = nil
     }
-    private func endDrillSession() {
-        stopDrillTimer()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.33) {
-            drillSessionEnd = true
-        }
-    }
-    private func formatTime(seconds: Int) -> String {
-        let m = seconds / 60, s = seconds % 60
-        return String(format: "%02d:%02d", m, s)
-    }
 
-    // MARK: — Standard Timer Helpers & Haptics
-    private func startAccurateTimer() {
+    func startAccurateTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
@@ -271,17 +264,20 @@ struct SessionView: View {
                 }
             }
     }
-    private func startCountUpTimer() {
+
+    func startCountUpTimer() {
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { _ in timeCount += 1 }
     }
-    private func finishSession() {
+
+    func finishSession() {
         stopAllTimers()
         startHapticAlarm()
         sessionComplete = true
     }
-    private func manualFinish() {
+
+    func manualFinish() {
         sessionManager.onSessionExpired = nil
         stopAllTimers()
         path.append(
@@ -294,109 +290,216 @@ struct SessionView: View {
             )
         )
     }
-    private func stopAllTimers() {
+
+    func stopAllTimers() {
         timerCancellable?.cancel()
         timerCancellable = nil
         hapticTimer?.invalidate()
         hapticTimer = nil
         sessionManager.endWorkout()
     }
+
     private func startHapticAlarm() {
-        hapticTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        // create the timer but don't schedule it yet
+        let timer = Timer(timeInterval: 1, repeats: true) { _ in
             WKInterfaceDevice.current().play(.notification)
         }
+        hapticTimer = timer
+        // attach it to the common modes so it fires when the screen is asleep
+        RunLoop.main.add(timer, forMode: .common)
     }
-    private func stopHapticAlarm() {
+
+    func stopHapticAlarm() {
         hapticTimer?.invalidate()
         hapticTimer = nil
     }
+
+    func formatTime(seconds: Int) -> String {
+        let m = seconds / 60, s = seconds % 60
+        return String(format: "%02d:%02d", m, s)
+    }
 }
 
-
-import HealthKit
-
+// MARK: –– Workout Manager
 class SessionManager: NSObject, ObservableObject {
-  /// Fires when the workout actually ends (either auto or manual).
-  var onSessionExpired: (() -> Void)?
+    var onSessionExpired: (() -> Void)?
+    var onWorkoutDiscarded: (() -> Void)?
+    var discardOnEnd = false
 
-  private let healthStore = HKHealthStore()
-  private var session: HKWorkoutSession?
-  private var builder: HKLiveWorkoutBuilder?
+    private let healthStore = HKHealthStore()
+    private var session: HKWorkoutSession?
+    private var builder: HKLiveWorkoutBuilder?
 
-  /// Begin a basketball workout. If `duration` is `nil`, it runs until you call `endWorkout()`.
-  func beginWorkout(duration: TimeInterval?) {
-    // 1) Create config & session
-    let config = HKWorkoutConfiguration()
-    config.activityType = .basketball
-    config.locationType   = .indoor
+    func beginWorkout(duration: TimeInterval?) {
+        discardOnEnd = false
+        let config = HKWorkoutConfiguration()
+        config.activityType = .basketball
+        config.locationType   = .indoor
 
-    do {
-      session = try HKWorkoutSession(healthStore: healthStore, configuration: config)
-      builder = session?.associatedWorkoutBuilder()
-    } catch {
-      print("⚠️ Couldn't start workout: \(error)")
-      return
-    }
-
-    session?.delegate = self
-    builder?.delegate = self
-    builder?.dataSource = HKLiveWorkoutDataSource(
-      healthStore: healthStore,
-      workoutConfiguration: config
-    )
-
-    // 2) Authorize & start
-    healthStore.requestAuthorization(
-      toShare: [ .workoutType() ],
-      read:   [ .workoutType() ]
-    ) { ok, err in
-      guard ok else { return }
-      let start = Date()
-      self.session?.startActivity(with: start)
-      self.builder?.beginCollection(withStart: start) { _, _ in }
-
-      // 3) If user passed in a duration, auto‑end after that many seconds
-      if let dur = duration {
-        DispatchQueue.main.asyncAfter(deadline: .now() + dur) {
-          self.endWorkout()
+        do {
+            session = try HKWorkoutSession(healthStore: healthStore, configuration: config)
+            builder = session?.associatedWorkoutBuilder()
+        } catch {
+            print("⚠️ Couldn't start workout: \(error)")
+            return
         }
-      }
-    }
-  }
 
-  /// Manually end the workout (e.g. user tapped “Finish”).
+        session?.delegate = self
+        builder?.delegate = self
+        builder?.dataSource = HKLiveWorkoutDataSource(
+            healthStore: healthStore,
+            workoutConfiguration: config
+        )
+
+        healthStore.requestAuthorization(
+            toShare: [.workoutType()],
+            read:   [.workoutType()]
+        ) { ok, _ in
+            guard ok else { return }
+            let start = Date()
+            self.session?.startActivity(with: start)
+            self.builder?.beginCollection(withStart: start) { _, _ in }
+            if let dur = duration {
+                DispatchQueue.main.asyncAfter(deadline: .now() + dur) {
+                    self.endWorkout()
+                }
+            }
+        }
+    }
+
     func endWorkout() {
-      guard let s = session, s.state == .running else { return }
-      s.end()
+        guard let s = session, s.state == .running else { return }
+        s.end()
     }
 }
 
-// MARK: HKWorkoutSessionDelegate
+// MARK: –– HKWorkoutSessionDelegate
 extension SessionManager: HKWorkoutSessionDelegate {
-  func workoutSession(
-    _ workoutSession: HKWorkoutSession,
-    didChangeTo toState: HKWorkoutSessionState,
-    from fromState: HKWorkoutSessionState,
-    date: Date
-  ) {
-    if toState == .ended {
-      // once it truly ends, finish collection & fire your callback
-      builder?.endCollection(withEnd: date) { _, _ in
-        self.builder?.finishWorkout { _, _ in
-          DispatchQueue.main.async {
-            self.onSessionExpired?()
-          }
+    func workoutSession(
+        _ workoutSession: HKWorkoutSession,
+        didChangeTo toState: HKWorkoutSessionState,
+        from _: HKWorkoutSessionState,
+        date: Date
+    ) {
+        guard toState == .ended else { return }
+        builder?.endCollection(withEnd: date) { _, _ in
+            DispatchQueue.main.async {
+                if self.discardOnEnd {
+                    self.builder?.discardWorkout()
+                    self.builder = nil
+                    self.session = nil
+                    self.onWorkoutDiscarded?()
+                } else {
+                    self.builder?.finishWorkout { _, error in
+                        if let error = error {
+                            print("⚠️ Workout save error: \(error)")
+                        }
+                        self.onSessionExpired?()
+                    }
+                }
+            }
         }
-      }
     }
-  }
-  func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
-    print("Workout error:", error)
-  }
+
+    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
+        print("Workout error:", error)
+    }
 }
 
-// MARK: HKLiveWorkoutBuilderDelegate
+// MARK: –– HKLiveWorkoutBuilderDelegate
 extension SessionManager: HKLiveWorkoutBuilderDelegate {
-  func workoutBuilder(_ builder: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {}
-  func workoutBuilderDidCollectEvent(_ builder: HKLiveWorkoutBuilder) {}
+    func workoutBuilder(_ builder: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) { }
+    func workoutBuilderDidCollectEvent(_ builder: HKLiveWorkoutBuilder) { }
+}
+
+// MARK: –– LogMakeButton
+struct LogMakeButton: View {
+    @Binding var makes: Int
+    @Binding var currentStage: Int
+    let shotType: ShotType
+    @State private var stageMakes = 0
+    private var totalStages: Int { shotType.shots.count }
+    let onComplete: () -> Void
+
+    var body: some View {
+        Button {
+            WKInterfaceDevice.current().play(.success)
+            handleStageProgress()
+            makes += 1
+        } label: {
+            VStack(spacing: 5) {
+                Spacer()
+
+                // Top row: exactly 2 icons
+                HStack(spacing: 10) {
+                    ForEach(0..<2, id: \.self) { idx in
+                        iconView(filled: stageMakes > idx)
+                    }
+                }
+
+                // Bottom row: exactly (totalStages - 2) icons
+                HStack(spacing: 10) {
+                    ForEach(0..<max(0, totalStages - 2), id: \.self) { idx in
+                        iconView(filled: stageMakes > idx + 2)
+                    }
+                }
+
+                Spacer()
+
+                Text(shotType.shots[currentStage - 1])
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .fontDesign(.rounded)
+                    .foregroundStyle(.green)
+                    .contentTransition(.numericText())
+            }
+        }
+        .edgesIgnoringSafeArea(.all)
+        .tint(.green)
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.roundedRectangle(radius: 40))
+    }
+
+    private func handleStageProgress() {
+        if stageMakes < 4 {
+            stageMakes += 1
+        } else {
+            stageMakes += 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                withAnimation {
+                    stageMakes = 0
+                    if currentStage < totalStages {
+                        currentStage += 1
+                    } else {
+                        onComplete()
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func iconView(filled: Bool) -> some View {
+        Image(systemName: "basketball.fill")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 35)
+            .fontWeight(.semibold)
+            .foregroundStyle(.green.opacity(filled ? 0.75 : 0.25))
+            .animation(.easeIn(duration: 0.25), value: filled)
+    }
+}
+
+
+// MARK: –– Previews
+struct SessionView_Previews: PreviewProvider {
+    static var previews: some View {
+        SessionView(
+            mode: .freestyle,
+            shotType: .layups,
+            duration: nil,
+            path: .constant(NavigationPath())
+        )
+        .previewDisplayName("Drill Mode")
+    }
 }

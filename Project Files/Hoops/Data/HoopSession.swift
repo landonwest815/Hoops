@@ -43,7 +43,7 @@ enum ShotType: String, Codable, CaseIterable, Identifiable {
             switch self {
                 case .layups:         return .red
                 case .freeThrows:     return .blue
-                case .midrange:       return .orange
+                case .midrange:       return .blue
                 case .threePointers:  return .green
                 case .deep:           return .purple
                 case .allShots:       return .orange
@@ -57,7 +57,7 @@ enum ShotType: String, Codable, CaseIterable, Identifiable {
         case .layups:
             return ["Left-Handed Layup", "Right-Handed Layup", "Floater", "Reverse Layup", "Finger Roll"]
         case .midrange:
-            return ["Left Baseline Midrange", "Right Baseline Midrange", "Left Elbow Midrange", "Right Elbow Midrange", "Free Throw Line Midrange"]
+            return ["Left Baseline", "Right Baseline", "Left Elbow", "Right Elbow", "Free Throw Line"]
         case .threePointers:
             return ["Left Corner Three", "Right Corner Three", "Left Wing Three", "Right Wing Three", "Top of the Key Three"]
         case .deep:
