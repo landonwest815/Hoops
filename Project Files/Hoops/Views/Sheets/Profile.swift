@@ -294,15 +294,15 @@ struct Profile: View {
                     
                     Spacer()
                     
-                    Button {
-                        // Info button action placeholder.
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 20)
-                            .foregroundStyle(.gray)
-                    }
+//                    Button {
+//                        // Info button action placeholder.
+//                    } label: {
+//                        Image(systemName: "info.circle")
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(height: 20)
+//                            .foregroundStyle(.gray)
+//                    }
                 }
                 .padding(.horizontal, 5)
                 .padding(.horizontal)
@@ -321,7 +321,7 @@ struct Profile: View {
                         }
                         .padding(.horizontal)
                         
-                        HStack {
+                        HStack(spacing: 10) {
                             // Average Makes per Minute Display
                             VStack(alignment: .leading) {
                                 HStack {

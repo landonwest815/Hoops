@@ -85,11 +85,65 @@ struct SessionListView: View {
     }
     
     
+    // 1. Track which quote to show and persist across launches
+    @AppStorage("quoteIndex") private var quoteIndex: Int = -1
+    @State private var displayedQuote: String = ""
+    
+    // 2. Your list of quotes
+    let quotes: [String] = [
+        "I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty-six times, I've been trusted to take the game-winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.\n- Michael Jordan",
+        "The most important thing is to try and inspire people so that they can be great in whatever they want to do.\n- Kobe Bryant",
+        "I've got a theory that if you give 100% all of the time, somehow things will work out in the end.\n- Larry Bird",
+        "Ask not what your teammates can do for you. Ask what you can do for your teammates.\n- Magic Johnson",
+        "You can't be afraid to fail. It's the only way you succeed—you’re not gonna succeed all the time, and I know that.\n- LeBron James",
+        "Good, better, best. Never let it rest. Until your good is better and your better is best.\n- Tim Duncan",
+        "Hard work beats talent when talent fails to work hard.\n- Kevin Durant",
+        "Excellence is not a singular act, but a habit. You are what you repeatedly do.\n- Shaquille O’Neal",
+        "Sometimes a player's greatest challenge is coming to grips with his role on the team.\n- Scottie Pippen",
+        "The only difference between a good shot and a bad shot is if it goes in or not.\n- Charles Barkley",
+        "The strength of the team is each individual member. The strength of each member is the team.\n- Phil Jackson",
+        "There can only be one winner, and the rest are losers, but winners know they are winners before the results are in.\n- Pat Riley",
+        "Concentration and mental toughness are the margins of victory.\n- Bill Russell",
+        "My belief is stronger than your doubt.\n- Dwyane Wade",
+        "Things turn out best for the people who make the best of the way things turn out.\n- John Wooden",
+        "One man can be a crucial ingredient on a team, but one man cannot make a team.\n- Kareem Abdul-Jabbar",
+        "They say that nobody is perfect. Then they tell you practice makes perfect. I wish they'd make up their minds.\n- Wilt Chamberlain",
+        "Your biggest opponent isn't the other guy. It's human nature.\n- Derek Fisher",
+        "A lot of people say they want to be great, but they're not willing to make the sacrifices necessary to achieve greatness.\n- Jason Kidd",
+        "Every morning you have two choices: continue to sleep with your dreams, or wake up and chase them.\n- Carmelo Anthony",
+        "Being a professional is doing the things you love to do, on the days you don't feel like doing them.\n- Julius Erving",
+        "I always keep a ball in the car. You never know.\n- Hakeem Olajuwon",
+        "You win by effort, by commitment, by ambition, by quality, by expressing yourself individually but in the team context.\n- Doc Rivers"
+    ]
+
+    
     // MARK: - Body
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 15) {
+                    
+                    // Secret message header (hidden until pulled down)
+                    GeometryReader { geo in
+                        let y = geo.frame(in: .named("scroll")).minY
+
+                        // begin fading when the view is 20pt above the top,
+                        // finish by the time it's 100pt into view
+                        let fadeStart: CGFloat = -60
+                        let fadeEnd:   CGFloat = 60
+                        let raw = (y - fadeStart) / (fadeEnd - fadeStart)
+                        let clamped = min(max(raw, 0), 1)
+
+                        // optional smoothstep for an extra-soft curve
+                        let eased = clamped * clamped * (3 - 2 * clamped)
+
+                        QuoteView(raw: displayedQuote)
+                            .opacity(eased)
+                            .frame(height: 80)
+                            .offset(y: -15)
+                    }
+                    .frame(height: 80)
+                        
                     // An invisible spacer to allow smooth scrolling.
                     Color.clear
                         .frame(height: 1)
@@ -177,17 +231,26 @@ struct SessionListView: View {
                     // Add extra spacing at the bottom to allow scrolling past the last content.
                     Spacer(minLength: 200)
                 }
+                .offset(y: -100)
                 .padding(.horizontal)
                 // Hide scroll indicators and animate changes to the sessions array.
                 .scrollIndicators(.hidden)
                 .animation(.smooth, value: sessions)
             }
+            .coordinateSpace(name: "scroll")
             // Additional scroll settings.
             .scrollIndicators(.hidden)
             // Use the selectedDate to control scrolling (for example, when the date filter changes).
             .id(selectedDate)
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .ignoresSafeArea()
+            .onAppear {
+                // only do this once per launch
+                guard displayedQuote.isEmpty else { return }
+                let next = (quoteIndex + 1) % quotes.count
+                quoteIndex = next
+                displayedQuote = quotes[next]
+            }
         }
         // Confirmation dialog for deleting a session.
         .confirmationDialog("Are you sure you want to delete this session?", isPresented: $showConfirmDelete, titleVisibility: .visible) {
@@ -237,11 +300,47 @@ struct SessionListView: View {
         switch sessionType {
         case "Freestyle": return "Shoot hoops!"
         case "Challenge": return "Challenge yourself!"
-        case "Drill": return "Hit some Drills!"
+        case "Drill": return "Run some Drills!"
         default: return "Shoot hoops!"
         }
     }
 }
+
+
+
+struct QuoteView: View {
+    /// incoming string in the form
+    ///    "…quote body…\n- Author Name"
+    let raw: String
+
+    private var parts: (body: String, author: String) {
+        let comps = raw.components(separatedBy: "\n- ")
+        let body = comps.first ?? raw
+        let author = comps.dropFirst().first.map { "- " + $0 } ?? ""
+        return (body, author)
+    }
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Text("“\(parts.body)”")
+                .font(.footnote)
+                .multilineTextAlignment(.center)
+                .lineSpacing(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(parts.author)
+                .font(.caption2)
+                .italic()
+                .multilineTextAlignment(.center)
+        }
+        .foregroundStyle(.gray.opacity(0.875))
+        .padding(.horizontal, 25)
+        // if you still want to limit overall height, center within that:
+        .frame(maxWidth: .infinity, minHeight: 60, alignment: .center)
+    }
+}
+
+
 
 
 // MARK: - FloatingActionButton

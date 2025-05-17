@@ -82,10 +82,10 @@ struct TrophyPopupView: View {
                     
                     // Display the threshold value that was unlocked.
                     Text(String(displayedThreshold))
-                        .font(.system(size: 100))
+                        .font(.system(size: 125))
                         .fontWeight(.heavy)
                         .fontDesign(.rounded)
-                        .foregroundStyle(.white.opacity(0.15))
+                        .foregroundStyle(.white.opacity(0.25))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                 }

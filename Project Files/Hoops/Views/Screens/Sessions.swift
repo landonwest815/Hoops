@@ -154,7 +154,9 @@ struct Sessions: View {
     private var toolbarContent: some ToolbarContent {
         Group {
             ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button(action: { activeSheet = .settings }) {
+                Button(action: {
+                    openSheet(.settings)
+                }) {
                     Image(systemName: "gear")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -172,35 +174,51 @@ struct Sessions: View {
             }
 
             ToolbarItemGroup(placement: .principal) {
-                Button(action: { activeSheet = .profile }) {
+                Button(action: {
+                    openSheet(.profile)
+                }) {
                     Text("hoops.")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                        .frame(height: 20)
+                      .font(.title2)
+                      .fontWeight(.semibold)
+                      .foregroundStyle(.white)
+                      .frame(height: 20)
                 }
                 .disabled(showTrophyPopup)
                 .opacity(showTrophyPopup ? 0.33 : 1.0)
             }
 
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button(action: { if !isTodayVisible { jumpToToday() } }) {
-                    HStack(spacing: 5) {
-                        if isTodayVisible {
-                            StreakBadgeView(streak: streak)
-                        } else {
-                            Text("Today").font(.system(size: 14)).fontWeight(.semibold).fontDesign(.rounded).foregroundStyle(.white)
-                            Image(systemName: "arrow.forward").font(.system(size: 9)).fontWeight(.bold).foregroundStyle(.white)
-                        }
-                    }
-                    .frame(width: 75, height: 30)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(18)
-                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(style: StrokeStyle(lineWidth: 1)).foregroundColor(.gray.opacity(0.25)))
-                    .animation(.easeInOut(duration: 0.25), value: isTodayVisible)
+              Button {
+                if !isTodayVisible {
+                  withAnimation(.easeInOut(duration: 0.25)) {
+                    jumpToToday()
+                  }
                 }
-                .disabled(showTrophyPopup)
-                .opacity(showTrophyPopup ? 0.33 : 1.0)
+              } label: {
+                HStack(spacing: 5) {
+                  if isTodayVisible {
+                    StreakBadgeView(streak: streak) 
+                  } else {
+                    Text("Today")
+                      .font(.system(size: 14))
+                      .fontWeight(.semibold)
+                      .fontDesign(.rounded)
+                      .foregroundStyle(.white)
+                    Image(systemName: "arrow.forward")
+                      .font(.system(size: 9))
+                      .fontWeight(.bold)
+                      .foregroundStyle(.white)
+                  }
+                }
+                .frame(width: 75, height: 30)
+                .background(.ultraThinMaterial)
+                .cornerRadius(18)
+                .overlay(RoundedRectangle(cornerRadius: 18)
+                          .stroke(style: .init(lineWidth: 1))
+                          .foregroundColor(.gray.opacity(0.25)))
+              }
+              .disabled(showTrophyPopup || isTodayVisible)
+              .opacity(showTrophyPopup ? 0.33 : 1.0)
             }
         }
     }
@@ -248,14 +266,16 @@ struct Sessions: View {
     }
 
     private func toggleMetric(_ metric: GraphType) {
-        if activeSheet != .stats {
-            activeSheet = .stats
-        }
-        if selectedMetric != metric {
-            withAnimation { selectedMetric = metric }
-        } else {
-            activeSheet = .none
-            withAnimation { selectedMetric = .none }
+        withAnimation {
+            if selectedMetric == metric {
+                // same button tapped twice → close
+                selectedMetric = .none
+                activeSheet    = .none
+            } else {
+                // new metric → select + open
+                selectedMetric = metric
+                activeSheet    = .stats
+            }
         }
     }
 
@@ -290,6 +310,21 @@ struct Sessions: View {
         }
 
         AccoladeLogic.setPersistedTrophyLevels(storedLevels)
+    }
+    
+    
+    /// Smoothly dismiss any open sheet, then present the new one.
+    private func openSheet(_ sheet: ActiveSheet) {
+        // if something’s already up, dismiss it first
+        if activeSheet != .none && activeSheet != sheet {
+            activeSheet = .none
+            // wait for the sheet to animate down
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                withAnimation { activeSheet = sheet }
+            }
+        } else {
+            withAnimation { activeSheet = sheet }
+        }
     }
 }
 

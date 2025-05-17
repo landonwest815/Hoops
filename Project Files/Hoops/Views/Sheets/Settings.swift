@@ -24,13 +24,12 @@ struct Settings: View {
     @State private var showDeleteSheet = false
     @State private var currentIconName: String? = UIApplication.shared.alternateIconName
     
-    @State private var showHistory: Bool = false
+   // @State private var showHistory: Bool = false
     
     @Binding var showOnboarding: Bool
     
     var body: some View {
         ZStack {
-            NavigationStack {
                 VStack(spacing: 5) {
                     HStack(spacing: 12) {
                         Text("My Settings")
@@ -43,14 +42,26 @@ struct Settings: View {
                     .padding(.horizontal, 5)
                     .padding(.top, 25)
                     
-                    // App Icon Picker
-                    HStack(spacing: 25) {
-                        appIconButton(name: nil, image: "iconImage0")
-                        appIconButton(name: "AppIcon1", image: "iconImage1")
-                        appIconButton(name: "AppIcon2", image: "iconImage2")
+                    VStack(spacing: 0) {
+                        UniformButton(
+                            leftIconName: "square.filled.on.square",
+                            leftText: "App Icon",
+                            leftColor: .white
+                        ) { EmptyView() }
+                            .padding()
+                            .cornerRadius(10)
+                        
+                        // App Icon Picker
+                        HStack(spacing: 25) {
+                            appIconButton(name: nil, image: "iconImage0")
+                            appIconButton(name: "AppIcon1", image: "iconImage1")
+                            appIconButton(name: "AppIcon2", image: "iconImage2")
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 3)
+                        .padding(.bottom)
+                        .cornerRadius(10)
                     }
-                    .padding()
-                    .cornerRadius(10)
     
                     
                     Divider()
@@ -77,27 +88,27 @@ struct Settings: View {
                     
                     Divider()
                     
-                    UniformButton(
-                        leftIconName: "list.clipboard.fill",
-                        leftText: "History",
-                        leftColor: .white
-                    ) {
-                        Button {
-                            showHistory = true
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Show me")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                    .fontDesign(.rounded)
-                                    .foregroundStyle(.gray)
-                            }
-                        }
-                        .frame(width: 100)
-                    }
-                    .padding()
-                    .cornerRadius(10)
+//                    UniformButton(
+//                        leftIconName: "list.clipboard.fill",
+//                        leftText: "History",
+//                        leftColor: .white
+//                    ) {
+//                        Button {
+//                            showHistory = true
+//                        } label: {
+//                            HStack {
+//                                Spacer()
+//                                Text("Show me")
+//                                    .font(.title3)
+//                                    .fontWeight(.semibold)
+//                                    .fontDesign(.rounded)
+//                                    .foregroundStyle(.gray)
+//                            }
+//                        }
+//                        .frame(width: 100)
+//                    }
+//                    .padding()
+//                    .cornerRadius(10)
                     
                     UniformButton(
                         leftIconName: "questionmark.circle.fill",
@@ -122,6 +133,8 @@ struct Settings: View {
                     .padding()
                     .cornerRadius(10)
                     
+                    Divider()
+                    
                     UniformButton(
                         leftIconName: "archivebox.fill",
                         leftText: "App Data",
@@ -132,7 +145,7 @@ struct Settings: View {
                                 showDeleteSheet = true
                             }
                         } label: {
-                            Text("Erase Data")
+                            Text("Full Reset")
                                 .foregroundStyle(.red)
                         }
                     }
@@ -164,10 +177,10 @@ struct Settings: View {
                     
                 }
                 .padding(.horizontal)
-                .navigationDestination(isPresented: $showHistory) {
-                    SessionHistoryView() // This should be the view showing all sessions
-                }
-            }
+//                .navigationDestination(isPresented: $showHistory) {
+//                    SessionHistoryView() // This should be the view showing all sessions
+//                }
+            
             
             if showDeleteSheet {
                 Color.black.opacity(0.001)
@@ -179,7 +192,7 @@ struct Settings: View {
                 
                 VStack {
                     Spacer()
-                    DeleteConfirmationSheet(prompt: "Are you sure you want to delete everything?") {
+                    DeleteConfirmationSheet(prompt: "Are you sure you want to delete all of your Hoops data?", subprompt: "This cannot be undone.") {
                         withAnimation {
                             for session in sessions {
                                 context.delete(session)
@@ -246,47 +259,155 @@ struct Settings: View {
 
 // MARK: - Supporting Views
 
+
 struct DeleteConfirmationSheet: View {
     let prompt: String
+    let subprompt: String
     let onDelete: () -> Void
     let onCancel: () -> Void
 
+    @GestureState private var isPressing = false
+    @State private var didComplete = false
+    @State private var fillProgress: CGFloat = 0
+    @StateObject private var haptics = HapticManager()
+
     var body: some View {
         VStack(spacing: 20) {
-            Text(prompt)
-                .font(.headline)
-                .multilineTextAlignment(.center)
-            
-            HStack {
+            // MARK: Prompts
+            VStack(spacing: 10) {
+                Text(prompt)
+                Text(subprompt)
+                    .foregroundStyle(.gray)
+            }
+            .font(.headline)
+            .multilineTextAlignment(.center)
+
+            HStack(spacing: 12) {
+                // Cancel button
                 Button(action: onCancel) {
                     Text("Cancel")
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(.title3).fontWeight(.semibold)
                         .foregroundStyle(.gray)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(.ultraThinMaterial)
                         .cornerRadius(12)
                 }
-                Button(action: onDelete) {
-                    Text("Delete")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.red)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(.red.opacity(0.33))
-                        .cornerRadius(12)
+
+                // Delete long-press
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Rectangle().fill(Color.red.opacity(0.33))
+                        Rectangle()
+                            .fill(Color.red)
+                            .frame(width: geo.size.width * fillProgress)
+                        Text("Delete")
+                            .font(.title3).fontWeight(.semibold)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: 12))
+                    .scaleEffect(didComplete ? 1.05 : 1)
+                    .gesture(
+                        LongPressGesture(minimumDuration: 1)
+                            .updating($isPressing) { cur, state, _ in state = cur }
+                            .onEnded { _ in
+                                // stop continuous rumble
+                                haptics.stopRumble()
+                                // click haptic
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+                                // pulse
+                                withAnimation(.easeOut(duration: 0.15)) { didComplete = true }
+                                DispatchQueue.main.asyncAfter(deadline: .now()+0.15) {
+                                    withAnimation(.easeIn(duration: 0.15)) { didComplete = false }
+                                }
+
+                                // finally fire delete after full pulse
+                                DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
+                                    onDelete()
+                                    fillProgress = 0
+                                }
+                            }
+                    )
+                    .onChange(of: isPressing) { pressing in
+                        if pressing && !didComplete {
+                            // start continuous rumble & fill
+                            haptics.startRumble()
+                            withAnimation(.linear(duration: 1)) { fillProgress = 1 }
+                        } else if !pressing && !didComplete {
+                            // canceled early
+                            haptics.stopRumble()
+                            withAnimation(.easeOut(duration: 0.1)) { fillProgress = 0 }
+                        }
+                    }
                 }
+                .frame(height: 50)
             }
         }
         .padding()
         .background(Color(red: 0.125, green: 0.125, blue: 0.125))
         .cornerRadius(28)
         .shadow(radius: 20)
-        .padding(.horizontal)
+        .padding(.horizontal)    }
+}
+
+
+import CoreHaptics
+
+/// Manages a continuous haptic pattern
+class HapticManager: ObservableObject {
+    private var engine: CHHapticEngine?
+    private var player: CHHapticAdvancedPatternPlayer?
+
+    init() { prepare() }
+
+    private func prepare() {
+        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
+        do {
+            engine = try CHHapticEngine()
+            try engine?.start()
+        } catch {
+            print("⚠️ haptics failed:", error)
+        }
+    }
+
+    /// Start a long‐running rumble (we’ll stop it manually)
+    func startRumble() {
+        guard let engine = engine else { return }
+        // continuous event with moderate intensity/sharpness
+        let event = CHHapticEvent(
+            eventType: .hapticContinuous,
+            parameters: [
+                .init(parameterID: .hapticIntensity, value: 0.5),
+                .init(parameterID: .hapticSharpness, value: 0.5)
+            ],
+            relativeTime: 0,
+            duration: 10  // long enough; we’ll stop early
+        )
+        do {
+            let pattern = try CHHapticPattern(events: [event], parameters: [])
+            player = try engine.makeAdvancedPlayer(with: pattern)
+            try player?.start(atTime: 0)
+        } catch {
+            print("⚠️ failed to start rumble:", error)
+        }
+    }
+
+    /// Stop any ongoing rumble
+    func stopRumble() {
+        do {
+            try player?.stop(atTime: CHHapticTimeImmediate)
+        } catch {
+            print("⚠️ failed to stop rumble:", error)
+        }
     }
 }
+
+
 
 struct UniformButton<RightContent: View>: View {
     let leftIconName: String

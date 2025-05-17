@@ -51,6 +51,7 @@
 /* Begin PBXFileReference section */
 		911086FA2DD6419F00FA2049 /* Hoops-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Hoops-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		911086FB2DD641AF00FA2049 /* Hoops Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Hoops Watch App.entitlements"; sourceTree = "<group>"; };
+		913EA6662DD853B0007A8A22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		91A5A0A22DA8713F001A4FCE /* HoopsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HoopsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -138,6 +139,7 @@
 		91AD54C82B449DDC00F4D367 /* Hoops */ = {
 			isa = PBXGroup;
 			children = (
+				913EA6662DD853B0007A8A22 /* Info.plist */,
 				9158C9BF2DD3E66C00D60F4C /* App */,
 				9101D9AA2D4A8EED00C5DBB2 /* Utilities */,
 				9101D9A82D4A8ED500C5DBB2 /* Data */,
@@ -614,12 +616,14 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Hoops/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Hoops/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -649,12 +653,14 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Hoops/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Hoops/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

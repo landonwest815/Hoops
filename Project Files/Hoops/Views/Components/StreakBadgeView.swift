@@ -37,6 +37,7 @@ struct StreakBadgeView: View {
                 .fontDesign(.rounded)
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
+                .contentTransition(.numericText())
         }
     }
 }

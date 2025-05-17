@@ -46,7 +46,8 @@ struct WeeklyShotTrackerView: View {
     var body: some View {
         VStack(spacing: 2.5) {
             HStack(spacing: 10) {
-                ForEach(rotatedWeekdays, id: \.self) { daySymbol in
+                ForEach(rotatedWeekdays.indices, id: \.self) { idx in
+                    let daySymbol = rotatedWeekdays[idx]
                     Text(daySymbol)
                         .font(.caption)
                         .fontWeight(.regular)

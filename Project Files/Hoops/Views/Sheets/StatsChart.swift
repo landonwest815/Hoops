@@ -156,18 +156,16 @@ struct StatsChart: View {
     var body: some View {
         VStack(spacing: 15) {
             headerView
-            chartView
             
             // Picker row for shot types and time range.
-            HStack {
+            HStack(spacing: 10) {
                 ShotTypePicker(shotType: $shotType)
                 TimeRangeSegmentedPicker(selectedTimeRange: $selectedTimeRange, shotType: $shotType)
             }
-            .padding(.top, 5)
-            .padding(.horizontal)
+            
+            chartView
             
             benchmarksView
-                .padding(.top, 20)
         }
         .padding(.horizontal)
         .padding(.top)
@@ -183,7 +181,7 @@ struct StatsChart: View {
     
     /// Displays a header showing the selected metric and date.
     private var headerView: some View {
-        HStack(spacing: 15) {
+        HStack(spacing: 20) {
             Text(selectedMetric.rawValue)
                 .font(.title3)
                 .fontWeight(.semibold)
@@ -194,7 +192,7 @@ struct StatsChart: View {
                 Image(systemName: "calendar")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 18)
+                    .frame(height: 16)
                 // Displays the selected date in a human-readable format.
                 Text(formattedDate)
                     .id(selectedDate)
@@ -382,114 +380,72 @@ struct StatsChart: View {
                 }
             }
         }
-        .frame(width: 350, height: 175)
+        .frame(maxWidth: .infinity, maxHeight: 175)
         .background(.black.opacity(0.125))
         .cornerRadius(25)
         .overlay(
             RoundedRectangle(cornerRadius: 25)
                 .stroke(.gray.opacity(0.25), lineWidth: 1)
         )
-        .padding(.horizontal)
+    }
+    
+    private var todayValue: String {
+        guard
+          let latest = computedData.last,
+          Calendar.current.isDate(latest.date, inSameDayAs: Date())
+        else {
+          return "–"
+        }
+
+        if latest.value.truncatingRemainder(dividingBy: 1) == 0 {
+            return "\(Int(latest.value))"
+        } else {
+            return String(format: "%.2f", latest.value)
+        }
     }
     
     /// Displays benchmark metrics such as average, today's metric, trend, best, and worst values.
     private var benchmarksView: some View {
-        VStack {
-            HStack(alignment: .top, spacing: 50) {
-                // Average Metric display.
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Average")
-                        .font(.subheadline)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.gray)
-                    Text(averageValue == 0 ? "-" :
-                         (averageValue.truncatingRemainder(dividingBy: 1) == 0 ?
-                             "\(Int(averageValue))" : String(format: "%.2f", averageValue)))
-                        .font(.title)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(averageValue == 0 ? .gray : .white)
-                }
+        VStack(spacing: 10) {
+            HStack(alignment: .top, spacing: 10) {
                 
-                // Today's Metric display.
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Today")
-                        .font(.subheadline)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.gray)
-                    if let latest = computedData.last,
-                       Calendar.current.isDate(latest.date, inSameDayAs: Date()) {
-                        Text(latest.value.truncatingRemainder(dividingBy: 1) == 0 ?
-                             "\(Int(latest.value))" :
-                             String(format: "%.2f", latest.value))
-                            .font(.title)
-                            .fontDesign(.rounded)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.white)
-                    } else {
-                        Text("-")
-                            .font(.title)
-                            .fontDesign(.rounded)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.gray)
-                    }
-                }
+                InfoCard(title: "Average", iconName: "lines.measurement.horizontal", iconColor: .red, textValue: String(averageValue))
                 
-                // Trend Metric display.
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Trend")
-                        .font(.subheadline)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.gray)
-                    Image(systemName: trendIcon)
-                        .font(.title)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundColor(trendColor)
-                        .padding(.top, 5)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, 1)
+                InfoCard(title: "Today", iconName: "calendar", iconColor: .blue, textValue: todayValue)
+                
+                InfoCard(title: "Trend", iconName: trendIcon, iconColor: trendColor, textValue: "")
+                    .frame(maxWidth: 65)
             
-            HStack(alignment: .top, spacing: 50) {
-                // Best Metric display.
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Best")
-                        .font(.subheadline)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.gray)
-                    Text(bestValue == 0 ? "-" :
-                         (bestValue.truncatingRemainder(dividingBy: 1) == 0 ?
-                             "\(Int(bestValue))" : String(format: "%.2f", bestValue)))
-                        .font(.title)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(bestValue == 0 ? .gray : .white)
-                }
-                
-                // Worst Metric display.
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Worst")
-                        .font(.subheadline)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.gray)
-                    Text(worstValue == 0 ? "-" :
-                         (worstValue.truncatingRemainder(dividingBy: 1) == 0 ?
-                             "\(Int(worstValue))" : String(format: "%.2f", worstValue)))
-                        .font(.title)
-                        .fontDesign(.rounded)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(worstValue == 0 ? .gray : .white)
-                }
             }
-            .padding(.horizontal)
-            .padding(.top, 1)
+            
+            HStack(alignment: .top, spacing: 10) {
+                
+                InfoCard(
+                    title: "Best",
+                    iconName: "trophy.fill",
+                    iconColor: .yellow,
+                    textValue: bestValue == 0
+                        ? "-"
+                        : (bestValue.truncatingRemainder(dividingBy: 1) == 0
+                            ? "\(Int(bestValue))"
+                            : String(format: "%.2f", bestValue))
+                )
+                
+                InfoCard(
+                    title: "Worst",
+                    iconName: "trash.fill",
+                    iconColor: .gray,
+                    textValue: worstValue == 0
+                        ? "-"
+                        : (worstValue.truncatingRemainder(dividingBy: 1) == 0
+                           ? "\(Int(worstValue))"
+                           : String(format: "%.2f", worstValue))
+                )
+                
+                
+            }
+            .padding(.horizontal, 30)
+            
             Spacer()
         }
     }
@@ -602,9 +558,9 @@ struct ShotTypePicker: View {
                 .font(.headline)
                 .padding(6)
                 .background(.ultraThinMaterial)
-                .cornerRadius(12)
+                .cornerRadius(16)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 16)
                         .stroke(.gray.opacity(0.25), lineWidth: 1)
                 )
         }
@@ -637,8 +593,8 @@ struct TimeRangeSegmentedPicker: View {
                         .font(.headline)
                         .lineLimit(1)
                         .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
                         .foregroundStyle(selectedTimeRange == range ? lineColor : .gray)
+                        .padding(.horizontal)
                 }
             }
         }
@@ -647,13 +603,106 @@ struct TimeRangeSegmentedPicker: View {
         .fontWeight(.semibold)
         .padding(6)
         .background(.ultraThinMaterial)
-        .cornerRadius(12)
+        .cornerRadius(16)
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(.gray.opacity(0.25), lineWidth: 1)
         )
     }
 }
+
+
+
+
+struct InfoCard: View {
+    let title: String
+    let iconName: String
+    let iconColor: Color
+    private let textValue: String?
+    private let symbolValue: String?
+
+    // MARK: - Inits
+
+    /// Displays a text value to the right of the icon
+    init(title: String,
+         iconName: String,
+         iconColor: Color = .white,
+         textValue: String)
+    {
+        self.title = title
+        self.iconName = iconName
+        self.iconColor = iconColor
+        self.textValue = textValue
+        self.symbolValue = nil
+    }
+
+    /// Displays a secondary SF Symbol to the right of the icon
+    init(title: String,
+         iconName: String,
+         iconColor: Color = .white,
+         symbolValue: String)
+    {
+        self.title = title
+        self.iconName = iconName
+        self.iconColor = iconColor
+        self.symbolValue = symbolValue
+        self.textValue = nil
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2.5) {
+            HStack {
+                // Leading icon
+                Image(systemName: iconName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 16)
+                    .foregroundColor(iconColor)
+                    .fontWeight(.semibold)
+
+                // Either text or symbol
+                if let text = textValue {
+                    Text(text)
+                        .font(.title3)
+                        .fontDesign(.rounded)
+                        .fontWeight(.semibold)
+                        .contentTransition(.numericText())
+                        .foregroundColor(.white)
+                        .frame(height: 25)
+                }
+                else if let sym = symbolValue {
+                    Image(systemName: sym)
+                        .font(.title3)
+                        .fontDesign(.rounded)
+                        .fontWeight(.semibold)
+                        .foregroundColor(iconColor)
+                }
+                
+                Spacer()
+            }
+
+            // Title underneath
+            Text(title)
+                .font(.caption)
+                .fontDesign(.rounded)
+                .fontWeight(.regular)
+                .foregroundColor(.gray)
+        }
+        .padding(.horizontal, 15)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity)
+        .background(.ultraThinMaterial)
+        .cornerRadius(18)
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(style: StrokeStyle(lineWidth: 1))
+                .foregroundColor(.gray.opacity(0.25))
+        )
+    }
+}
+
+
+
 
 // MARK: - Preview
 #Preview {

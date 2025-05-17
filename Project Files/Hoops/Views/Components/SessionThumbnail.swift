@@ -243,6 +243,6 @@ struct PlaceholderThumbnail: View {
         // Preview an example session thumbnail.
         SessionThumbnail(date: Date.now, makes: 125, length: 300, average: 2.3, shotType: .deep)
         // Preview the placeholder thumbnail.
-        PlaceholderThumbnail(prompt: "Go hit some Drills!")
+        PlaceholderThumbnail(prompt: "Go run some Drills!")
     }
 }
