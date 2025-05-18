@@ -38,9 +38,9 @@ enum SessionMode: Hashable {
 }
 
 struct ContentView: View {
-    @State private var path = NavigationPath()
-    @State private var authStatus: HKAuthorizationStatus?
+    @Binding var path: NavigationPath
 
+    @State private var hasWorkoutPermission = false
     private let healthStore = HKHealthStore()
 
     var body: some View {
@@ -52,19 +52,17 @@ struct ContentView: View {
                     .fontDesign(.rounded)
                     .foregroundStyle(.white)
 
-                // While status is undetermined or still loading, show the "Enable" button.
-                if authStatus == nil || authStatus == .notDetermined {
-                    Button("Enable HealthKit") {
-                        requestHealthAuthorization()
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.green)
-                } else {
-                    // Once the user has granted or denied, show "New Session"
+                if hasWorkoutPermission {
                     NavigationLink(value: AppRoute.modeSelection) {
                         Text("New Session")
                     }
                     .hapticNavLinkStyle()
+                    .tint(.green)
+                } else {
+                    Button("Enable HealthKit") {
+                        requestWorkoutAuthorization()
+                    }
+                    .buttonStyle(.bordered)
                     .tint(.green)
                 }
 
@@ -77,15 +75,13 @@ struct ContentView: View {
                     .offset(x: 10, y: -5)
             }
             .offset(y: 95)
-            .onAppear(perform: loadAuthorizationStatus)
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .modeSelection:
                     ModeSelection(path: $path)
-
                 case .shotSelection(let mode):
                     SelectionList(
-                        title: mode == .challenge ? "Challenge Type" : mode.title + " Type",
+                        title: mode.title + " Type",
                         items: ShotType.allCases,
                         label: { $0.displayName },
                         tint: { $0.color },
@@ -96,7 +92,6 @@ struct ContentView: View {
                         },
                         path: $path
                     )
-
                 case .challengeDuration(let shot):
                     SelectionList(
                         title: "Pick Duration",
@@ -114,15 +109,8 @@ struct ContentView: View {
                         },
                         path: $path
                     )
-
                 case .session(let mode, let shot, let duration):
-                    SessionView(
-                        mode: mode,
-                        shotType: shot,
-                        duration: duration,
-                        path: $path
-                    )
-
+                    SessionView(mode: mode, shotType: shot, duration: duration, path: $path)
                 case .results(let mode, let shot, let duration, let makes, let time):
                     ResultsView(
                         path: $path,
@@ -134,24 +122,46 @@ struct ContentView: View {
                 }
             }
         }
+        .onAppear(perform: checkWorkoutPermission)
     }
-    
-    private func loadAuthorizationStatus() {
-       authStatus = healthStore.authorizationStatus(for: .workoutType())
-   }
 
-   private func requestHealthAuthorization() {
-       guard HKHealthStore.isHealthDataAvailable() else { return }
-       let toShare: Set = [ HKObjectType.workoutType() ]
-       let toRead:  Set = [ HKObjectType.workoutType() ]
-       healthStore.requestAuthorization(toShare: toShare, read: toRead) { success, _ in
-           DispatchQueue.main.async {
-               authStatus = healthStore.authorizationStatus(for: .workoutType())
-           }
-       }
-   }
+    private func checkWorkoutPermission() {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            hasWorkoutPermission = false
+            return
+        }
+        let status = healthStore.authorizationStatus(for: .workoutType())
+        hasWorkoutPermission = (status == .sharingAuthorized)
+        print("🔍 workoutType status = \(status.rawValue) (\(status)), hasWorkoutPermission = \(hasWorkoutPermission)")
+    }
+
+    private func requestWorkoutAuthorization() {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            print("⚠️ HealthKit not available")
+            return
+        }
+
+        let toShare: Set<HKSampleType> = [.workoutType()]
+
+        var toRead: Set<HKObjectType> = [.workoutType()]
+        if let hr = HKQuantityType.quantityType(forIdentifier: .heartRate) {
+            toRead.insert(hr)
+        }
+        if let energy = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) {
+            toRead.insert(energy)
+        }
+
+        print("🔹 Requesting HealthKit permissions…")
+        healthStore.requestAuthorization(toShare: toShare, read: toRead) { success, error in
+            DispatchQueue.main.async {
+                print("🔸 workoutType auth callback – success: \(success), error: \(String(describing: error))")
+                self.hasWorkoutPermission = success
+            }
+        }
+    }
 }
 
 #Preview {
-    ContentView()
+    @Previewable @State var path = NavigationPath()
+    ContentView(path: $path)
 }

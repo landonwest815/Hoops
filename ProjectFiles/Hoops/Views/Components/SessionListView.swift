@@ -170,12 +170,12 @@ struct SessionListView: View {
             .id(selectedDate)
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .ignoresSafeArea()
-            .onAppear {
-                guard displayedQuote.isEmpty else { return }
-                let next = (quoteIndex + 1) % quotes.count
-                quoteIndex = next
-                displayedQuote = quotes[next]
-            }
+        }
+        .onAppear {
+            guard displayedQuote.isEmpty else { return }
+            let next = (quoteIndex + 1) % quotes.count
+            quoteIndex = next
+            displayedQuote = quotes[next]
         }
         .confirmationDialog(
             "Are you sure you want to delete this session?",
@@ -276,7 +276,7 @@ struct HeaderView: View {
     @Binding var selectedDate: Date
     @Binding var sortMode: SortMode
 
-    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat = "M dd, yyyy"
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat = "MMM d, yyyy"
 
     private var formattedDate: String {
         let formatter = DateFormatter()

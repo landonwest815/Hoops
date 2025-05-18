@@ -41,13 +41,14 @@ struct WeeklyShotTrackerView: View {
     var body: some View {
         VStack(spacing: 2.5) {
             HStack(spacing: 10) {
-                ForEach(rotatedWeekdays, id: \.self) { d in
-                    Text(d)
-                        .font(.caption)
-                        .frame(maxWidth: .infinity)
-                        .foregroundStyle(.secondary)
-                }
+              ForEach(rotatedWeekdays.indices, id: \.self) { idx in
+                Text(rotatedWeekdays[idx])
+                  .font(.caption)
+                  .frame(maxWidth: .infinity)
+                  .foregroundStyle(.secondary)
+              }
             }
+            
             HStack(spacing: 10) {
                 ForEach(daysOfWeek, id: \.self) { day in
                     let startOfDay = calendar.startOfDay(for: day)

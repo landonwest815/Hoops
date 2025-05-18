@@ -11,11 +11,11 @@ import UserNotifications
 
 /// Manages WatchConnectivity between iPhone and Apple Watch and posts a notification on new sessions.
 class WatchConnector: NSObject, ObservableObject, WCSessionDelegate {
-    private let session: WCSession
+    static let shared = WatchConnector()
+    private let session = WCSession.default
     var modelContext: ModelContext?
 
-    init(session: WCSession = .default) {
-        self.session = session
+    override init() {
         super.init()
         session.delegate = self
         session.activate()
@@ -65,10 +65,79 @@ class WatchConnector: NSObject, ObservableObject, WCSessionDelegate {
         sendNotification(shotType: shotType, sessionType: sessionType, length: length)
     }
 
+    // Singleton that hands out notification titles in a shuffled order, per shot type,
+    // and never repeats until every title has been used once.
+    final class NotificationTitleProvider {
+        static let shared = NotificationTitleProvider()
+
+        private var queues: [ShotType: [String]] = [:]
+        private let allTitles: [ShotType: [String]] = [
+            .layups: [
+                "Nothing but net down low! 🏀",
+                "Smooth finishes! 💪",
+                "Layup game on point! ⭐️",
+                "At the rim like Wemby! 👽",
+                "Owning the paint like Shaq! 💥"
+            ],
+            .freeThrows: [
+                "Free throws locked in! 🎯",
+                "Nailed those freebies! 🙌",
+                "Perfect from the line! 🏅",
+                "Mamba Mentality at the stripe! 🐍"
+            ],
+            .midrange: [
+                "Midrange magic! ✨",
+                "Sweet pull-up jumper! 🌟",
+                "That midrange is money! 💰",
+                "Mid-range magic, CP3 style! 🏀",
+                "Dirk-style one-legged splash! 🇩🇪"
+            ],
+            .threePointers: [
+                "Splash! 🌊",
+                "Rainmaker from deep! ☔️",
+                "Triple threat success! 🎯",
+                "Steph Curry with the shot! 🏆",
+                "Splash Brother energy! 💦"
+            ],
+            .deep: [
+                "Deep bomb detonated! 💣",
+                "From way downtown! 🏙️",
+                "Ice cold from deep! ❄️",
+                "Lillard’s range unlocked! 🔥",
+                "Luka Magic deep dagger! 🔪"
+            ],
+            .allShots: [
+                "Great job on your session! 🏀",
+                "You crushed it! 🔥",
+                "Hoops session complete! ⛹️‍♂️",
+                "Keep that momentum! 🙌",
+                "Time to celebrate those makes! 🎉",
+            ]
+        ]
+
+        private init() {
+          resetAllQueues()
+        }
+
+        private func resetAllQueues() {
+          queues = allTitles.mapValues { titles in titles.shuffled() }
+        }
+
+        /// Returns the next title for a given shot type, reshuffling when exhausted.
+        func next(for shotType: ShotType) -> String {
+          // if queue empty (or not yet created), refill & shuffle
+          if queues[shotType]?.isEmpty ?? true {
+            queues[shotType] = allTitles[shotType]!.shuffled()
+          }
+          // pop the first off
+          return queues[shotType]!.removeFirst()
+        }
+    }
+
     private func sendNotification(shotType: ShotType, sessionType: SessionType, length: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "New \(sessionType.rawValue) Session"
-        content.body = "\(shotType.rawValue) | \(length/60)m \(length%60)s"
+        content.title = NotificationTitleProvider.shared.next(for: shotType)
+        content.body = "\(shotType.rawValue) \(sessionType.rawValue) completed"
         content.sound = .default
 
         let request = UNNotificationRequest(

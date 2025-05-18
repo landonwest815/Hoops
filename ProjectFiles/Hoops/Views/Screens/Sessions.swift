@@ -34,7 +34,7 @@ struct Sessions: View {
     ]
     @State private var sortMode: SortMode = .byTime
 
-    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat = "M dd, yyyy"
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat = "MMM d, yyyy"
     @AppStorage(AppSettingsKeys.startOfWeek)  private var startOfWeek = "Sunday"
 
     @Binding var showOnboarding: Bool

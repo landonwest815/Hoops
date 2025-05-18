@@ -29,7 +29,7 @@ struct StatsChart: View {
     @State private var currentActiveSession: HoopSession?
     @State private var computedData: [(date: Date, value: Double)] = []
     
-    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "M dd, yyyy"
+    @AppStorage(AppSettingsKeys.dateFormat) private var dateFormat: String = "MMM d, yyyy"
 
     var lineColor: Color {
         switch shotType {

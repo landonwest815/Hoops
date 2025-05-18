@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		914E18822DD9A95000F1D86F /* watchDemo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 914E18812DD9A95000F1D86F /* watchDemo.mp4 */; };
+		914E18892DD9B30100F1D86F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914E18882DD9B30100F1D86F /* WidgetKit.framework */; };
+		914E188B2DD9B30100F1D86F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 914E188A2DD9B30100F1D86F /* SwiftUI.framework */; };
+		914E18962DD9B30300F1D86F /* HoopsComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 914E18872DD9B30100F1D86F /* HoopsComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		916C3D422DD662910086588D /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */; };
 		91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54CD2B449DDD00F4D367 /* Assets.xcassets */; };
 		91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91AD54D02B449DDD00F4D367 /* Preview Assets.xcassets */; };
@@ -18,6 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		914E18942DD9B30300F1D86F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91AD54BE2B449DDC00F4D367 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 914E18862DD9B30100F1D86F;
+			remoteInfo = HoopsComplicationExtension;
+		};
 		91A5A0A62DA8713F001A4FCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91AD54BE2B449DDC00F4D367 /* Project object */;
@@ -35,6 +46,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		914E189B2DD9B30300F1D86F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				914E18962DD9B30300F1D86F /* HoopsComplicationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91AD54E92B449DDE00F4D367 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -52,6 +74,10 @@
 		911086FA2DD6419F00FA2049 /* Hoops-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Hoops-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		911086FB2DD641AF00FA2049 /* Hoops Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Hoops Watch App.entitlements"; sourceTree = "<group>"; };
 		913EA6662DD853B0007A8A22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		914E18812DD9A95000F1D86F /* watchDemo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = watchDemo.mp4; sourceTree = "<group>"; };
+		914E18872DD9B30100F1D86F /* HoopsComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HoopsComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		914E18882DD9B30100F1D86F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		914E188A2DD9B30100F1D86F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		91A5A0A22DA8713F001A4FCE /* HoopsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HoopsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54C62B449DDC00F4D367 /* Hoops.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hoops.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91AD54CD2B449DDD00F4D367 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -72,6 +98,13 @@
 			);
 			target = 91AD54D52B449DDD00F4D367 /* Hoops Watch App */;
 		};
+		914E189A2DD9B30300F1D86F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 914E18862DD9B30100F1D86F /* HoopsComplicationExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -81,6 +114,7 @@
 		911086EB2DD532EB00FA2049 /* Utilities */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utilities; sourceTree = "<group>"; };
 		911086F12DD5414F00FA2049 /* Generic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Generic; sourceTree = "<group>"; };
 		911086FC2DD6470F00FA2049 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		914E188C2DD9B30100F1D86F /* HoopsComplication */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (914E189A2DD9B30300F1D86F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = HoopsComplication; sourceTree = "<group>"; };
 		9158C9BF2DD3E66C00D60F4C /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		91A5A0942DA85FDE001A4FCE /* Logic */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logic; sourceTree = "<group>"; };
 		91A5A0A32DA8713F001A4FCE /* HoopsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = HoopsTests; sourceTree = "<group>"; };
@@ -88,6 +122,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		914E18842DD9B30100F1D86F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				914E188B2DD9B30100F1D86F /* SwiftUI.framework in Frameworks */,
+				914E18892DD9B30100F1D86F /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91A5A09F2DA8713F001A4FCE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -120,6 +163,7 @@
 				91AD54C82B449DDC00F4D367 /* Hoops */,
 				91AD54DA2B449DDD00F4D367 /* Hoops Watch App */,
 				91A5A0A32DA8713F001A4FCE /* HoopsTests */,
+				914E188C2DD9B30100F1D86F /* HoopsComplication */,
 				91AD54C72B449DDC00F4D367 /* Products */,
 				91C36FD22B45EEBE0074E7B1 /* Frameworks */,
 				911086FA2DD6419F00FA2049 /* Hoops-Watch-App-Info.plist */,
@@ -132,6 +176,7 @@
 				91AD54C62B449DDC00F4D367 /* Hoops.app */,
 				91AD54D62B449DDD00F4D367 /* Hoops Watch App.app */,
 				91A5A0A22DA8713F001A4FCE /* HoopsTests.xctest */,
+				914E18872DD9B30100F1D86F /* HoopsComplicationExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,6 +192,7 @@
 				9101D9A72D4A8EAD00C5DBB2 /* Views */,
 				91AD54CD2B449DDD00F4D367 /* Assets.xcassets */,
 				91AD54CF2B449DDD00F4D367 /* Preview Content */,
+				914E18812DD9A95000F1D86F /* watchDemo.mp4 */,
 			);
 			path = Hoops;
 			sourceTree = "<group>";
@@ -187,6 +233,8 @@
 			children = (
 				91E8ADE22B9BB0A8004D1124 /* WatchConnectivity.framework */,
 				91C36FD32B45EEBE0074E7B1 /* WatchConnectivity.framework */,
+				914E18882DD9B30100F1D86F /* WidgetKit.framework */,
+				914E188A2DD9B30100F1D86F /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -194,6 +242,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		914E18862DD9B30100F1D86F /* HoopsComplicationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 914E18972DD9B30300F1D86F /* Build configuration list for PBXNativeTarget "HoopsComplicationExtension" */;
+			buildPhases = (
+				914E18832DD9B30100F1D86F /* Sources */,
+				914E18842DD9B30100F1D86F /* Frameworks */,
+				914E18852DD9B30100F1D86F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				914E188C2DD9B30100F1D86F /* HoopsComplication */,
+			);
+			name = HoopsComplicationExtension;
+			packageProductDependencies = (
+			);
+			productName = HoopsComplicationExtension;
+			productReference = 914E18872DD9B30100F1D86F /* HoopsComplicationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		91A5A0A12DA8713F001A4FCE /* HoopsTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91A5A0A82DA8713F001A4FCE /* Build configuration list for PBXNativeTarget "HoopsTests" */;
@@ -250,10 +320,12 @@
 				91AD54D22B449DDD00F4D367 /* Sources */,
 				91AD54D32B449DDD00F4D367 /* Frameworks */,
 				91AD54D42B449DDD00F4D367 /* Resources */,
+				914E189B2DD9B30300F1D86F /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				914E18952DD9B30300F1D86F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				911086EB2DD532EB00FA2049 /* Utilities */,
@@ -276,6 +348,9 @@
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
+					914E18862DD9B30100F1D86F = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					91A5A0A12DA8713F001A4FCE = {
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 91AD54C52B449DDC00F4D367;
@@ -304,11 +379,19 @@
 				91AD54C52B449DDC00F4D367 /* Hoops */,
 				91AD54D52B449DDD00F4D367 /* Hoops Watch App */,
 				91A5A0A12DA8713F001A4FCE /* HoopsTests */,
+				914E18862DD9B30100F1D86F /* HoopsComplicationExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		914E18852DD9B30100F1D86F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91A5A0A02DA8713F001A4FCE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -320,6 +403,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				914E18822DD9A95000F1D86F /* watchDemo.mp4 in Resources */,
 				91AD54D12B449DDD00F4D367 /* Preview Assets.xcassets in Resources */,
 				91AD54CE2B449DDD00F4D367 /* Assets.xcassets in Resources */,
 			);
@@ -337,6 +421,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		914E18832DD9B30100F1D86F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91A5A09E2DA8713F001A4FCE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -362,6 +453,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		914E18952DD9B30300F1D86F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 914E18862DD9B30100F1D86F /* HoopsComplicationExtension */;
+			targetProxy = 914E18942DD9B30300F1D86F /* PBXContainerItemProxy */;
+		};
 		91A5A0A72DA8713F001A4FCE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 91AD54C52B449DDC00F4D367 /* Hoops */;
@@ -375,6 +471,67 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		914E18982DD9B30300F1D86F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HoopsComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HoopsComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.landonwest.Hoops.watchkit.HoopsComplication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		914E18992DD9B30300F1D86F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HoopsComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HoopsComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.landonwest.Hoops.watchkit.HoopsComplication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
 		91A5A0A92DA8713F001A4FCE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -546,8 +703,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Hoops-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to read your past workout data.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to record your basketball workout session.";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need to read your workouts, heart rate, and calories burned so Hoops can visualize your sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need to write your workouts so Hoops can track your sessions";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.landonwest.Hoops;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -581,8 +739,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Hoops-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Hoops;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app uses HealthKit to read your past workout data.";
-				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app uses HealthKit to record your basketball workout session.";
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need to read your workouts, heart rate, and calories burned so Hoops can visualize your sessions.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need to write your workouts so Hoops can track your sessions";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.landonwest.Hoops;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -681,6 +840,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		914E18972DD9B30300F1D86F /* Build configuration list for PBXNativeTarget "HoopsComplicationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				914E18982DD9B30300F1D86F /* Debug */,
+				914E18992DD9B30300F1D86F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		91A5A0A82DA8713F001A4FCE /* Build configuration list for PBXNativeTarget "HoopsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

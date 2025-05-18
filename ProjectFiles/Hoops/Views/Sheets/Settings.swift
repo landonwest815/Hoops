@@ -10,7 +10,7 @@ import SwiftData
 import CoreHaptics
 
 enum AppSettingsKeys {
-    static let dateFormat = "M dd, yyyy"
+    static let dateFormat = "MMM d, yyyy"
     static let startOfWeek = "Sunday"
 }
 
@@ -22,7 +22,20 @@ struct Settings: View {
 
     @State private var showDeleteSheet = false
     @State private var currentIconName: String? = UIApplication.shared.alternateIconName
+    
+    @AppStorage("streakReminderSeconds")
+    private var streakReminderSeconds: Int = 10 * 3600
 
+    private var selectedHour: Binding<Int> {
+        Binding(
+          get: { streakReminderSeconds / 3600 },
+          set: { newHour in
+            streakReminderSeconds = newHour * 3600
+          }
+        )
+    }
+    
+    
     var body: some View {
         ZStack {
             VStack(spacing: 5) {
@@ -73,6 +86,34 @@ struct Settings: View {
                 .padding()
                 .cornerRadius(10)
 
+                Divider()
+                
+                UniformButton(
+                    leftIconName: "flame.fill",
+                    leftText: "Streak Reminders",
+                    leftColor: .white
+                ) {
+                    // our custom hour-only wheel
+                    Picker(selection: selectedHour, label: Text("")) {
+                        ForEach(0..<24, id: \.self) { hour in
+                            let displayHour = hour % 12 == 0 ? 12 : hour % 12
+                            let ampm = hour < 12 ? "am" : "pm"
+                            Text(String(format: "%2d:00 %@", displayHour, ampm))
+                                .tag(hour)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(width: 125, height: 90)
+                }
+                .frame(height: 90)
+                .padding(.leading)
+                .cornerRadius(10)
+                .onChange(of: streakReminderSeconds) { _ in
+                    StreakReminderScheduler.updateReminder(in: context)
+                }
+
+                
                 Divider()
 
                 UniformButton(leftIconName: "questionmark.circle.fill",
@@ -221,7 +262,7 @@ struct DateFormatToggleButton: View {
         "MM/dd/yyyy", "MMM d, yyyy", "MMM d", "M/dd",
         "EEEE, MMM d", "d MMM", "EEEE d"
     ]
-    @AppStorage(AppSettingsKeys.dateFormat) private var selectedFormat = "M dd, yyyy"
+    @AppStorage(AppSettingsKeys.dateFormat) private var selectedFormat = "MMM d, yyyy"
 
     var body: some View {
         let idx = formats.firstIndex(of: selectedFormat) ?? 0
@@ -339,47 +380,76 @@ struct DeleteConfirmationSheet: View {
     }
 }
 
-// Manages continuous rumble haptics
 class HapticManager: ObservableObject {
     private var engine: CHHapticEngine?
     private var player: CHHapticAdvancedPatternPlayer?
+    private var engineIsRunning = false
 
-    init() { prepare() }
-    private func prepare() {
+    init() {
+        prepareEngine()
+    }
+
+    private func prepareEngine() {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
+
         do {
-            engine = try CHHapticEngine()
-            try engine?.start()
+            let newEngine = try CHHapticEngine()
+            newEngine.stoppedHandler = { [weak self] _ in
+                self?.engineIsRunning = false
+            }
+            newEngine.resetHandler = { [weak self] in
+                self?.engineIsRunning = false
+                self?.prepareEngine()
+            }
+
+            try newEngine.start()
+            engineIsRunning = true
+            engine = newEngine
         } catch {
-            print("⚠️ haptics failed:", error)
+            print("⚠️ HapticManager engine failed to prepare:", error)
+            engine = nil
+            engineIsRunning = false
         }
     }
 
     func startRumble() {
-        guard let engine = engine else { return }
+        guard let engine = engine, !engineIsRunning else { return }
+
+        do {
+            try engine.start()
+            engineIsRunning = true
+        } catch {
+            print("⚠️ HapticManager failed to start engine:", error)
+            return
+        }
+
+        let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.5)
+        let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5)
         let event = CHHapticEvent(
             eventType: .hapticContinuous,
-            parameters: [
-                .init(parameterID: .hapticIntensity, value: 0.5),
-                .init(parameterID: .hapticSharpness, value: 0.5)
-            ],
+            parameters: [intensity, sharpness],
             relativeTime: 0,
             duration: 10
         )
+
         do {
             let pattern = try CHHapticPattern(events: [event], parameters: [])
             player = try engine.makeAdvancedPlayer(with: pattern)
             try player?.start(atTime: 0)
         } catch {
-            print("⚠️ failed to start rumble:", error)
+            print("⚠️ HapticManager failed to start rumble:", error)
         }
     }
 
     func stopRumble() {
-        do { try player?.stop(atTime: CHHapticTimeImmediate) }
-        catch { print("⚠️ failed to stop rumble:", error) }
+        do {
+            try player?.stop(atTime: CHHapticTimeImmediate)
+        } catch {
+            print("⚠️ HapticManager failed to stop rumble:", error)
+        }
     }
 }
+
 
 extension DateFormatter {
     static func formatted(date: Date, with format: String) -> String {

@@ -12,6 +12,14 @@ import SwiftData
 struct HoopsApp: App {
     let modelContainer = try! ModelContainer(for: HoopSession.self)
     @StateObject private var watchConnector = WatchConnector()
+    @Environment(\.modelContext) private var context
+    
+    init() {
+        // Make sure that if the key doesn't exist yet, it gets seeded at 10 am
+        UserDefaults.standard.register(defaults: [
+            "streakReminderSeconds": 10 * 3600
+        ])
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -20,6 +28,7 @@ struct HoopsApp: App {
                 .environmentObject(watchConnector)
                 .onAppear {
                     watchConnector.modelContext = modelContainer.mainContext
+                    StreakReminderScheduler.updateReminder(in: context)
                 }
         }
     }

@@ -70,15 +70,16 @@ private extension SessionView {
             if drillTimer == nil { startDrillTimer() }
             sessionManager.beginWorkout(duration: nil)
         }
-        .onDisappear {
-            stopDrillTimer()
-            sessionManager.endWorkout()
-        }
         .alert("Abandon Drill?", isPresented: $showingDrillEndEarlyConfirmation) {
             Button("Quit", role: .destructive) {
+                // tell the builder to throw it away
                 sessionManager.discardOnEnd = true
                 stopDrillTimer()
+
+                // when it's discarded, go back to home
                 sessionManager.onWorkoutDiscarded = { path = NavigationPath() }
+
+                // THIS is the ONLY other place we call endWorkout()
                 sessionManager.endWorkout()
             }
             Button("Keep Hoopin’", role: .cancel) { }
@@ -117,12 +118,31 @@ private extension SessionView {
             ) {
                 if mode == .challenge {
                     Button("Quit", role: .destructive) {
-                        sessionManager.discardOnEnd = true
-                        stopAllTimers()
-                        sessionManager.onWorkoutDiscarded = { path = NavigationPath() }
+                        // …unchanged challenge logic…
                     }
                 } else {
-                    Button("Finish Session", role: .destructive) { manualFinish() }
+                    Button("Finish Session", role: .destructive) {
+                        // 1) stop your UI timers & haptics
+                        stopAllTimers()
+
+                        // 2) disable the auto‐navigate callback so it won’t fire
+                        sessionManager.onSessionExpired = nil
+
+                        // 3) end the workout
+                        sessionManager.discardOnEnd = false
+                        sessionManager.endWorkout()
+
+                        // 4) manually navigate exactly once
+                        path.append(
+                            AppRoute.results(
+                                mode: mode,
+                                shot: shotType,
+                                duration: duration,
+                                makes: makes,
+                                time: timeCount
+                            )
+                        )
+                    }
                 }
                 Button("Keep Hoopin’", role: .cancel) { }
             }
@@ -171,20 +191,31 @@ private extension SessionView {
         }
         .onAppear {
             if mode == .challenge, let limit = duration {
+                // challenge: show cover when time’s up
                 sessionManager.onSessionExpired = { finishSession() }
                 timeCount = limit
                 endDate = Date().addingTimeInterval(TimeInterval(limit))
                 sessionManager.beginWorkout(duration: TimeInterval(limit))
                 startAccurateTimer()
             } else {
-                sessionManager.onSessionExpired = nil
+                // freestyle (and drill): auto‐navigate to results
                 timeCount = 0
+                sessionManager.onSessionExpired = {
+                    DispatchQueue.main.async {
+                        path.append(
+                            AppRoute.results(
+                                mode: mode,
+                                shot: shotType,
+                                duration: duration,
+                                makes: makes,
+                                time: timeCount
+                            )
+                        )
+                    }
+                }
                 sessionManager.beginWorkout(duration: nil)
                 startCountUpTimer()
             }
-        }
-        .onDisappear {
-            stopAllTimers()
         }
     }
 
@@ -272,25 +303,22 @@ private extension SessionView {
     }
 
     func manualFinish() {
-        sessionManager.onSessionExpired = nil
+        // stop all UI timers & haptics
         stopAllTimers()
-        path.append(
-            AppRoute.results(
-                mode: mode,
-                shot: shotType,
-                duration: duration,
-                makes: makes,
-                time: timeCount
-            )
-        )
+
+        // tell HealthKit to finish the workout, which will fire onSessionExpired
+        sessionManager.discardOnEnd = false
+        sessionManager.endWorkout()
     }
 
     func stopAllTimers() {
         timerCancellable?.cancel()
         timerCancellable = nil
+
         hapticTimer?.invalidate()
         hapticTimer = nil
-        sessionManager.endWorkout()
+
+        // ⚠️ Do NOT call sessionManager.endWorkout() here!
     }
 
     func startHapticAlarm() {

@@ -420,6 +420,7 @@ struct SessionCreation: View {
             sessionType: sessionType
         )
         context.insert(session)
+        StreakReminderScheduler.updateReminder(in: context)
         dismiss()
     }
 }

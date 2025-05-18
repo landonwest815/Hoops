@@ -32,26 +32,34 @@ struct SessionsLogic {
 
     static func calculateWeeklyStreak(from sessions: [HoopSession]) -> Int {
         let calendar = Calendar.current
-        let weekStarts = Set(sessions.compactMap {
-            calendar.dateInterval(of: .weekOfYear, for: $0.date)?.start
-        })
-        let sortedStarts = weekStarts.sorted(by: >)
-        guard let mostRecent = sortedStarts.first else { return 0 }
 
-        var streak = 1
-        var previous = mostRecent
+        // 1) Find the start of *this* week.
+        guard let thisWeekStart = calendar.dateInterval(of: .weekOfYear, for: Date())?.start else {
+            return 0
+        }
 
-        for week in sortedStarts.dropFirst() {
-            if let expected = calendar.date(
-                byAdding: .weekOfYear,
-                value: -1,
-                to: previous
-            ), calendar.isDate(expected, inSameDayAs: week) {
-                streak += 1
-                previous = week
-            } else {
-                break
+        // 2) If there's at least one shot so far *this* week, include it.
+        var streak = sessions.contains { $0.date >= thisWeekStart }
+            ? 1
+            : 0
+
+        // 3) Now walk backwards from *last* week (i.e. thisWeekStart - 1 week).
+        var weekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: thisWeekStart)!
+
+        while true {
+            // define the interval [weekStart, weekStart + 1 week)
+            let nextWeekStart = calendar.date(byAdding: .weekOfYear, value: 1, to: weekStart)!
+            // did you hoop in that week?
+            let hasSession = sessions.contains {
+                $0.date >= weekStart && $0.date < nextWeekStart
             }
+
+            guard hasSession else {
+                break   // first empty *completed* week stops the streak
+            }
+
+            streak += 1
+            weekStart = calendar.date(byAdding: .weekOfYear, value: -1, to: weekStart)!
         }
 
         return streak
