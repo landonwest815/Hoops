@@ -52,7 +52,8 @@ struct SessionListView: View {
     }
 
     @AppStorage("quoteIndex") private var quoteIndex = -1
-    @State private var displayedQuote = ""
+    @State private var displayedQuote = "I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty-six times, I've been trusted to take the game-winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.\n- Michael Jordan"
+    
     private let quotes: [String] = [
         "I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty-six times, I've been trusted to take the game-winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.\n- Michael Jordan",
         "The most important thing is to try and inspire people so that they can be great in whatever they want to do.\n- Kobe Bryant",
