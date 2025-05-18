@@ -27,7 +27,7 @@ struct ContentView: View {
                 onDismiss: { hasSeenOnboarding = true }
             ) {
                 OnboardingView(isPresented: $showOnboarding)
-                    .presentationDetents([.fraction(0.65)])
+                    .presentationDetents([.fraction(AppConstants.SheetHeights.current.onboarding)])
                     .sheetStyle()
                     .interactiveDismissDisabled()
                     .presentationDragIndicator(.hidden)
@@ -36,7 +36,24 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
-        .modelContainer(HoopSession.preview)
+
+#if DEBUG
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ContentView()
+                .modelContainer(HoopSession.preview)
+                .previewDisplayName("iPhone Pro")
+            
+            ContentView()
+                .modelContainer(HoopSession.preview)
+                .previewDisplayName("iPhone Base")
+            
+            ContentView()
+                .modelContainer(HoopSession.preview)
+                .previewDisplayName("iPhone SE")
+        }
+        .preferredColorScheme(.dark)
+    }
 }
+#endif

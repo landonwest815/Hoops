@@ -37,7 +37,7 @@ struct Settings: View {
     
     
     var body: some View {
-        ZStack {
+        ScrollView {
             VStack(spacing: 5) {
                 HStack {
                     Text("My Settings")

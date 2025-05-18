@@ -34,3 +34,9 @@ extension Image {
             .cornerRadius(20)
     }
 }
+
+extension UIScreen {
+  static var isShortScreen: Bool {
+    UIScreen.main.bounds.height <= 667
+  }
+}

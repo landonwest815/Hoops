@@ -9,6 +9,7 @@ enum SortMode {
     case byTime, byShotType
 }
 
+
 struct Sessions: View {
     @Environment(\.modelContext) private var context
     @Query(animation: .bouncy) private var sessions: [HoopSession]
@@ -236,7 +237,7 @@ struct Sessions: View {
                 selectedDate: $selectedDate
             )
             .sheetStyle()
-            .presentationDetents([.fraction(AppConstants.SheetHeights.statsFraction)])
+            .presentationDetents([.fraction(AppConstants.SheetHeights.current.stats)])
             .presentationBackgroundInteraction(.enabled)
 
         case .profile:
@@ -248,24 +249,24 @@ struct Sessions: View {
                 daysHoopedCount: SessionsLogic.calculateDaysHooped(for: sessions)
             )
             .sheetStyle()
-            .presentationDetents([.fraction(AppConstants.SheetHeights.profileFraction)])
+            .presentationDetents([.fraction(AppConstants.SheetHeights.current.profile)])
 
         case .sessionCreation:
             SessionCreation(selectedDate: $selectedDate)
                 .sheetStyle()
-                .presentationDetents([.fraction(AppConstants.SheetHeights.creationFraction)])
+                .presentationDetents([.fraction(AppConstants.SheetHeights.current.creation)])
                 .presentationDragIndicator(.hidden)
 
         case .sessionDetails:
             SessionDetails(session: $selectedSession)
                 .sheetStyle()
-                .presentationDetents([.fraction(AppConstants.SheetHeights.detailsFraction)])
+                .presentationDetents([.fraction(AppConstants.SheetHeights.current.details)])
                 .presentationDragIndicator(.hidden)
 
         case .settings:
             Settings(showOnboarding: $showOnboarding)
                 .sheetStyle()
-                .presentationDetents([.fraction(AppConstants.SheetHeights.settingsFraction)])
+                .presentationDetents([.fraction(AppConstants.SheetHeights.current.settings)])
 
         case .none:
             EmptyView()

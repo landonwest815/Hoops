@@ -52,7 +52,7 @@ struct SessionListView: View {
     }
 
     @AppStorage("quoteIndex") private var quoteIndex = -1
-    @State private var displayedQuote = "I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty-six times, I've been trusted to take the game-winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.\n- Michael Jordan"
+    @State private var displayedQuote = ""
     
     private let quotes: [String] = [
         "I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty-six times, I've been trusted to take the game-winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.\n- Michael Jordan",
@@ -171,12 +171,11 @@ struct SessionListView: View {
             .id(selectedDate)
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .ignoresSafeArea()
-        }
-        .onAppear {
-            guard displayedQuote.isEmpty else { return }
-            let next = (quoteIndex + 1) % quotes.count
-            quoteIndex = next
-            displayedQuote = quotes[next]
+            .onAppear {
+              let next = (quoteIndex + 1) % quotes.count
+              quoteIndex = next
+              displayedQuote = quotes[next]
+            }
         }
         .confirmationDialog(
             "Are you sure you want to delete this session?",
